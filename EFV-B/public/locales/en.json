@@ -1,0 +1,538 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "gallery": "Gallery",
+    "marketplace": "Marketplace",
+    "blog": "Blog",
+    "blogs": "Blogs",
+    "feedback": "Feedback",
+    "contact": "Contact",
+    "admin": "Admin",
+    "my_library": "My Library",
+    "quit_dashboard": "QUIT TO DASHBOARD",
+    "change_location": "Change Location",
+    "languages": {
+      "en": "English",
+      "hi": "Hindi",
+      "fr": "French",
+      "de": "German",
+      "es": "Spanish",
+      "ar": "Arabic",
+      "zh-CN": "Chinese",
+      "ja": "Japanese",
+      "it": "Italian",
+      "pt": "Portuguese",
+      "ru": "Russian",
+      "ko": "Korean"
+    }
+  },
+  "hero": {
+    "title": "Measure Your <br> Alignment <br> <span class=\"gold-glow-text\">Live in Flow</span>",
+    "subtitle": "EFV™ by UWO™ - the world's first Alignment Intelligence system <br> designed to elevate your Energy, Frequency & Vibration.",
+    "browse_books": "Browse EFV™ Books",
+    "get_app": "GET EFV™ APP",
+    "coming_soon": "(COMING SOON)"
+  },
+  "what_is_efv": {
+    "title": "What is <span class=\"gold-text\">EFV<sup>TM</sup> </span>",
+    "subtitle": "EFV<sup>TM</sup> helps you understand how your body and mind work together.<br>A system created by Mr. Gurumukh P. Ahuja that includes:",
+    "energy_title": "Energy",
+    "energy_desc": "Control and improve your daily energy levels.",
+    "frequency_title": "Frequency",
+    "frequency_desc": "Connect your feelings with your life goals.",
+    "vibration_title": "Vibration",
+    "vibration_desc": "Live in a natural state of flow and ease.",
+    "lifestyle_title": "Lifestyle",
+    "lifestyle_desc": "Simple daily habits for better performance."
+  },
+  "books_section": {
+    "title": "EFV<sup>TM</sup> Books <span class=\"gold-text\">(Volume 1-9 Series)</span>",
+    "subtitle": "Volume 1 & 2 releasing this month.<br>9-volume transformational system covering:",
+    "alignment": "Alignment",
+    "flow": "Flow",
+    "conscious_living": "Conscious Living",
+    "energy_science": "Energy Science",
+    "emotional_frameworks": "Emotional Frameworks",
+    "meditation_frequency": "Meditation & Frequency Practices",
+    "notify_me": "Notify Me"
+  },
+  "why_efv_works": {
+    "title": "Why EFV<sup>TM</sup> Works <span class=\"gold-text\">(Science + Philosophy)</span>",
+    "align_three": "EFV<sup>TM</sup> helps you align all three daily.",
+    "energy_clarity": "Energy Governs Clarity",
+    "energy_back": "What you seek outside has always lived inside.",
+    "freq_emotions": "Frequency Shapes Emotions",
+    "freq_back": "Change your inner code, and reality responds.",
+    "vib_decisions": "Vibration Influences Decisions",
+    "vib_back": "Stop chasing outcomes. Start embodying power."
+  },
+  "final_cta": {
+    "title": "Begin Your <span class=\"gold-glow-text\">Alignment Journey</span>",
+    "read_books": "Read EFV<sup>TM</sup> Books",
+    "explore_lifestyle": "Explore EFV<sup>TM</sup> Lifestyle"
+  },
+  "footer": {
+    "explore": "Explore",
+    "about_efv": "About EFV<sup>TM</sup>",
+    "about_uwo": "About UWO<sup>TM</sup>",
+    "gallery": "Gallery",
+    "terms": "Terms & Conditions",
+    "marketplace": "Marketplace",
+    "blog": "Blog",
+    "blogs": "Blogs",
+    "partner_portal": "Partner Portal",
+    "feedback": "Feedback",
+    "contact": "Contact",
+    "privacy": "Privacy Policy",
+    "tagline": "World's first EFV<sup>TM</sup> system. Designed for better living.",
+    "connect": "Connect",
+    "copyright": "&copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup> is a UWO<sup>TM</sup> Innovation."
+  },
+  "buttons": {
+    "buy_now": "BUY NOW",
+    "purchase_now": "PURCHASE NOW",
+    "view_info": "INFO",
+    "learn_more": "Learn More",
+    "notify_me": "Notify Me",
+    "login": "Login",
+    "logout": "Logout",
+    "account": "Account",
+    "dashboard": "Dashboard",
+    "admin_panel": "Admin Panel"
+  },
+  "location": {
+    "title": "Choose Your Location",
+    "subtitle": "Experience the portal in your preferred language.",
+    "footer": "Setting your region unlocks localized content and pricing."
+  },
+  "notify_modal": {
+    "title": "GET NOTIFIED!",
+    "subtitle": "We will notify you on your email when <strong id=\"notify-book-name\" class=\"gold-text\">MINDOS</strong> is ready.",
+    "placeholder": "Enter your email address",
+    "button": "NOTIFY ME",
+    "confirmation": "<i class=\"fas fa-check-circle\"></i> Confirmation email sent! <br> If you don't see it, check your SPAM/JUNKS folder."
+  },
+  "marketplace_page": {
+    "title": "EFV™ <span class=\"gold-text\">MARKETPLACE</span>",
+    "subtitle": "SECURE DIGITAL & PHYSICAL ASSET DISPENSARY",
+    "filter_all": "ALL",
+    "filter_hardcover": "HARDCOVER",
+    "filter_paperback": "PAPERBACK",
+    "filter_audiobook": "AUDIOBOOK",
+    "filter_ebook": "E-BOOK",
+    "in_stock": "IN STOCK",
+    "out_of_stock": "OUT OF STOCK",
+    "coming_soon": "COMING SOON",
+    "notion_msg": "Currently unavailable on our platform. You can still purchase this book from our official publishing partner.",
+    "buy_notion": "Buy on NotionPress",
+    "edition_suffix": "Edition"
+  },
+  "dashboard_page": {
+    "title": "THE <span class=\"text-gold-energy\">LIBRARY</span>",
+    "subtitle": "EFV SECURE CONTENT DISPENSARY",
+    "restricted": "Access Restricted",
+    "restricted_desc": "Please login to view your secure digital assets.",
+    "quit_dashboard": "QUIT TO DASHBOARD",
+    "syncing": "Synchronizing Library...",
+    "initializing": "Initializing Discs...",
+    "no_assets": "No Digital Assets Found",
+    "visit_marketplace": "Visit Marketplace",
+    "secure_access": "Secure Lifetime Access",
+    "read_percent": "% READ",
+    "connection_est": "ENCRYPTED CONNECTION ESTABLISHED"
+  },
+  "product_modal": {
+    "close": "Close",
+    "add_to_cart": "ADD TO CART",
+    "buy_now": "BUY NOW",
+    "select_qty": "Select Quantity:",
+    "subtotal": "Subtotal:",
+    "collection_title": "The EFV™ Collection",
+    "collection_desc": "Discover the transformative power of Energy, Frequency, and Vibration. Each volume in this sacred series is designed to align your consciousness with the universal code of existence.",
+    "tab_specs": "SPECIFICATIONS",
+    "tab_desc": "DESCRIPTION",
+    "tab_mfr": "MANUFACTURER INFO",
+    "generic_name_label": "Generic Name",
+    "country_origin_label": "Country of Origin",
+    "mfr_address_label": "Name and address of the Manufacturer",
+    "packer_address_label": "Name and address of the Packer",
+    "spec_product_form": "Product Form",
+    "spec_isbn": "ISBN",
+    "spec_isbn_13": "ISBN-13",
+    "spec_dimensions": "Dimensions",
+    "spec_weight": "Weight",
+    "spec_pages": "Pages",
+    "spec_language": "Language",
+    "spec_type": "Type",
+    "spec_volume": "Volume",
+    "spec_stock_status": "Stock Status",
+    "spec_generic_name": "Generic Name",
+    "value_hardcover": "Hardcover",
+    "value_paperback": "Paperback",
+    "value_audiobook": "Audiobook",
+    "value_ebook": "E-Book",
+    "value_hindi": "Hindi",
+    "value_english": "English",
+    "value_instock": "In Stock",
+    "value_outofstock": "Out of Stock",
+    "value_comingsoon": "Coming Soon",
+    "value_india": "India"
+  },
+  "products": {
+    "vol1": {
+      "title": "ORIGIN CODE",
+      "desc": "A journey into the starting point of everything - where consciousness, energy, and existence begin. This volume lays the foundation for understanding how reality is formed."
+    },
+    "vol2": {
+      "title": "MINDOS",
+      "desc": "An exploration of how thoughts and emotions shape our inner world. It breaks down the architecture of the human mind in a clear, practical way."
+    },
+    "vol3": {
+      "title": "UNIVERSAL ACTIVATION",
+      "desc": "A guide to awakening the untapped potential within you. It helps you recognize and activate the deeper frequencies that drive growth and clarity."
+    },
+    "vol4": {
+      "title": "RESONANCE BRIDGE",
+      "desc": "Bridges the gap between human awareness and universal intelligence. This volume shows how alignment creates flow, intuition, and meaningful synchronicity."
+    },
+    "vol5": {
+      "title": "HUMAN OS",
+      "desc": "A fresh look at the human operating system how we think, decide, evolve, and build the future. It connects human consciousness with the next era of AI."
+    },
+    "vol6": {
+      "title": "EMOTIONOS",
+      "desc": "Explains emotional intelligence as a powerful stabilizing force. It shows how emotional calibration creates harmony between humans and intelligent systems."
+    },
+    "vol7": {
+      "title": "MEMORIOS",
+      "desc": "Explores memory as the thread that holds identity together. It examines how continuity across time shapes who we are and who we become."
+    },
+    "vol8": {
+      "title": "AGENTOS",
+      "desc": "Unpacks the rise of autonomous intelligence and intelligent agents. A practical blueprint for understanding the agent-driven world ahead."
+    },
+    "vol9": {
+      "title": "GOVERNANCEOS",
+      "desc": "Focuses on ethics, alignment, and responsibility in an AI-powered civilization. It defines the principles that ensure technology evolves with wisdom."
+    },
+    "efv_v1_hardcover": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "Learn the secrets of Energy and Alignment. Premium hardcover book."
+    },
+    "efv_v1_paperback": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "Learn the secrets of Energy and Alignment. Easy-to-carry paperback book."
+    },
+    "efv_v1_ebook": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "The complete digital version of Volume 1. Accessible on all devices."
+    },
+    "efv_v1_audiobook": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "The immersive audio experience of Volume 1. Listen and align on the go."
+    },
+    "efv_v1_hardcover_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "The English hardcover edition of the foundational Volume 1."
+    },
+    "efv_v1_paperback_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "Explore the secrets of Energy and Alignment in English. Easy-to-carry paperback."
+    },
+    "efv_v1_ebook_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "The complete English digital version of Volume 1."
+    },
+    "efv_v1_audiobook_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "The immersive English audio experience of Volume 1."
+    },
+    "efv_v2_hardcover": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "An exploration of how thoughts and emotions shape our inner world."
+    },
+    "efv_v2_paperback": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "Decoding Thought, Emotion & The Architecture Of The Human Mind."
+    },
+    "efv_v2_ebook": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "The complete digital version of Volume 2. Accessible on all devices."
+    },
+    "efv_v2_audiobook": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "The immersive audio experience of Volume 2. Listen and align on the go."
+    },
+    "efv_v2_hardcover_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "The English hardcover edition of Volume 2. Explore the architecture of the human mind."
+    },
+    "efv_v2_paperback_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "The English paperback edition. Decoding Thought, Emotion & The Architecture Of The Human Mind."
+    },
+    "efv_v2_ebook_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "The complete English digital version of Volume 2."
+    },
+    "efv_v2_audiobook_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "The English audio experience of Volume 2."
+    },
+    "efv_canon_v3_hard": {
+      "title": "EFV™ VOL 3: UNIVERSAL ACTIVATION",
+      "description": "A guide to awakening the untapped potential within you. It helps you recognize and activate the deeper frequencies that drive growth and clarity."
+    },
+    "efv_canon_v4_hard": {
+      "title": "EFV™ VOL 4: RESONANCE BRIDGE",
+      "description": "Bridges the gap between human awareness and universal intelligence. This volume shows how alignment creates flow, intuition, and meaningful synchronicity."
+    },
+    "efv_canon_v5_hard": {
+      "title": "EFV™ VOL 5: HUMAN OS™",
+      "description": "A fresh look at the human operating system how we think, decide, evolve, and build the future."
+    },
+    "efv_canon_v6_hard": {
+      "title": "EFV™ VOL 6: EMOTIONOS™",
+      "description": "Explains emotional intelligence as a powerful stabilizing force. It shows how emotional calibration creates harmony."
+    },
+    "efv_canon_v7_hard": {
+      "title": "EFV™ VOL 7: MEMORYOS™",
+      "description": "Explores memory as the thread that holds identity together."
+    },
+    "efv_canon_v8_hard": {
+      "title": "EFV™ VOL 8: AGENTOS™",
+      "description": "Unpacks the rise of autonomous intelligence and intelligent agents."
+    },
+    "efv_canon_v9_hard": {
+      "title": "EFV™ VOL 9: GOVERNANCEOS™",
+      "description": "Focuses on ethics, alignment, and responsibility in an AI-powered civilization."
+    }
+  },
+  "about_page": {
+    "title": "About <span class=\"gold-text\">EFV<sup>TM</sup></span>",
+    "subtitle": "Energy. Frequency. Vibration — the three forces that govern human potential.",
+    "about_uwo": "About UWO<sup>TM</sup>",
+    "uwo_text1": "<strong>Unified Web Options</strong> A next-generation human-transformation company building wellness, technology, and lifestyle solutions.",
+    "uwo_text2": "<strong>Our Mission:</strong> Providing tools and ecosystems to measure and elevate consciousness through Alignment Intelligence.",
+    "about_efv": "About EFV<sup>TM</sup>",
+    "efv_text": "EFV<sup>TM</sup> (Energy Frequency Vibration) is the core philosophical and technological framework designed by Mr. Gurumukh P. Ahuja. It decodes the fundamental forces that govern human potential:",
+    "energy_label": "<strong>Energy:</strong> Control your energy for better daily performance and health.",
+    "frequency_label": "<strong>Frequency:</strong> Connect your feelings with your life's goals.",
+    "vibration_label": "<strong>Vibration:</strong> Live in a state of flow and clear thinking.",
+    "about_founder": "About the Founder",
+    "founder_name": "Mr. Gurumukh P. Ahuja",
+    "founder_desc": "Founder and Author of EFV<sup>TM</sup>.<br>Creator of the 9-Volume EFV<sup>TM</sup> Series and wellness system.",
+    "vision_title": "The Vision",
+    "vision_desc": "The start of our books and the main system.",
+    "mission_title": "The Mission",
+    "mission_desc": "To measure and elevate human alignment through the Integration of Technology and Frequency.",
+    "uwo_found_title": "UWO<sup>TM</sup> Foundation",
+    "uwo_found_desc": "Establishing the Universal Wellness Organization.",
+    "global_launch_title": "Global Launch",
+    "global_launch_desc": "Bringing Alignment Intelligence to the world.",
+    "bio_title": "MR. GURUMUKH P. AHUJA",
+    "bio_subtitle": "Visionary Thinker • Author of EFV™ Series",
+    "bio_para1": "Mr. Gurumukh P. Ahuja is driven by a single mission: to democratize intelligence and build the infrastructure for a future where technology serves humanity with precision and purpose.",
+    "bio_para2": "As the Founder and Director of UWO™, Mr. Gurumukh P. Ahuja leads a team dedicated to pushing the boundaries of what’s possible. Mr. Gurumukh P. Ahuja's work is focused on creating \"under one roof\" ecosystems that simplify the complex world of Artificial Intelligence for businesses and individuals alike.",
+    "bio_para3": "Key Initiatives & Innovations:",
+    "bio_bullet1": "<span class=\"author-glow-term\">Author of \"EFV Canon™ - The Origin Code\":</span> In this book, Mr. Gurumukh P. Ahuja explores the foundational principles of technological evolution and the \"origin code\" that dictates how we interact with the digital frontier.",
+    "bio_bullet2": "<span class=\"author-glow-term\">AISA™:</span> Mr. Gurumukh P. Ahuja architected this sovereign AI system to set new standards in responsible and scalable intelligence.",
+    "bio_bullet3": "<span class=\"author-glow-term\">AI Mall™:</span> Mr. Gurumukh P. Ahuja developed a first-of-its-kind marketplace, bringing every essential AI solution together in one accessible destination.",
+    "bio_para4": "Whether it is through the platforms built at UWO™ or the insights shared in Mr. Gurumukh P. Ahuja's writing, Mr. Gurumukh P. Ahuja is committed to <span class=\"author-glow-term\">Transforming Tomorrow, Today.</span>"
+  },
+  "books_page": {
+    "title": "Discover the EFV<sup>TM</sup><br>9-Volume Masterworks",
+    "subtitle": "Explore the foundational texts of Alignment Intelligence.",
+    "vol1_title": "Volume 1  Energy Alignment",
+    "vol1_desc": "The foundational guide to building and directing vital energy flow.",
+    "buy_amazon": "Buy on Amazon",
+    "buy_flipkart": "Flipkart",
+    "buy_notion": "Notion Press",
+    "free_pdf": "Free Chapter PDF",
+    "vol2_title": "Volume 2  Frequency Intelligence",
+    "vol2_desc": "Mastering the internal frequencies that shape your emotional reality.",
+    "pre_order": "Pre-order",
+    "vol3_9_title": "Volumes 3-9",
+    "coming_soon": "\"Coming Soon\"",
+    "journey_continues": "The journey continues. Stay tuned for the full release of the 9-volume system."
+  },
+  "profile_page": {
+    "sidebar": {
+      "browse_store": "Browse Store",
+      "dashboard": "Dashboard",
+      "cart_items": "Cart Items",
+      "my_orders": "My Orders",
+      "my_library": "My Library",
+      "notifications": "Notifications",
+      "account_settings": "Account Settings",
+      "help_support": "Help & Support",
+      "admin_portal": "Admin Portal",
+      "orders_management": "Orders Management",
+      "product_management": "Product Management",
+      "customers": "Customers",
+      "payments": "Payments",
+      "shipments": "Shipments",
+      "coupons": "Coupons",
+      "user_support": "User Support",
+      "partner_marketing": "Partner Marketing",
+      "sign_out": "Sign Out"
+    },
+    "welcome_back": "Welcome back,",
+    "journey_continues": "Your alignment journey continues here",
+    "my_collection": "My Collection",
+    "total_orders": "Total Orders",
+    "total_spent": "Total Spent",
+    "continue_reading": "Continue Reading",
+    "start_reading_desc": "Start your reading journey by browsing the store.",
+    "shopping": "Shopping",
+    "cart": "Cart",
+    "cart_empty": "Your cart is empty",
+    "browse_marketplace": "Browse Marketplace",
+    "order_summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "tax": "Tax (GST)",
+    "grand_total": "Grand Total",
+    "proceed_checkout": "Proceed to Checkout",
+    "my": "My",
+    "orders": "Orders",
+    "orders_desc": "Track your orders and download invoices",
+    "sync": "Sync",
+    "filter_all": "All Orders",
+    "filter_active": "Active",
+    "filter_shipped": "Shipped",
+    "filter_delivered": "Delivered",
+    "filter_cancelled": "Cancelled",
+    "no_orders": "No orders found",
+    "no_orders_desc": "Your journey awaits. Discover our collection in the marketplace.",
+    "browse_store": "Browse Store",
+    "library": "Library",
+    "library_desc": "Your digital collection",
+    "delete_all": "DELETE ALL",
+    "lib_tab_all": "All",
+    "lib_tab_ebooks": "E-Books",
+    "lib_tab_audiobooks": "Audiobooks",
+    "library_empty": "Library is empty",
+    "account": "Account",
+    "notifications_title": "Notifications",
+    "no_notifications": "No new notifications",
+    "center": "Center",
+    "settings_desc": "Manage your profile and security",
+    "profile_tab": "Profile",
+    "security_tab": "Security",
+    "addresses_tab": "Addresses",
+    "full_name": "Full Name",
+    "email_address": "Email Address",
+    "phone_number": "Phone Number",
+    "save_changes": "Save Changes",
+    "security_settings": "Security Settings",
+    "current_password": "Current Password",
+    "new_password": "New Password",
+    "confirm_password": "Confirm New Password",
+    "password_placeholder": "********",
+    "new_password_placeholder": "Minimum 6 characters",
+    "update_password": "Update Password",
+    "account_session": "Account Session",
+    "sign_out_device": "Sign Out from this Device",
+    "addresses": "Addresses",
+    "add_new": "+ Add New",
+    "help": "Help",
+    "support": "Support",
+    "send_message": "Send a Message",
+    "subject_placeholder": "Subject",
+    "message_placeholder": "Message",
+    "send_message_btn": "Send Message",
+    "direct_support": "Direct Support",
+    "email_us": "Email Us",
+    "my_inquiries": "My Inquiries",
+    "no_inquiries": "No previous inquiries found.",
+    "order_details": "ORDER DETAILS",
+    "tracking_status": "Tracking Status",
+    "order_items": "Order Items",
+    "payment": "Payment",
+    "shipping": "Shipping",
+    "total": "Total",
+    "ship_to": "Ship To",
+    "secure_checkout": "Secure Checkout",
+    "select_address": "Select Delivery Address",
+    "fill_manually": "Fill Manually",
+    "deliver_selected": "Deliver to Selected Address",
+    "shipping_to": "Shipping To:",
+    "back": "Back",
+    "confirm_pay": "Confirm & Pay Now",
+    "payment_details": "Payment Details",
+    "cart_subtotal": "Cart Subtotal",
+    "delivery_charges": "Delivery Charges",
+    "tax_gst": "Tax (GST 18%)",
+    "total_payable": "Total Payable",
+    "add_address_title": "ADD NEW ADDRESS",
+    "mobile_number": "Mobile Number",
+    "pincode": "Pincode",
+    "city": "City",
+    "state": "State",
+    "house_placeholder": "House No / Building Name",
+    "area_placeholder": "Area / Street / Locality",
+    "landmark_placeholder": "Landmark (Optional)",
+    "home": "Home",
+    "work": "Work",
+    "set_default": "Set as default address",
+    "save_address": "Save Address",
+    "cancel": "Cancel",
+    "return_request": "Return Request",
+    "select_reason": "Select a reason",
+    "reason_damaged": "Damaged product",
+    "reason_wrong": "Wrong product received",
+    "reason_quality": "Quality issue",
+    "reason_other": "Other",
+    "submit": "Submit"
+  },
+  "checkout_page": {
+    "payment_method": "Payment Method",
+    "online_payment": "Online Payment",
+    "cod": "Cash on Delivery (COD)",
+    "shipping_details": "Shipping Details",
+    "name_placeholder": "Gurumukh P Ahuja",
+    "phone_placeholder": "Enter phone number",
+    "phone_error": "Invalid phone number for selected country",
+    "email_placeholder": "email@example.com",
+    "address_label": "House / Flat / Street",
+    "address_placeholder": "Bunglow No, Street Name",
+    "area_label": "Area / Landmark",
+    "area_placeholder": "Near Meta Center, Opposite...",
+    "city_placeholder": "Mumbai",
+    "state_placeholder": "Maharashtra",
+    "pincode_placeholder": "400001",
+    "checking_delivery": "Checking delivery...",
+    "promo_code": "PROMO CODE",
+    "coupon_placeholder": "Enter code...",
+    "apply": "APPLY",
+    "cod_charges": "COD Charges",
+    "place_order": "PLACE ORDER",
+    "secure_payment_msg": "Secure payment via Cashfree SSL encrypted.",
+    "order_success": "Order Created Successfully!",
+    "back": "BACK",
+    "agree_terms": "I agree to the Terms & Conditions",
+    "proceed_payment": "PROCEED TO PAYMENT"
+  },
+  "cart": {
+    "title": "Your <span class=\"gold-text\">Cart</span>",
+    "empty": "Your cart is empty.",
+    "total": "Total:",
+    "checkout": "Checkout Now",
+    "login": "Login",
+    "signup": "Sign Up",
+    "profile_title": "Account Info",
+    "purchase_history": "Purchase History",
+    "no_history": "No purchase history found.",
+    "logout": "Logout"
+  },
+  "chatbot_intro": {
+    "title": "MEET EFV™ ASSISTANT",
+    "subtitle": "Your intelligent guide across the EFV™ platform.",
+    "p1": "Welcome to EFV™.",
+    "p2": "If you ever need help exploring the platform, finding books, understanding features, or asking questions, our EFV™ Assistant is always here for you.",
+    "p3": "Simply click the glowing star icon in the bottom-right corner to start chatting.",
+    "got_it": "Got It",
+    "ask_bot": "Ask EFV Bot"
+  }
+}

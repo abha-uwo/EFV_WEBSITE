@@ -1,0 +1,607 @@
+/* 
+ * Premium Admin Modal System v1.0
+ * Theme: Luxury Minimal Dark + Gold
+ */
+
+:root {
+    --p-modal-bg: rgba(10, 10, 12, 0.85);
+    --p-card-bg: #0D0D0F;
+    --p-input-bg: #111111;
+    --p-gold: #D4AF37;
+    --p-gold-gradient: linear-gradient(135deg, #B8860B 0%, #D4AF37 50%, #FFD700 100%);
+    --p-text-main: #FFFFFF;
+    --p-text-muted: #A0A0A0;
+    --p-border: rgba(212, 175, 55, 0.15);
+    --p-radius: 20px;
+    --p-transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* Modal Overlay & Backdrop */
+.admin-premium-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(20px);
+    display: none;
+    /* Controlled by active class */
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.admin-premium-overlay.active {
+    display: flex;
+    opacity: 1;
+}
+
+/* Particle Canvas Background */
+.modal-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0.4;
+    z-index: -1;
+}
+
+/* Modal Card */
+.admin-premium-card {
+    background: var(--p-card-bg);
+    width: 95%;
+    max-width: 900px;
+    max-height: 92vh;
+    border-radius: var(--p-radius);
+    border: 1px solid var(--p-border);
+    position: relative;
+    box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.1);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transform: scale(0.95) translateY(30px);
+    transition: var(--p-transition);
+}
+
+.admin-premium-overlay.active .admin-premium-card {
+    transform: scale(1) translateY(0);
+}
+
+/* Glow Reflection Effect */
+.admin-premium-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--p-radius);
+    padding: 1px;
+    background: linear-gradient(135deg, transparent 40%, rgba(212, 175, 55, 0.3), transparent 60%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+}
+
+/* Content Area */
+.modal-main-content {
+    padding: 40px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+/* Section Header */
+.modal-header-premium {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-header-premium h2 {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: var(--p-text-main);
+}
+
+.close-premium {
+    background: none;
+    border: none;
+    color: var(--p-text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: var(--p-transition);
+}
+
+.close-premium:hover {
+    color: var(--p-gold);
+    transform: rotate(90deg);
+}
+
+/* Section Titles */
+.form-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 35px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.form-section-header:first-child {
+    margin-top: 0;
+}
+
+.form-section-header i {
+    color: var(--p-gold);
+    font-size: 1rem;
+}
+
+.form-section-header h3 {
+    margin: 0;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--p-gold);
+    min-height: auto;
+    display: inline-block;
+}
+
+/* Layout Grid */
+.premium-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+/* Floating Label Form Group */
+.p-form-group {
+    position: relative;
+    margin-bottom: 15px;
+}
+
+.p-input {
+    width: 100%;
+    background: var(--p-input-bg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    padding: 18px 16px 6px;
+    color: white;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: var(--p-transition);
+}
+
+.p-input:focus {
+    border-color: var(--p-gold);
+    background: #000;
+    box-shadow: 0 0 15px rgba(212, 175, 55, 0.1);
+    outline: none;
+}
+
+.p-label {
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    transform: translateY(-50%);
+    color: var(--p-text-muted);
+    font-size: 1rem;
+    pointer-events: none;
+    transition: var(--p-transition);
+}
+
+.p-input:focus~.p-label,
+.p-input:not(:placeholder-shown)~.p-label,
+.p-input:-webkit-autofill~.p-label {
+    top: 12px;
+    font-size: 0.7rem;
+    color: var(--p-gold);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Custom Select Styling */
+select.p-input {
+    appearance: none;
+    cursor: pointer;
+}
+
+/* Custom Drop Box - File Upload */
+.upload-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.drop-zone {
+    border: 1.5px dashed rgba(212, 175, 55, 0.3);
+    border-radius: 16px;
+    padding: 25px;
+    text-align: center;
+    background: rgba(0, 0, 0, 0.2);
+    transition: var(--p-transition);
+    cursor: pointer;
+    position: relative;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: var(--p-gold);
+    background: rgba(212, 175, 55, 0.05);
+    box-shadow: 0 0 20px rgba(212, 175, 55, 0.1);
+}
+
+.drop-zone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.drop-zone i {
+    font-size: 1.8rem;
+    color: var(--p-gold);
+    margin-bottom: 10px;
+    transition: var(--p-transition);
+}
+
+.drop-zone:hover i {
+    transform: translateY(-5px) scale(1.1);
+}
+
+.drop-zone span {
+    font-size: 0.8rem;
+    color: var(--p-text-muted);
+}
+
+.file-preview {
+    margin-top: 8px;
+    font-size: 0.75rem;
+    color: var(--p-gold);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Textarea Premium */
+textarea.p-input {
+    min-height: 100px;
+    padding-top: 25px;
+    resize: vertical;
+}
+
+/* Buttons Section */
+.modal-footer-premium {
+    padding: 30px 40px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    display: flex;
+    gap: 20px;
+}
+
+.p-btn {
+    flex: 1;
+    padding: 16px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: var(--p-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.p-btn-primary {
+    background: var(--p-gold-gradient);
+    border: none;
+    color: black;
+    box-shadow: 0 10px 20px rgba(212, 175, 55, 0.2);
+}
+
+.p-btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 30px rgba(212, 175, 55, 0.4);
+    filter: brightness(1.1);
+}
+
+.p-btn-secondary {
+    background: transparent;
+    border: 1px solid var(--p-gold);
+    color: var(--p-gold);
+}
+
+.p-btn-secondary:hover {
+    background: rgba(212, 175, 55, 0.1);
+    transform: translateY(-3px);
+}
+
+/* Animations */
+@keyframes successCheck {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.success-icon {
+    color: #4CAF50;
+    animation: successCheck 0.5s ease forwards;
+}
+
+/* Custom Scrollbar for Modal */
+.modal-main-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.modal-main-content::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.modal-main-content::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+}
+
+.modal-main-content::-webkit-scrollbar-thumb:hover {
+    background: var(--p-gold);
+}
+
+/* Layout adjustments */
+@media (max-width: 768px) {
+
+    .premium-grid,
+    .upload-container {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-main-content {
+        padding: 20px;
+    }
+
+    .modal-header-premium,
+    .modal-footer-premium {
+        padding: 20px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════ */
+/* PREMIUM AUDIOBOOK CHAPTER MANAGEMENT & TITLE INPUT STYLES       */
+/* THEME: PURE BLACK + LUXURY GOLD ACCENTS (#0D0D0F, #111111, #D4AF37) */
+/* ═══════════════════════════════════════════════════════════════ */
+#admin-chapters-container {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)) !important;
+    gap: 16px !important;
+    margin-top: 15px !important;
+}
+
+@media (max-width: 768px) {
+    #admin-chapters-container {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+.admin-chapter-card.chapter-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 14px !important;
+    background: #0D0D0F !important;
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+    border-radius: 14px !important;
+    padding: 16px 18px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: visible !important;
+    cursor: default !important;
+    transform: none !important;
+}
+
+.admin-chapter-card.chapter-card::before,
+.admin-chapter-card.chapter-card::after {
+    display: none !important;
+}
+
+.admin-chapter-card.chapter-card:hover {
+    border-color: rgba(212, 175, 55, 0.45) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.8), 0 0 15px rgba(212, 175, 55, 0.08) !important;
+    transform: none !important;
+}
+
+.admin-chapter-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1) !important;
+}
+
+.admin-chapter-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    background: rgba(212, 175, 55, 0.08) !important;
+    border: 1px solid rgba(212, 175, 55, 0.25) !important;
+    padding: 4px 10px !important;
+    border-radius: 6px !important;
+    color: #D4AF37 !important;
+    font-size: 0.78rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+}
+
+.admin-chapter-status-pill {
+    font-size: 0.72rem !important;
+    padding: 3px 9px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    transition: all 0.3s ease !important;
+}
+
+.admin-chapter-status-pill.ready {
+    background: rgba(212, 175, 55, 0.12) !important;
+    color: #D4AF37 !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+}
+
+.admin-chapter-status-pill.pending {
+    background: rgba(255, 255, 255, 0.03) !important;
+    color: rgba(255, 255, 255, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+.admin-chapter-del-btn {
+    background: rgba(255, 77, 77, 0.08) !important;
+    border: 1px solid rgba(255, 77, 77, 0.2) !important;
+    color: #ff6b6b !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    font-size: 0.75rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.admin-chapter-del-btn:hover {
+    background: #ff4d4d !important;
+    color: #ffffff !important;
+    transform: scale(1.05) !important;
+    border-color: #ff4d4d !important;
+}
+
+.admin-chapter-input-wrap {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+    width: 100% !important;
+}
+
+.admin-chapter-input-label {
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    color: #D4AF37 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin: 0 !important;
+}
+
+.admin-chapter-title-input {
+    width: 100% !important;
+    height: 42px !important;
+    background: #111111 !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    padding: 0 14px !important;
+    color: #ffffff !important;
+    font-size: 0.92rem !important;
+    font-weight: 500 !important;
+    transition: all 0.25s ease !important;
+    box-sizing: border-box !important;
+}
+
+.admin-chapter-title-input:focus {
+    border-color: #D4AF37 !important;
+    background: #000000 !important;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.15) !important;
+    outline: none !important;
+}
+
+.admin-chapter-title-input::placeholder {
+    color: rgba(255, 255, 255, 0.3) !important;
+    font-size: 0.85rem !important;
+}
+
+.admin-chapter-audio-box {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px dashed rgba(212, 175, 55, 0.2) !important;
+    border-radius: 8px !important;
+    padding: 10px 12px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    transition: all 0.2s ease !important;
+}
+
+.admin-chapter-audio-box:hover {
+    border-color: rgba(212, 175, 55, 0.4) !important;
+    background: rgba(212, 175, 55, 0.02) !important;
+}
+
+.admin-chapter-audio-controls {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    flex-wrap: wrap !important;
+}
+
+.admin-chapter-file-btn {
+    background: rgba(212, 175, 55, 0.1) !important;
+    border: 1px solid rgba(212, 175, 55, 0.3) !important;
+    color: #D4AF37 !important;
+    padding: 6px 12px !important;
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    transition: all 0.2s ease !important;
+    white-space: nowrap !important;
+}
+
+.admin-chapter-file-btn:hover {
+    background: #D4AF37 !important;
+    color: #000000 !important;
+    border-color: #D4AF37 !important;
+}
+
+.admin-chapter-file-name {
+    font-size: 0.75rem !important;
+    color: rgba(255, 255, 255, 0.6) !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+.admin-chapter-file-name.has-file {
+    color: #D4AF37 !important;
+    font-weight: 600 !important;
+}

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Status - EFV™</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            background: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .status-container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 211, 105, 0.2);
+            max-width: 420px;
+            width: 90%;
+        }
+
+        .loader {
+            font-size: 3rem;
+            color: #FFD369;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+            color: #FFD369;
+        }
+
+        p {
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            background: #FFD369;
+            color: #000;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 700;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background: #fff;
+        }
+
+        .error-icon {
+            color: #ff4d4d;
+        }
+
+        .success-icon {
+            color: #4caf50;
+        }
+
+        .redirect-note {
+            font-size: 0.8rem;
+            opacity: 0.5;
+            margin-top: 12px;
+        }
+    </style>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body>
+    <div class="status-container" id="status-box">
+        <div class="loader"><i class="fas fa-spinner fa-spin"></i></div>
+        <h2>Processing...</h2>
+        <p>Please do not refresh or close this window. We are verifying your payment status.</p>
+    </div>
+
+    <script src="../js/api-config.js"></script>
+    <script>
+        const API_BASE = (typeof CONFIG !== 'undefined') ? CONFIG.API_BASE_URL : 'http://localhost:8080';
+
+        async function verify() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const order_id = urlParams.get('order_id');
+            const statusBox = document.getElementById('status-box');
+
+            if (!order_id) {
+                statusBox.innerHTML = `
+                    <div class="loader error-icon"><i class="fas fa-times-circle"></i></div>
+                    <h2>Invalid Session</h2>
+                    <p>We couldn't find your order details. Please contact support.</p>
+                    <a href="marketplace.html" class="btn">Return to Store</a>
+                `;
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const user = JSON.parse(localStorage.getItem('efv_user'));
+                const directCheckout = JSON.parse(localStorage.getItem('directCheckout'));
+                const appliedCoupon = localStorage.getItem('efv_applied_coupon') || '';
+                const claimedOfferId = localStorage.getItem('efv_checkout_offer_id') || '';
+
+                // Get local order details to extract shippingAddress, shippingCharge and codCharge
+                const localOrderId = order_id.replace('EFV-CF-', 'EFV-');
+                const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+                const localOrder = orders.find(o => o.orderId === localOrderId);
+                const shippingAddress = JSON.parse(localStorage.getItem('shippingAddress')) || (localOrder ? localOrder.shippingAddress : null);
+                const shippingCharge = localOrder ? localOrder.shippingCharge : 0;
+                const codCharge = localOrder ? localOrder.codCharge : 0;
+
+                // Read user-specific cart key (matches cart.js logic)
+                function getUserCartKey() {
+                    if (!user || !user.email) return 'efv_cart';
+                    const cleanEmail = user.email.toLowerCase().replace(/[^a-z0-9]/g, '_');
+                    return `efv_cart_${cleanEmail}`;
+                }
+                const cart = JSON.parse(localStorage.getItem(getUserCartKey()))
+                    || JSON.parse(localStorage.getItem('efv_cart'))
+                    || (localOrder && localOrder.products ? localOrder.products : []);
+
+                const items = directCheckout ? (Array.isArray(directCheckout) ? directCheckout : [directCheckout]) : cart;
+                const paidCurrency = localStorage.getItem('efv_paid_currency') || (localOrder ? localOrder.currency : 'INR');
+
+                const reqHeaders = { 'Content-Type': 'application/json' };
+                if (token) {
+                    reqHeaders['Authorization'] = `Bearer ${token}`;
+                }
+
+                const response = await fetch(`${API_BASE}/api/orders/verify-cashfree`, {
+                    method: 'POST',
+                    headers: reqHeaders,
+                    body: JSON.stringify({
+                        order_id: order_id,
+                        customer: shippingAddress,
+                        currency: paidCurrency,
+                        items: items.map(i => ({ productId: i.id || i.productId, quantity: i.quantity || 1 })),
+                        couponCode: appliedCoupon,
+                        shippingCharge: shippingCharge,
+                        codCharge: codCharge,
+                        offerId: claimedOfferId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Success — clear all cart-related storage
+                    localStorage.removeItem(getUserCartKey());
+                    localStorage.removeItem('efv_cart');
+                    localStorage.removeItem('directCheckout');
+                    localStorage.removeItem('shippingAddress');
+                    localStorage.removeItem('efv_applied_coupon');
+                    localStorage.removeItem('efv_paid_currency');
+                    localStorage.removeItem('efv_checkout_offer_id');
+
+                    // 🟢 Detect if order contains digital products (EBOOK / AUDIOBOOK)
+                    const orderItems = data.order && data.order.items ? data.order.items : [];
+                    const hasDigital = orderItems.some(i => {
+                        const t = (i.type || '').toUpperCase();
+                        return t === 'EBOOK' || t === 'AUDIOBOOK';
+                    });
+                    const hasPhysical = orderItems.some(i => {
+                        const t = (i.type || '').toUpperCase();
+                        return ['HARDCOVER', 'PAPERBACK', 'PHYSICAL'].includes(t);
+                    });
+
+                    const isDigitalOnly = hasDigital && !hasPhysical;
+
+                    // Redirect to library for digital, orders for physical
+                    const redirectUrl = isDigitalOnly
+                        ? 'profile.html?tab=library'
+                        : 'profile.html?tab=orders';
+                    const btnLabel = isDigitalOnly ? '📖 Go to My Library' : '📦 View My Orders';
+                    const successMsg = isDigitalOnly
+                        ? `Your E-Book / Audiobook is now unlocked! Order <b>${data.order.orderId}</b>.`
+                        : `Thank you for your purchase. Your order <b>${data.order.orderId}</b> has been placed.`;
+
+                    statusBox.innerHTML = `
+                        <div class="loader success-icon"><i class="fas fa-check-circle"></i></div>
+                        <h2>Payment Successful!</h2>
+                        <p>${successMsg}</p>
+                        <a href="${redirectUrl}" class="btn">${btnLabel}</a>
+                        <p class="redirect-note">Redirecting automatically in 4 seconds...</p>
+                    `;
+
+                    // Auto-redirect after 4 seconds
+                    setTimeout(() => { window.location.href = redirectUrl; }, 4000);
+
+                } else {
+                    throw new Error(data.message || 'Verification Failed');
+                }
+            } catch (error) {
+                statusBox.innerHTML = `
+                    <div class="loader error-icon"><i class="fas fa-times-circle"></i></div>
+                    <h2>Payment Failed</h2>
+                    <p>${error.message}. If money was deducted, please contact support@uwo24.com with Order ID: ${order_id}</p>
+                    <a href="checkout.html" class="btn">Go Back</a>
+                `;
+            }
+        }
+
+        window.onload = verify;
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,304 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À Propos",
+    "gallery": "Galerie",
+    "marketplace": "Marché",
+    "blog": "Blog",
+    "blogs": "Blogs",
+    "feedback": "Retours",
+    "contact": "Contact",
+    "admin": "Admin",
+    "my_library": "Ma Bibliothèque",
+    "quit_dashboard": "QUITTER VERS TABLEAU DE BORD",
+    "change_location": "Changer de Région"
+  },
+  "hero": {
+    "title": "Mesurez Votre <br> Alignement <br> <span class=\"gold-glow-text\">Vivez en Flux</span>",
+    "subtitle": "EFV™ par UWO™ - le premier système d'Intelligence d'Alignement au monde <br> conçu pour élever votre Énergie, Fréquence et Vibration.",
+    "browse_books": "Parcourir les Livres EFV™",
+    "get_app": "OBTENIR L'APPLICATION EFV™",
+    "coming_soon": "(BIENTÔT DISPONIBLE)"
+  },
+  "what_is_efv": {
+    "title": "Qu'est-ce que <span class=\"gold-text\">EFV<sup>TM</sup> </span>",
+    "subtitle": "EFV™ vous aide à comprendre comment votre corps et votre esprit travaillent ensemble.<br>Un système créé par M. Gurumukh P. Ahuja qui comprend :",
+    "energy_title": "Énergie",
+    "energy_desc": "Contrôlez et améliorez vos niveaux d'énergie quotidiens.",
+    "frequency_title": "Fréquence",
+    "frequency_desc": "Connectez vos sentiments à vos objectifs de vie.",
+    "vibration_title": "Vibration",
+    "vibration_desc": "Vivez dans un état naturel de flux et de facilité.",
+    "lifestyle_title": "Mode de vie",
+    "lifestyle_desc": "Des habitudes quotidiennes simples pour une meilleure performance."
+  },
+  "books_section": {
+    "title": "Livres EFV<sup>TM</sup> <span class=\"gold-text\">(Série Volumes 1-9)</span>",
+    "subtitle": "Les Volumes 1 et 2 sortent ce mois-ci.<br>Système de transformation en 9 volumes couvrant :",
+    "alignment": "Alignement",
+    "flow": "Flux",
+    "conscious_living": "Vie Consciente",
+    "energy_science": "Science de l'Énergie",
+    "emotional_frameworks": "Cadres Émotionnels",
+    "meditation_frequency": "Pratiques de Méditation et de Fréquence",
+    "notify_me": "M'avertir"
+  },
+  "why_efv_works": {
+    "title": "Pourquoi EFV<sup>TM</sup> Fonctionne <span class=\"gold-text\">(Science + Philosophie)</span>",
+    "align_three": "EFV™ vous aide à aligner les trois quotidiennement.",
+    "energy_clarity": "L'Énergie Régit la Clarté",
+    "energy_back": "Ce que vous cherchez à l'extérieur a toujours vécu à l'intérieur.",
+    "freq_emotions": "La Fréquence Façonne les Émotions",
+    "freq_back": "Modifiez votre code interne, et la réalité répondra.",
+    "vib_decisions": "La Vibration Influence les Décisions",
+    "vib_back": "Cessez de poursuivre les résultats. Commencez à incarner le pouvoir."
+  },
+  "final_cta": {
+    "title": "Commencez Votre <span class=\"gold-glow-text\">Voyage d'Alignement</span>",
+    "read_books": "Lire les Livres EFV™",
+    "explore_lifestyle": "Explorer le Mode de Vie EFV™"
+  },
+  "footer": {
+    "explore": "Explorer",
+    "about_efv": "À Propos de EFV™",
+    "about_uwo": "À Propos de UWO™",
+    "gallery": "Galerie",
+    "terms": "Conditions Générales",
+    "marketplace": "Marché",
+    "blog": "Blog",
+    "blogs": "Blogs",
+    "partner_portal": "Portail Partenaire",
+    "feedback": "Retours",
+    "contact": "Contact",
+    "privacy": "Politique de Confidentialité",
+    "tagline": "Premier système EFV™ au monde. Conçu pour une vie meilleure.",
+    "connect": "Connecter",
+    "copyright": "&copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup> est une Innovation de UWO<sup>TM</sup>."
+  },
+  "buttons": {
+    "buy_now": "ACHETER AHORA",
+    "purchase_now": "ACHETER AHORA",
+    "view_info": "INFO",
+    "learn_more": "En savoir plus",
+    "notify_me": "M'avertir"
+  },
+  "location": {
+    "title": "Choisissez Votre Région",
+    "subtitle": "Découvrez le portail dans votre langue préférée.",
+    "footer": "Définir votre région débloque le contenu et les prix localisés."
+  },
+  "notify_modal": {
+    "title": "SOYEZ AVERTI !",
+    "subtitle": "Nous vous informerons sur votre e-mail lorsque <strong id=\"notify-book-name\" class=\"gold-text\">MINDOS</strong> sera prêt.",
+    "placeholder": "Entrez votre adresse e-mail",
+    "button": "M'AVERTIR",
+    "confirmation": "<i class=\"fas fa-check-circle\"></i> E-mail de confirmation envoyé ! <br> Si vous ne le voyez pas, vérifiez vos spams."
+  },
+  "marketplace_page": {
+    "title": "MARCHÉ <span class=\"gold-text\">EFV™</span>",
+    "subtitle": "DISPENSAIRE SÉCURISÉ D'ACTIFS NUMÉRIQUES ET PHYSIQUES",
+    "filter_all": "TOUT",
+    "filter_hardcover": "RELIÉ",
+    "filter_paperback": "BROCHÉ",
+    "filter_audiobook": "LIVRE AUDIO",
+    "filter_ebook": "E-BOOK",
+    "in_stock": "EN STOCK",
+    "out_of_stock": "RUPTURE DE STOCK",
+    "coming_soon": "BIENTÔT DISPONIBLE",
+    "notion_msg": "Actuellement indisponible sur notre plateforme. Vous pouvez toujours acheter ce livre auprès de notre partenaire d'édition officiel.",
+    "buy_notion": "Acheter sur NotionPress",
+    "edition_suffix": "Édition"
+  },
+  "dashboard_page": {
+    "title": "LA <span class=\"text-gold-energy\">BIBLIOTHÈQUE</span>",
+    "subtitle": "DISPENSAIRE DE CONTENU SÉCURISÉ EFV",
+    "restricted": "Accès Restreint",
+    "restricted_desc": "Veuillez vous connecter pour voir vos actifs numériques sécurisés.",
+    "quit_dashboard": "QUITTER VERS TABLEAU DE BORD",
+    "syncing": "Synchronisation de la bibliothèque...",
+    "initializing": "Initialisation des disques...",
+    "no_assets": "Aucun actif numérique trouvé",
+    "visit_marketplace": "Visiter le Marché",
+    "secure_access": "Accès Sécurisé à Vie",
+    "read_percent": "% LU",
+    "connection_est": "CONNEXION ENCRYPTÉE ÉTABLIE"
+  },
+  "product_modal": {
+    "close": "Fermer",
+    "add_to_cart": "AJOUTER AU PANIER",
+    "buy_now": "ACHETER MAINTENANT",
+    "select_qty": "Choisir la Quantité :",
+    "subtotal": "Sous-total :",
+    "collection_title": "La Collection EFV™",
+    "collection_desc": "Découvrez le pouvoir transformateur de l'Énergie, de la Fréquence et de la Vibration. Chaque volume de cette série sacrée est conçu pour aligner votre conscience avec le code universel de l'existence.",
+    "tab_specs": "SPÉCIFICATIONS",
+    "tab_desc": "DESCRIPTION",
+    "tab_mfr": "INFOS FABRICANT",
+    "generic_name_label": "Nom Générique",
+    "country_origin_label": "Pays d'Origine",
+    "mfr_address_label": "Nom et adresse du Fabricant",
+    "packer_address_label": "Nom et adresse de l'Emballeur"
+  },
+  "products": {
+    "vol1": {
+      "title": "ORIGIN CODE",
+      "desc": "Un voyage au point de départ de tout, où commencent la conscience, l'énergie et l'existence. Ce volume pose les bases pour comprendre comment la réalité se forme."
+    },
+    "vol2": {
+      "title": "MINDOS",
+      "desc": "Une exploration de la façon dont les pensées et les émotions façonnent notre monde intérieur. Il décompose l'architecture de l'esprit humain de manière claire et pratique."
+    },
+    "vol3": {
+      "title": "UNIVERSAL ACTIVATION",
+      "desc": "Un guide pour éveiller le potentiel inexploité en vous. Il vous aide à reconnaître et à activer les fréquences les plus profondes qui stimulent la croissance et la clarté."
+    },
+    "vol4": {
+      "title": "RESONANCE BRIDGE",
+      "desc": "Comble le fossé entre la conscience humaine et l'intelligence universelle. Ce volume montre comment l'alignement crée le flux, l'intuition et une synchronicité significative."
+    },
+    "vol5": {
+      "title": "HUMAN OS",
+      "desc": "Un nouveau regard sur le système d'exploitation humain: comment nous pensons, décidons, évoluons et construisons l'avenir. Il connecte la conscience humaine à l'ère de l'IA."
+    },
+    "vol6": {
+      "title": "EMOTIONOS",
+      "desc": "Explique l'intelligence émotionnelle comme une force stabilisatrice puissante. Il montre comment l'étalonnage émotionnel crée une harmonie entre les humains et les systèmes."
+    },
+    "vol7": {
+      "title": "MEMORIOS",
+      "desc": "Explore la mémoire comme le fil qui unit l'identité. Il examine comment la continuité dans le temps façonne qui nous sommes et qui nous devenons."
+    },
+    "vol8": {
+      "title": "AGENTOS",
+      "desc": "Décrypte l'essor de l'intelligence autonome et des agents intelligents. Un schéma pratique pour comprendre le monde de demain axé sur les agents."
+    },
+    "vol9": {
+      "title": "GOVERNANCEOS",
+      "desc": "Se concentre sur l'éthique, l'alignement et la responsabilité dans une civilisation alimentée par l'IA. Il définit les principes garantissant que la technologie évolue avec sagesse."
+    },
+    "efv_v1_hardcover": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "Apprenez les secrets de l'Énergie et de l'Alignement. Livre relié de qualité supérieure."
+    },
+    "efv_v1_paperback": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "Apprenez les secrets de l'Énergie et de l'Alignement. Livre broché facile à transporter."
+    },
+    "efv_v1_ebook": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "La version numérique complète du Volume 1. Accessible sur tous les appareils."
+    },
+    "efv_v1_audiobook": {
+      "title": "EFV™ VOL 1: ORIGIN CODE™",
+      "description": "L'expérience audio immersive du Volume 1. Écoutez et alignez-vous en déplacement."
+    },
+    "efv_v1_hardcover_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "L'édition reliée en anglais du Volume 1 fondateur."
+    },
+    "efv_v1_paperback_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "Explorez les secrets de l'Énergie et de l'Alignement en anglais. Broché facile à transporter."
+    },
+    "efv_v1_ebook_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "La version numérique anglaise complète du Volume 1."
+    },
+    "efv_v1_audiobook_en": {
+      "title": "EFV™ VOL 1: THE ORIGIN CODE™",
+      "description": "L'expérience audio immersive en anglais du Volume 1."
+    },
+    "efv_v2_hardcover": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "Une exploration de la façon dont les pensées et les émotions façonnent notre monde intérieur."
+    },
+    "efv_v2_paperback": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "Décryptage de la pensée, de l'émotion et de l'architecture de l'esprit humain."
+    },
+    "efv_v2_ebook": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "La version numérique complète du Volume 2. Accessible sur tous les appareils."
+    },
+    "efv_v2_audiobook": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "L'expérience audio immersive du Volume 2. Écoutez et alignez-vous en déplacement."
+    },
+    "efv_v2_hardcover_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "L'édition reliée en anglais du Volume 2. Explorez l'architecture de l'esprit humain."
+    },
+    "efv_v2_paperback_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "L'édition brochée en anglais. Décryptage de la pensée, de l'émotion et de l'architecture de l'esprit."
+    },
+    "efv_v2_ebook_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "La version numérique anglaise complète du Volume 2."
+    },
+    "efv_v2_audiobook_en": {
+      "title": "EFV™ VOL 2: MINDOS™",
+      "description": "L'expérience audio en anglais du Volume 2."
+    },
+    "efv_canon_v3_hard": {
+      "title": "EFV™ VOL 3: UNIVERSAL ACTIVATION",
+      "description": "Un guide pour éveiller le potentiel inexploité en vous. Il vous aide à reconnaître et à activer les fréquences."
+    },
+    "efv_canon_v4_hard": {
+      "title": "EFV™ VOL 4: RESONANCE BRIDGE",
+      "description": "Comble le fossé entre la conscience humaine et l'intelligence universelle."
+    },
+    "efv_canon_v5_hard": {
+      "title": "EFV™ VOL 5: HUMAN OS™",
+      "description": "Un nouveau regard sur le système d'exploitation humain: comment nous pensons."
+    },
+    "efv_canon_v6_hard": {
+      "title": "EFV™ VOL 6: EMOTIONOS™",
+      "description": "Explique l'intelligence émotionnelle comme une force stabilisatrice puissante."
+    },
+    "efv_canon_v7_hard": {
+      "title": "EFV™ VOL 7: MEMORYOS™",
+      "description": "Explore la mémoire comme le fil qui unit l'identité."
+    },
+    "efv_canon_v8_hard": {
+      "title": "EFV™ VOL 8: AGENTOS™",
+      "description": "Décrypte l'essor de l'intelligence autonome et des agents."
+    },
+    "efv_canon_v9_hard": {
+      "title": "EFV™ VOL 9: GOVERNANCEOS™",
+      "description": "Se concentre sur l'éthique, l'alignement et la responsabilité."
+    }
+  },
+  "about_page": {
+    "title": "À Propos de <span class=\"gold-text\">EFV<sup>TM</sup></span>",
+    "subtitle": "Énergie. Fréquence. Vibration — les trois forces qui régissent le potentiel humain.",
+    "about_uwo": "À Propos de UWO<sup>TM</sup>",
+    "uwo_text1": "<strong>Unified Web Options</strong> Une entreprise de transformation humaine de nouvelle génération développant des solutions de bien-être, de technologie et de mode de vie.",
+    "uwo_text2": "<strong>Notre Mission :</strong> Fournir des outils et des écosystèmes pour mesurer et élever la conscience grâce à l'Intelligence d'Alignement.",
+    "about_efv": "À Propos de EFV<sup>TM</sup>",
+    "efv_text": "EFV<sup>TM</sup> (Énergie Fréquence Vibration) est le cadre philosophique et technologique de base conçu par M. Gurumukh P. Ahuja. Il décode les forces fondamentales qui régissent le potentiel humain :",
+    "energy_label": "<strong>Énergie:</strong> Contrôlez votre énergie pour de meilleures performances quotidiennes et une meilleure santé.",
+    "frequency_label": "<strong>Fréquence:</strong> Connectez vos sentiments à vos objectifs de vie.",
+    "vibration_label": "<strong>Vibration:</strong> Vivez dans un état de flux et de pensée claire.",
+    "about_founder": "À Propos du Fondateur",
+    "founder_name": "M. Gurumukh P. Ahuja",
+    "founder_desc": "Fondateur et Auteur de EFV<sup>TM</sup>.<br>Créateur de la série EFV<sup>TM</sup> de 9 volumes et du système de bien-être.",
+    "vision_title": "La Vision",
+    "vision_desc": "Le début de nos livres et du système principal.",
+    "mission_title": "La Mission",
+    "mission_desc": "Mesurer et élever l'alignement humain grâce à l'Intégration de la Technologie et de la Fréquence.",
+    "uwo_found_title": "Fondation UWO™",
+    "uwo_found_desc": "Création de l'Organisation Universelle du Bien-être.",
+    "global_launch_title": "Lancement Mondial",
+    "global_launch_desc": "Apporter l'Intelligence d'Alignement au monde.",
+    "bio_title": "M. GURUMUKH P. AHUJA",
+    "bio_subtitle": "Penseur visionnaire • Auteur de la série EFV™",
+    "bio_para1": "M. Gurumukh P. Ahuja est guidé par une seule mission : démocratiser l'intelligence et construire l'infrastructure d'un avenir où la technologie sert l'humanité avec précision et but.",
+    "bio_para2": "En tant que Fondateur et Directeur de UWO™, M. Gurumukh P. Ahuja dirige une équipe dédiée à repousser les limites du possible. Son travail se concentre sur la création d'écosystèmes \"sous un même toit\" qui simplifient le monde complexe de l'Intelligence Artificielle pour les entreprises et les particuliers.",
+    "bio_para3": "Initiatives clés et innovations :",
+    "bio_bullet1": "<span class=\"author-glow-term\">Auteur de \"EFV Canon™ - Le Code d'Origine\":</span> Dans ce livre, M. Gurumukh P. Ahuja explore les principes fondamentaux de l'évolution technologique et le \"code d'origine\" qui dicte nos interactions avec le numérique.",
+    "bio_bullet2": "<span class=\"author-glow-term\">AISA™:</span> M. Gurumukh P. Ahuja a conçu ce système d'IA souverain pour établir de nouvelles normes en matière d'intelligence responsable et évolutive.",
+    "bio_bullet3": "<span class=\"author-glow-term\">AI Mall™:</span> M. Gurumukh P. Ahuja a développé un marché unique en son genre, réunissant toutes les solutions d'IA indispensables dans une destination accessible.",
+    "bio_para4": "Que ce soit à travers les plateformes construites chez UWO™ ou les réflexions partagées dans ses écrits, M. Gurumukh P. Ahuja s'engage à <span class=\"author-glow-term\">Transformer Demain, Dès Aujourd'hui.</span>"
+  }
+}

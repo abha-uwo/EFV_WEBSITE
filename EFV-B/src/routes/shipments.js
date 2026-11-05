@@ -1,0 +1,426 @@
+const express = require('express');
+const router = express.Router();
+const { Shipment, Order } = require('../models');
+const adminAuth = require('../middleware/adminAuth');
+
+const nimbusPostService = require('../services/nimbusPostService');
+const { protect, optionalAuth } = require('../middleware/auth');
+
+// Get all shipments (Admin Only)
+router.get('/', adminAuth, async (req, res) => {
+    try {
+        const shipments = await Shipment.find().sort({ createdAt: -1 });
+        res.json(shipments);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching shipments' });
+    }
+});
+
+/**
+ * @route   GET /api/shipments/track/:awb
+ * @desc    Track a shipment with NimbusPost (LIVE DATA) by AWB
+ * @access  Public / Optional Auth
+ */
+router.get('/track/:awb', optionalAuth, async (req, res) => {
+    try {
+        const { awb } = req.params;
+        if (!awb || awb === 'undefined') {
+            return res.status(400).json({ status: false, message: 'Invalid AWB number' });
+        }
+
+        const trackingData = await nimbusPostService.trackShipment(awb);
+        
+        // Auto-sync status back to database if found
+        if (trackingData.status && trackingData.data && trackingData.data.status_name) {
+            const newStatus = trackingData.data.status_name;
+            const shipment = await Shipment.findOne({ awbNumber: awb });
+            if (shipment && shipment.shippingStatus !== newStatus) {
+                shipment.shippingStatus = newStatus;
+                await shipment.save();
+
+                const order = await Order.findOne({ orderId: shipment.orderId });
+                if (order && order.status !== newStatus) {
+                    order.status = newStatus;
+                    order.timeline.push({ status: newStatus, note: 'Auto-synced with NimbusPost (via AWB tracking)' });
+                    await order.save();
+                }
+            }
+        }
+
+        res.json(trackingData);
+    } catch (error) {
+        console.error('Nimbus Tracking Route Error:', error.message);
+        res.status(500).json({ status: false, message: 'Unable to fetch live tracking. Please try later.' });
+    }
+});
+
+/**
+ * @route   GET /api/shipments/track-by-order/:orderId
+ * @desc    Track a shipment by Order ID
+ *          Returns order summary + live Nimbus tracking data in one call
+ * @access  Public / Optional Auth (Redacts PII if unauthenticated/non-owner)
+ */
+router.get('/track-by-order/:orderId', optionalAuth, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        // 1. Find the order — try by orderId string first, then MongoDB _id
+        let order = await Order.findOne({ orderId: orderId });
+        if (!order && orderId.match(/^[0-9a-fA-F]{24}$/)) {
+            order = await Order.findById(orderId);
+        }
+
+        if (!order) {
+            return res.status(404).json({ status: false, message: 'Order not found' });
+        }
+
+        // Verify ownership/admin if user is authenticated
+        const ownerEmail = (order.customer && order.customer.email ? order.customer.email : '').toLowerCase();
+        const reqEmail = (req.user && req.user.email ? req.user.email : '').toLowerCase();
+        const ownerUserId = order.userId ? order.userId.toString() : null;
+        const reqUserId = req.user && req.user._id ? req.user._id.toString() : null;
+
+        const isOwner = (ownerUserId && reqUserId && ownerUserId === reqUserId) ||
+            (ownerEmail && reqEmail && ownerEmail === reqEmail);
+        const uEmail = (req.user?.email || '').toLowerCase().trim();
+        const isAdmin = req.user && (req.user.role === 'admin' || uEmail === 'admin@uwo24.com' || uEmail === 'efv@uwo24.com');
+
+        // 2. Get AWB — prefer from order directly, fallback to Shipment collection
+        let awbNumber = order.awbNumber;
+        let courierName = order.courierName;
+        let shipmentId = order.shipmentId;
+        let shippingStatus = order.status;
+
+        if (!awbNumber) {
+            const shipment = await Shipment.findOne({ orderId: order._id.toString() });
+            if (shipment) {
+                awbNumber = shipment.awbNumber;
+                courierName = shipment.courierName;
+                shipmentId = shipment.shipmentId;
+                shippingStatus = shipment.shippingStatus;
+            }
+        }
+
+        // 3. Build response object (sanitize PII if not owner/admin)
+        const orderSummary = {
+            orderId: order.orderId,
+            _id: order._id,
+            status: order.status,
+            awbNumber: awbNumber || null,
+            courierName: courierName || null,
+            shipmentId: shipmentId || null,
+            shippingStatus: shippingStatus || order.status,
+            trackingLink: order.trackingLink || null,
+            items: order.items,
+            totalAmount: order.totalAmount,
+            paymentMethod: order.paymentMethod,
+            createdAt: order.createdAt,
+            customer: (isOwner || isAdmin) ? {
+                name: order.customer ? order.customer.name : '',
+                city: order.shippingAddress ? order.shippingAddress.city : '',
+                state: order.shippingAddress ? order.shippingAddress.state : ''
+            } : {
+                name: order.customer?.name ? `${order.customer.name.slice(0, 1)}***` : '',
+                city: order.shippingAddress ? order.shippingAddress.city : '',
+                state: order.shippingAddress ? order.shippingAddress.state : ''
+            },
+            timeline: order.timeline || []
+        };
+
+        // 4. Fetch live tracking details from the corresponding provider
+        if (order.fulfillmentProvider === 'LULU') {
+            if (order.luluJobId) {
+                try {
+                    const { getPrintJobStatus } = require('../utils/lulu');
+                    const jobStatus = await getPrintJobStatus(order.luluJobId);
+                    
+                    if (jobStatus && jobStatus.status) {
+                        const newLuluStatus = jobStatus.status.name || jobStatus.status;
+                        let needsSave = false;
+                        
+                        if (order.luluStatus !== newLuluStatus) {
+                            order.luluStatus = newLuluStatus;
+                            needsSave = true;
+                        }
+                        
+                        const trackingInfo = jobStatus.tracking || {};
+                        if (trackingInfo.tracking_number && order.luluTracking !== trackingInfo.tracking_number) {
+                            order.luluTracking = trackingInfo.tracking_number;
+                            order.awbNumber = trackingInfo.tracking_number;
+                            needsSave = true;
+                        }
+
+                        let mappedStatus = null;
+                        if (newLuluStatus === 'SHIPPED') {
+                            mappedStatus = 'Shipped';
+                        } else if (newLuluStatus === 'CANCELED' || newLuluStatus === 'REJECTED') {
+                            mappedStatus = 'Cancelled';
+                        }
+
+                        if (mappedStatus && order.status !== mappedStatus) {
+                            order.status = mappedStatus;
+                            order.timeline.push({ status: mappedStatus, note: `Status synced with Lulu (Status: ${newLuluStatus})` });
+                            needsSave = true;
+                        }
+
+                        const tLink = trackingInfo.tracking_urls && trackingInfo.tracking_urls[0];
+                        if (tLink && order.trackingLink !== tLink) {
+                            order.trackingLink = tLink;
+                            needsSave = true;
+                        }
+
+                        if (needsSave) {
+                            await order.save();
+                            // Update orderSummary with newly saved state
+                            orderSummary.status = order.status;
+                            orderSummary.timeline = order.timeline;
+                            orderSummary.awbNumber = order.awbNumber || null;
+                            orderSummary.shippingStatus = order.status;
+                            orderSummary.trackingLink = order.trackingLink || null;
+                        }
+
+                        // Format liveTracking data for the frontend compatibility
+                        orderSummary.liveTracking = {
+                            status: true,
+                            provider: 'LULU',
+                            data: {
+                                status_name: order.status,
+                                carrier: trackingInfo.carrier || 'Lulu Shipping',
+                                tracking_number: trackingInfo.tracking_number || '',
+                                tracking_url: (trackingInfo.tracking_urls && trackingInfo.tracking_urls[0]) || '',
+                                shipped_at: trackingInfo.shipped_at || '',
+                                estimated_delivery: ''
+                            }
+                        };
+                    }
+                } catch (trackErr) {
+                    console.warn('Lulu live tracking fetch failed:', trackErr.message);
+                    orderSummary.liveTracking = { status: false, message: 'Live tracking temporarily unavailable' };
+                }
+            } else {
+                orderSummary.liveTracking = { status: false, message: 'Lulu Job ID not found' };
+            }
+        } else if (awbNumber) {
+            try {
+                const liveTracking = await nimbusPostService.trackShipment(awbNumber);
+                orderSummary.liveTracking = liveTracking;
+
+                // Auto-sync status back to database
+                if (liveTracking.status && liveTracking.data && liveTracking.data.status_name) {
+                    const newStatus = liveTracking.data.status_name;
+                    if (order.status !== newStatus) {
+                        console.log(`🔄 Syncing status for order ${order.orderId}: ${order.status} -> ${newStatus}`);
+                        order.status = newStatus;
+                        order.timeline.push({ status: newStatus, note: 'Auto-synced with NimbusPost' });
+                        await order.save();
+                        
+                        // Also update Shipment record
+                        const shipment = await Shipment.findOne({ orderId: order._id.toString() });
+                        if (shipment) {
+                            shipment.shippingStatus = newStatus;
+                            await shipment.save();
+                        }
+                    }
+                }
+            } catch (trackErr) {
+                console.warn('Live tracking fetch failed:', trackErr.message);
+                orderSummary.liveTracking = { status: false, message: 'Live tracking temporarily unavailable' };
+            }
+        }
+
+        res.json({ status: true, data: orderSummary });
+
+    } catch (error) {
+        console.error('Track-by-Order Error:', error.message);
+        res.status(500).json({ status: false, message: 'Error fetching tracking info' });
+    }
+});
+
+// Update shipment status
+router.put('/:id', adminAuth, async (req, res) => {
+    try {
+        const shipment = await Shipment.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        if (!shipment) return res.status(404).json({ message: 'Shipment not found' });
+        res.json(shipment);
+    } catch (error) {
+        res.status(400).json({ message: 'Error updating shipment' });
+    }
+});
+
+/**
+ * @route   POST /api/shipments/create
+ * @desc    Create a shipment for an order (NimbusPost) — Admin Only
+ *          Includes duplicate prevention: will not re-create if AWB already exists
+ * @access  Admin Only
+ */
+router.post('/create', adminAuth, async (req, res) => {
+    try {
+        const { orderId } = req.body;
+        const order = await Order.findById(orderId).populate('items.productId');
+
+        if (!order) {
+            return res.status(404).json({ message: 'Order not found' });
+        }
+
+        // DUPLICATE PREVENTION: Check if shipment already exists in Shipment collection
+        const existingShipment = await Shipment.findOne({ orderId: order._id.toString() });
+        if (existingShipment && existingShipment.awbNumber) {
+            return res.status(409).json({
+                message: `Shipment already created for this order. AWB: ${existingShipment.awbNumber}`,
+                shipment: existingShipment
+            });
+        }
+
+        // Also check the order's own awbNumber field
+        if (order.awbNumber) {
+            return res.status(409).json({
+                message: `This order already has a shipment. AWB: ${order.awbNumber}`,
+                awbNumber: order.awbNumber
+            });
+        }
+
+        const c = order.customer || {};
+        const addr = (typeof c.address === 'object' && c.address !== null) ? c.address : {};
+
+        const pincode = String(c.pincode || c.zip || addr.pincode || addr.zip || '000000').trim();
+        const city = (c.city || addr.city || addr.district || 'Unknown').trim();
+        const state = (c.state || addr.state || (pincode.startsWith('48') ? 'Madhya Pradesh' : 'Madhya Pradesh')).trim();
+        let phone = String(c.phone || addr.phone || '9999999999').trim().replace(/\D/g, '').slice(-10);
+        if (phone.length < 10) phone = '9999999999';
+
+        // ROBUST ADDRESS CONSTRUCTION
+        let addressLine = [
+            addr.house, addr.street, addr.area, addr.landmark, addr.fullAddress
+        ].filter(Boolean).map(s => s.trim()).filter(s => s.length > 0).join(', ');
+
+        // Fallback to customer's own address field if object keys are empty
+        if (!addressLine && typeof c.address === 'string') {
+            addressLine = c.address;
+        }
+
+        // Final fallback: if no street info, at least use city/state so it's not empty, 
+        // but warn if essential parts are missing
+        if (!addressLine || addressLine.length < 5) {
+            addressLine = addr.house || addr.street || addr.area || c.address || 'Address Details Missing';
+        }
+
+        // Validate mandatory fields BEFORE hitting Nimbus
+        const missing = [];
+        if (!c.name) missing.push('Consignee name');
+        if (!addressLine || addressLine === 'undefined' || addressLine.length < 3) missing.push('Consignee Address');
+        if (!city) missing.push('Consignee City');
+        if (!state) missing.push('Consignee State');
+        if (!pincode || pincode === '000000') missing.push('Consignee Pincode');
+        if (!phone) missing.push('Consignee Phone');
+        if (!order.totalAmount) missing.push('Order Total');
+
+        if (missing.length > 0) {
+            return res.status(400).json({
+                message: `Shipment rejected. Missing required info: ${missing.join(', ')}. Please edit user address in Customers tab.`
+            });
+        }
+
+        const payload = {
+            order_number: order.orderId,
+            consignee: {
+                name: (c.name || 'Customer').substring(0, 50),
+                email: c.email || '',
+                phone: phone,
+                address: addressLine.substring(0, 255),
+                city: city,
+                state: state,
+                pincode: pincode,
+                country: 'India'
+            },
+            pickup: {
+                warehouse_name: "Office",
+                name: "Gurumukh P Ahuja",
+                contact_name: "Gurumukh P Ahuja",
+                phone: "8871190020",
+                address: "4th floor, SG Square Building, near PNB Bank",
+                city: "Jabalpur",
+                state: "Madhya Pradesh",
+                pincode: "482008"
+            },
+            order_items: order.items.map(item => ({
+                name: (item.title || 'Product').replace(/[^\x00-\x7F]/g, "").substring(0, 50),
+                qty: Number(item.quantity),
+                price: Number(item.price),
+                sku: (item.productId ? (item.productId.title || item.title) : item.title).replace(/[^\x00-\x7F]/g, "").substring(0, 20)
+            })),
+            payment_type: (order.paymentMethod || '').toLowerCase() === 'cod' ? 'cod' : 'prepaid',
+            order_amount: Number(order.totalAmount),
+            order_total: Number(order.totalAmount),
+            // WEIGHT CONVERSION: Nimbus expects KG, we store grams. Divide by 1000.
+            weight: Number(order.items.reduce((sum, item) => sum + ((item.productId && item.productId.weight) ? item.productId.weight : 500) * item.quantity, 0)) / 1000,
+            sub_weight: 0,
+            length: 15, breadth: 15, height: 5,
+            shipment_type: 'regular',
+            support_email: "sreshthi+3296@uwo24.com",
+            support_phone: "9798780000"
+        };
+
+        console.log('Sending Weight to Nimbus:', payload.weight, 'kg');
+        console.log('Nimbus Shipment Payload:', JSON.stringify(payload, null, 2));
+        const result = await nimbusPostService.createShipment(payload);
+        console.log('Nimbus API Result:', JSON.stringify(result, null, 2));
+
+        if (result.status && result.data) {
+            const newShipment = await Shipment.create({
+                orderId: order._id,
+                shipmentId: result.data.shipment_id || '',
+                awbNumber: result.data.awb_number || '',
+                courierName: result.data.courier_name || 'NimbusPost',
+                shippingStatus: 'Processing',
+                trackingLink: result.data.tracking_url || ''
+            });
+
+            order.status = 'Processing';
+            order.shipmentId = newShipment.shipmentId;
+            order.awbNumber = newShipment.awbNumber;
+            order.courierName = newShipment.courierName;
+            order.timeline.push({ status: 'Processing', note: 'Shipment created via NimbusPost' });
+            await order.save();
+
+            res.json({ success: true, shipment: newShipment });
+        } else {
+            res.status(400).json({ message: result.message || 'NimbusPost shipment creation failed' });
+        }
+    } catch (error) {
+        console.error('Create Shipment Error:', error);
+        res.status(500).json({ message: error.message || 'Server error during shipment creation' });
+    }
+});
+
+/**
+ * @route   GET /api/shipments/sync/:id
+ * @desc    Sync shipment status with NimbusPost
+ * @access  Admin Only
+ */
+router.get('/sync/:id', adminAuth, async (req, res) => {
+    try {
+        const shipment = await Shipment.findById(req.params.id);
+        if (!shipment || !shipment.awbNumber) {
+            return res.status(404).json({ message: 'Shipment or AWB not found' });
+        }
+
+        const tracking = await nimbusPostService.trackShipment(shipment.awbNumber);
+        if (tracking.status && tracking.data) {
+            const newStatus = tracking.data.status_name || shipment.shippingStatus;
+            shipment.shippingStatus = newStatus;
+            await shipment.save();
+
+            const order = await Order.findById(shipment.orderId);
+            if (order && order.status !== newStatus) {
+                order.status = newStatus;
+                order.timeline.push({ status: newStatus, note: 'Status synced with NimbusPost' });
+                await order.save();
+            }
+        }
+        res.json({ success: true, shipment });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+module.exports = router;

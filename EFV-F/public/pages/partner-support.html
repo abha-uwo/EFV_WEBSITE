@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Support | EFV™</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../js/api-config.js"></script>
+    <link rel="stylesheet" href="../css/toast.css">
+    <script src="../js/toast.js"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --bg-dark: #070B14;
+            --glass: rgba(15, 20, 35, 0.8);
+            --border: rgba(212, 175, 55, 0.2);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-wrapper {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .header-title h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            margin: 0;
+            color: var(--gold);
+        }
+
+        /* Support Form */
+        .support-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .glass-panel {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            opacity: 0.7;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-gold:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        /* Chat History */
+        .chat-history {
+            margin-top: 40px;
+        }
+
+        .chat-history h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .message-bubble {
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 20px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .message-partner {
+            align-self: flex-end;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+            border: 1px solid var(--gold);
+            border-bottom-right-radius: 5px;
+        }
+
+        .message-admin {
+            align-self: flex-start;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom-left-radius: 5px;
+        }
+
+        .message-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.7rem;
+            opacity: 0.5;
+            margin-top: 8px;
+        }
+
+        .message-sender {
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .status-resolved {
+            text-align: center;
+            padding: 10px;
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-bottom: 20px;
+            border: 1px solid #22c55e;
+        }
+
+        /* Scrollbar */
+        .chat-messages::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat-messages::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.02);
+        }
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .back-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.7;
+            transition: 0.3s;
+        }
+        .back-btn:hover {
+            opacity: 1;
+            color: var(--gold);
+        }
+    </style>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <header>
+            <div class="header-title">
+                <h1>SUPPORT CENTER</h1>
+            </div>
+            <a href="partner-dashboard.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </header>
+
+        <div class="support-container">
+            <!-- New Message Form -->
+            <div class="glass-panel" id="form-container">
+                <h2 style="font-family: 'Cinzel', serif; font-size: 1.1rem; margin-bottom: 20px; color: var(--gold);">Send New Message to Admin</h2>
+                <form id="support-form">
+                    <div class="form-group">
+                        <label>Subject</label>
+                        <input type="text" id="subject" class="form-control" placeholder="Briefly describe the topic" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message / Issue Description</label>
+                        <textarea id="message" class="form-control" rows="5" placeholder="Provide details about your query or issue..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-gold" id="send-btn">Send Message</button>
+                </form>
+            </div>
+
+            <!-- Conversation History -->
+            <div class="chat-history">
+                <h2>Conversation History</h2>
+                <div class="chat-messages" id="chat-messages">
+                    <div style="text-align: center; opacity: 0.5; padding: 40px;">
+                        Loading messages...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = (typeof CONFIG !== 'undefined') ? CONFIG.API_BASE_URL : 'http://localhost:8080';
+        const token = localStorage.getItem('partnerToken');
+
+        if (!token) {
+            window.location.href = 'partner-verification.html';
+        }
+
+        async function fetchMessages() {
+            try {
+                const res = await fetch(`${API_BASE}/api/partner-messages/partner`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!res.ok) throw new Error('Failed to load messages');
+
+                const messages = await res.json();
+                renderMessages(messages);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('chat-messages').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading messages. Please refresh.</div>';
+            }
+        }
+
+        function renderMessages(messages) {
+            const container = document.getElementById('chat-messages');
+            container.innerHTML = '';
+
+            if (messages.length === 0) {
+                container.innerHTML = '<div style="text-align: center; opacity: 0.3; padding: 40px;"><i class="fas fa-comments fa-3x" style="margin-bottom: 15px;"></i><p>No previous conversation found.</p></div>';
+                return;
+            }
+
+            // Check if last message is resolved
+            const isResolved = messages.some(m => m.status === 'Resolved');
+            if (isResolved) {
+                const resolvedBanner = document.createElement('div');
+                resolvedBanner.className = 'status-resolved';
+                resolvedBanner.innerHTML = '<i class="fas fa-check-circle"></i> This conversation has been marked as RESOLVED by admin.';
+                container.appendChild(resolvedBanner);
+            }
+
+            messages.forEach(msg => {
+                const isPartner = msg.sender_type === 'partner';
+                const div = document.createElement('div');
+                div.className = `message-bubble ${isPartner ? 'message-partner' : 'message-admin'}`;
+                
+                div.innerHTML = `
+                    <div class="message-text">${msg.message_text}</div>
+                    <div class="message-info">
+                        <span class="message-sender">${isPartner ? 'You' : 'Admin'}</span>
+                        <span class="message-time">${new Date(msg.createdAt).toLocaleString()}</span>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+
+            // Scroll to bottom
+            container.scrollTop = container.scrollHeight;
+        }
+
+        document.getElementById('support-form').onsubmit = async (e) => {
+            e.preventDefault();
+            const subject = document.getElementById('subject').value;
+            const message_text = document.getElementById('message').value;
+            const btn = document.getElementById('send-btn');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+
+            try {
+                const res = await fetch(`${API_BASE}/api/partner-messages/partner`, {
+                    method: 'POST',
+                    headers: { 
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ subject, message_text })
+                });
+
+                if (res.ok) {
+                    showToast('Message sent successfully!', 'success');
+                    document.getElementById('subject').value = '';
+                    document.getElementById('message').value = '';
+                    fetchMessages();
+                } else {
+                    const data = await res.json();
+                    showToast(data.message || 'Error sending message', 'error');
+                }
+            } catch (err) {
+                showToast('Network error', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Send Message';
+            }
+        };
+
+        // Initial fetch
+        fetchMessages();
+
+        // Refresh every 30 seconds
+        setInterval(fetchMessages, 30000);
+    </script>
+</body>
+
+</html>
+

@@ -1,0 +1,48 @@
+[
+  {
+    "name": "Hardcover",
+    "slug": "HARDCOVER",
+    "isDigital": false,
+    "_id": "1782369267018y21w44lsl",
+    "createdAt": "2026-06-25T06:34:27.018Z",
+    "updatedAt": "2026-06-25T06:34:27.018Z"
+  },
+  {
+    "name": "Softbook",
+    "slug": "PAPERBACK",
+    "isDigital": false,
+    "_id": "1782369267026oyb485t85",
+    "createdAt": "2026-06-25T06:34:27.026Z",
+    "updatedAt": "2026-06-25T06:34:27.026Z"
+  },
+  {
+    "name": "Ebook",
+    "slug": "EBOOK",
+    "isDigital": true,
+    "_id": "17823692670315iu2pz73o",
+    "createdAt": "2026-06-25T06:34:27.031Z",
+    "updatedAt": "2026-06-25T06:34:27.031Z"
+  },
+  {
+    "name": "Audiobook",
+    "slug": "AUDIOBOOK",
+    "isDigital": true,
+    "_id": "1782369267034fzklb6t9l",
+    "createdAt": "2026-06-25T06:34:27.034Z",
+    "updatedAt": "2026-06-25T06:34:27.034Z"
+  },
+  {
+    "name": "offer",
+    "slug": "DF",
+    "isDigital": false,
+    "isActive": true,
+    "discountType": "simple",
+    "discountValue": 0,
+    "minQuantity": 2,
+    "bogoBuySlug": "Hindi",
+    "bogoGetSlug": "English",
+    "_id": "1782390629291o7z9ewai0",
+    "createdAt": "2026-06-25T12:30:29.291Z",
+    "updatedAt": "2026-06-25T12:30:29.291Z"
+  }
+]

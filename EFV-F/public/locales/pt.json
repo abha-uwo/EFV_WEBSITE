@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "home": "Início",
+    "about": "Sobre",
+    "gallery": "Galeria",
+    "marketplace": "Mercado",
+    "blog": "Blog",
+    "blogs": "Blogs",
+    "feedback": "Feedback",
+    "contact": "Contato",
+    "admin": "Admin",
+    "my_library": "Minha Biblioteca",
+    "quit_dashboard": "SAIR PARA O PAINEL",
+    "change_location": "Alterar Localização"
+  }
+}

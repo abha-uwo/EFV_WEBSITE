@@ -1,0 +1,304 @@
+{
+  "nav": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "gallery": "المعرض",
+    "marketplace": "المتجر",
+    "blog": "المدونة",
+    "blogs": "المدونات",
+    "feedback": "الآراء",
+    "contact": "اتصل بنا",
+    "admin": "المدير",
+    "my_library": "مكتبتي",
+    "quit_dashboard": "الخروج إلى لوحة التحكم",
+    "change_location": "تغيير الموقع"
+  },
+  "hero": {
+    "title": "قس مدى <br> محاذاتك <br> <span class=\"gold-glow-text\">عش في تدفق</span>",
+    "subtitle": "EFV™ بواسطة UWO™ - أول نظام ذكاء محاذاة في العالم <br> مصمم لرفع الطاقة والتردد والاهتزاز الخاص بك.",
+    "browse_books": "تصفح كتب EFV™",
+    "get_app": "احصل على تطبيق EFV™",
+    "coming_soon": "(قريباً)"
+  },
+  "what_is_efv": {
+    "title": "ما هو <span class=\"gold-text\">EFV<sup>TM</sup> </span>",
+    "subtitle": "تساعدك EFV™ على فهم كيفية عمل جسمك وعقلك معاً.<br>نظام تم إنشاؤه بواسطة السيد غوروموخ ب. أهوجا يتضمن:",
+    "energy_title": "الطاقة",
+    "energy_desc": "التحكم في مستويات طاقتك اليومية وتحسينها.",
+    "frequency_title": "التردد",
+    "frequency_desc": "ربط مشاعرك بأهداف حياتك.",
+    "vibration_title": "الاهتزاز",
+    "vibration_desc": "العيش في حالة طبيعية من التدفق والسهولة.",
+    "lifestyle_title": "نمط الحياة",
+    "lifestyle_desc": "عادات يومية بسيطة لأداء أفضل."
+  },
+  "books_section": {
+    "title": "كتب EFV<sup>TM</sup> <span class=\"gold-text\">(سلسلة الأجزاء 1-9)</span>",
+    "subtitle": "سيتم إطلاق المجلدين 1 و2 هذا الشهر.<br>نظام تحولي من 9 مجلدات يغطي:",
+    "alignment": "المحاذاة",
+    "flow": "التدفق",
+    "conscious_living": "العيش الواعي",
+    "energy_science": "علم الطاقة",
+    "emotional_frameworks": "الأطر العاطفية",
+    "meditation_frequency": "ممارسات التأمل والتردد",
+    "notify_me": "أبلغني"
+  },
+  "why_efv_works": {
+    "title": "لماذا تعمل EFV<sup>TM</sup> <span class=\"gold-text\">(علم + فلسفة)</span>",
+    "align_three": "تساعدك EFV™ على محاذاة الثلاثة يومياً.",
+    "energy_clarity": "الطاقة تحكم الوضوح",
+    "energy_back": "ما تبحث عنه في الخارج كان يعيش دائماً في الداخل.",
+    "freq_emotions": "التردد يشكل العواطف",
+    "freq_back": "غير شفرتك الداخلية، والواقع سيستجيب.",
+    "vib_decisions": "الاهتزاز يؤثر على القرارات",
+    "vib_back": "توقف عن مطاردة النتائج. ابدأ في تجسيد القوة."
+  },
+  "final_cta": {
+    "title": "ابدأ <span class=\"gold-glow-text\">رحلة المحاذاة</span> الخاصة بك",
+    "read_books": "اقرأ كتب EFV™",
+    "explore_lifestyle": "استكشف نمط حياة EFV™"
+  },
+  "footer": {
+    "explore": "استكشف",
+    "about_efv": "حول EFV™",
+    "about_uwo": "حول UWO™",
+    "gallery": "المعرض",
+    "terms": "الشروط والأحكام",
+    "marketplace": "المتجر",
+    "blog": "المدونة",
+    "blogs": "المدونات",
+    "partner_portal": "بوابة الشركاء",
+    "feedback": "الآراء",
+    "contact": "اتصل بنا",
+    "privacy": "سياسة الخصوصية",
+    "tagline": "أول نظام EFV™ في العالم. مصمم لحياة أفضل.",
+    "connect": "اتصل بنا",
+    "copyright": "&copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup> هي ابتكار لـ UWO<sup>TM</sup>."
+  },
+  "buttons": {
+    "buy_now": "شراء الآن",
+    "purchase_now": "شراء الآن",
+    "view_info": "تفاصيل",
+    "learn_more": "معرفة المزيد",
+    "notify_me": "أبلغني"
+  },
+  "location": {
+    "title": "اختر موقعك",
+    "subtitle": "جرب البوابة بلغتك المفضلة.",
+    "footer": "تحديد منطقتك يفتح المحتوى والأسعار المحلية."
+  },
+  "notify_modal": {
+    "title": "كن على علم!",
+    "subtitle": "سنقوم بإخطارك على بريدك الإلكتروني عندما يكون <strong id=\"notify-book-name\" class=\"gold-text\">MINDOS</strong> جاهزاً.",
+    "placeholder": "أدخل عنوان بريدك الإلكتروني",
+    "button": "أبلغني",
+    "confirmation": "<i class=\"fas fa-check-circle\"></i> تم إرسال بريد التأكيد الإلكتروني! <br> إذا لم تجده، تحقق من مجلد البريد المهمل."
+  },
+  "marketplace_page": {
+    "title": "متجر <span class=\"gold-text\">EFV™</span>",
+    "subtitle": "مستوصف آمن للأصول الرقمية والمادية",
+    "filter_all": "الكل",
+    "filter_hardcover": "غلاف فني",
+    "filter_paperback": "غلاف ورقي",
+    "filter_audiobook": "كتاب صوتي",
+    "filter_ebook": "كتاب إلكتروني",
+    "in_stock": "متوفر",
+    "out_of_stock": "نفدت الكمية",
+    "coming_soon": "قريباً",
+    "notion_msg": "غير متوفر حالياً على منصتنا. لا يزال بإمكانك شراء هذا الكتاب من شريك النشر الرسمي لدينا.",
+    "buy_notion": "الشراء من NotionPress",
+    "edition_suffix": "طبعة"
+  },
+  "dashboard_page": {
+    "title": "المكتبة <span class=\"text-gold-energy\">الآمنة</span>",
+    "subtitle": "مستوصف محتوى آمن لـ EFV",
+    "restricted": "الدخول مقيد",
+    "restricted_desc": "يرجى تسجيل الدخول لعرض أصولك الرقمية الآمنة.",
+    "quit_dashboard": "الخروج إلى لوحة التحكم",
+    "syncing": "مزامنة المكتبة...",
+    "initializing": "بدء تشغيل الأقراص...",
+    "no_assets": "لم يتم العثور على أصول رقمية",
+    "visit_marketplace": "زيارة المتجر",
+    "secure_access": "وصول آمن مدى الحياة",
+    "read_percent": "% تم قراءته",
+    "connection_est": "تم إنشاء اتصال مشفر"
+  },
+  "product_modal": {
+    "close": "إغلاق",
+    "add_to_cart": "إضافة إلى السلة",
+    "buy_now": "شراء الآن",
+    "select_qty": "حدد الكمية:",
+    "subtotal": "المجموع الفرعي:",
+    "collection_title": "مجموعة EFV™",
+    "collection_desc": "اكتشف القوة التحويلية للطاقة والتردد والاهتزاز. تم تصميم كل مجلد في هذه السلسلة المقدسة لمحاذاة وعيك مع الشفرة الكونية للوجود.",
+    "tab_specs": "المواصفات",
+    "tab_desc": "الوصف",
+    "tab_mfr": "معلومات الشركة المصنعة",
+    "generic_name_label": "الاسم العام",
+    "country_origin_label": "بلد المنشأ",
+    "mfr_address_label": "اسم وعنوان الشركة المصنعة",
+    "packer_address_label": "اسم وعنوان الوكيل المعبئ"
+  },
+  "products": {
+    "vol1": {
+      "title": "ORIGIN CODE",
+      "desc": "رحلة إلى نقطة البداية لكل شيء - حيث يبدأ الوعي والطاقة والوجود. يضع هذا المجلد الأساس لفهم كيفية تشكل الواقع."
+    },
+    "vol2": {
+      "title": "MINDOS",
+      "desc": "استكشاف لكيفية تشكيل الأفكار والعواطف لعالمنا الداخلي. يفكك بنية العقل البشري بطريقة واضحة وعملية."
+    },
+    "vol3": {
+      "title": "UNIVERSAL ACTIVATION",
+      "desc": "دليل لإيقاظ الإمكانات غير المستغلة بداخلك. يساعدك على التعرف على الترددات العميقة وتنشيطها التي تقود النمو والوضوح."
+    },
+    "vol4": {
+      "title": "RESONANCE BRIDGE",
+      "desc": "يسد الفجوة بين الوعي البشري والذكاء الكوني. يوضح هذا المجلد كيف تخلق المحاذاة التدفق والحدس والتزامن الهادف."
+    },
+    "vol5": {
+      "title": "HUMAN OS",
+      "desc": "نظرة جديدة على نظام التشغيل البشري - كيف نفكر، نقرر، نتطور ونبني المستقبل. يربط الوعي البشري بالحقبة القادمة من الذكاء الاصطناعي."
+    },
+    "vol6": {
+      "title": "EMOTIONOS",
+      "desc": "يشرح الذكاء العاطفي كقوة استقرار قوية. يوضح كيف يخلق التقييس العاطفي انسجاماً بين البشر والأنظمة الذكية."
+    },
+    "vol7": {
+      "title": "MEMORIOS",
+      "desc": "يستكشف الذاكرة باعتبارها الخيط الذي يربط الهوية معاً. يفحص كيف تشكل الاستمرارية عبر الزمن من نحن ومن سنصبح."
+    },
+    "vol8": {
+      "title": "AGENTOS",
+      "desc": "يفكك صعود الذكاء المستقل والوكلاء الأذكياء. مخطط عملي لفهم عالم الوكلاء القادم."
+    },
+    "vol9": {
+      "title": "GOVERNANCEOS",
+      "desc": "يركز على الأخلاق والمحاذاة والمسؤولية في حضارة تعمل بالذكاء الاصطناعي. يحدد المبادئ التي تضمن تطور التكنولوجيا بحكمة."
+    },
+    "efv_v1_hardcover": {
+      "title": "EFV™ المجلد 1: ORIGIN CODE™",
+      "description": "تعلم أسرار الطاقة والمحاذاة. كتاب غلاف فني مميز."
+    },
+    "efv_v1_paperback": {
+      "title": "EFV™ المجلد 1: ORIGIN CODE™",
+      "description": "تعلم أسرار الطاقة والمحاذاة. كتاب غلاف ورقي سهل الحمل."
+    },
+    "efv_v1_ebook": {
+      "title": "EFV™ المجلد 1: ORIGIN CODE™",
+      "description": "النسخة الرقمية الكاملة من المجلد 1. يمكن الوصول إليها على جميع الأجهزة."
+    },
+    "efv_v1_audiobook": {
+      "title": "EFV™ المجلد 1: ORIGIN CODE™",
+      "description": "تجربة الصوت الغامرة للمجلد 1. استمع وتوافق أثناء التنقل."
+    },
+    "efv_v1_hardcover_en": {
+      "title": "EFV™ المجلد 1: THE ORIGIN CODE™",
+      "description": "الطبعة الإنجليزية ذات الغلاف الفني من المجلد 1 التأسيسي."
+    },
+    "efv_v1_paperback_en": {
+      "title": "EFV™ المجلد 1: THE ORIGIN CODE™",
+      "description": "استكشف أسرار الطاقة والمحاذاة باللغة الإنجليزية. غلاف ورقي سهل الحمل."
+    },
+    "efv_v1_ebook_en": {
+      "title": "EFV™ المجلد 1: THE ORIGIN CODE™",
+      "description": "النسخة الرقمية الإنجليزية الكاملة من المجلد 1."
+    },
+    "efv_v1_audiobook_en": {
+      "title": "EFV™ المجلد 1: THE ORIGIN CODE™",
+      "description": "تجربة الصوت الإنجليزية الغامرة للمجلد 1."
+    },
+    "efv_v2_hardcover": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "استكشاف لكيفية تشكيل الأفكار والعواطف لعالمنا الداخلي."
+    },
+    "efv_v2_paperback": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "فك رموز الفكر والعاطفة وبنية العقل البشري."
+    },
+    "efv_v2_ebook": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "النسخة الرقمية الكاملة من المجلد 2. يمكن الوصول إليها على جميع الأجهزة."
+    },
+    "efv_v2_audiobook": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "تجربة الصوت الغامرة للمجلد 2. استمع وتوافق أثناء التنقل."
+    },
+    "efv_v2_hardcover_en": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "الطبعة الإنجليزية ذات الغلاف الفني للمجلد 2. استكشف بنية العقل البشري."
+    },
+    "efv_v2_paperback_en": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "الطبعة الإنجليزية ذات الغلاف الورقي. فك رموز الفكر والعاطفة وبنية العقل."
+    },
+    "efv_v2_ebook_en": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "النسخة الرقمية الإنجليزية الكاملة من المجلد 2."
+    },
+    "efv_v2_audiobook_en": {
+      "title": "EFV™ المجلد 2: MINDOS™",
+      "description": "تجربة الصوت الإنجليزية للمجلد 2."
+    },
+    "efv_canon_v3_hard": {
+      "title": "EFV™ المجلد 3: UNIVERSAL ACTIVATION",
+      "description": "دليل لإيقاظ الإمكانات غير المستغلة بداخلك."
+    },
+    "efv_canon_v4_hard": {
+      "title": "EFV™ المجلد 4: RESONANCE BRIDGE",
+      "description": "يسد الفجوة بين الوعي البشري والذكاء الكوني."
+    },
+    "efv_canon_v5_hard": {
+      "title": "EFV™ المجلد 5: HUMAN OS™",
+      "description": "نظرة جديدة على نظام التشغيل البشري - كيف نفكر، نقرر."
+    },
+    "efv_canon_v6_hard": {
+      "title": "EFV™ المجلد 6: EMOTIONOS™",
+      "description": "يشرح الذكاء العاطفي كقوة استقرار قوية."
+    },
+    "efv_canon_v7_hard": {
+      "title": "EFV™ المجلد 7: MEMORYOS™",
+      "description": "يستكشف الذاكرة باعتبارها الخيط الذي يربط الهوية معاً."
+    },
+    "efv_canon_v8_hard": {
+      "title": "EFV™ المجلد 8: AGENTOS™",
+      "description": "يفكك صعود الذكاء المستقل والوكلاء الأذكياء."
+    },
+    "efv_canon_v9_hard": {
+      "title": "EFV™ المجلد 9: GOVERNANCEOS™",
+      "description": "يركز على الأخلاق والمحاذاة والمسؤولية."
+    }
+  },
+  "about_page": {
+    "title": "حول <span class=\"gold-text\">EFV<sup>TM</sup></span>",
+    "subtitle": "الطاقة. التردد. الاهتزاز — القوى الثلاث التي تحكم الإمكانات البشرية.",
+    "about_uwo": "حول UWO<sup>TM</sup>",
+    "uwo_text1": "<strong>Unified Web Options</strong> شركة تحول بشري من الجيل القادم تبني حلول العافية والتكنولوجيا ونمط الحياة.",
+    "uwo_text2": "<strong>مهمتنا:</strong> تقديم الأدوات والأنظمة البيئية لقياس الوعي ورفعه من خلال ذكاء المحاذاة.",
+    "about_efv": "حول EFV<sup>TM</sup>",
+    "efv_text": "EFV<sup>TM</sup> (الطاقة والتردد والاهتزاز) هو الإطار الفلسفي والتكنولوجي الأساسي الذي صممه السيد غوروموخ ب. أهوجا. إنه يفك رموز القوى الأساسية التي تحكم الإمكانات البشرية:",
+    "energy_label": "<strong>الطاقة:</strong> تحكم في طاقتك لأداء يومي وصحة أفضل.",
+    "frequency_label": "<strong>التردد:</strong> اربط مشاعرك بأهداف حياتك.",
+    "vibration_label": "<strong>الاهتزاز:</strong> عش في حالة من التدفق والتفكير الواضح.",
+    "about_founder": "حول المؤسس",
+    "founder_name": "السيد غوروموخ ب. أهوجا",
+    "founder_desc": "مؤسس وكاتب لـ EFV<sup>TM</sup>.<br>مبتكر سلسلة EFV<sup>TM</sup> المكونة من 9 مجلدات ونظام العافية.",
+    "vision_title": "الرؤية",
+    "vision_desc": "بداية كتبنا والنظام الأساسي.",
+    "mission_title": "المهمة",
+    "mission_desc": "قياس ورفع محاذاة البشر من خلال تكامل التكنولوجيا والتردد.",
+    "uwo_found_title": "تأسيس UWO™",
+    "uwo_found_desc": "تأسيس المنظمة العالمية للعافية.",
+    "global_launch_title": "الإطلاق العالمي",
+    "global_launch_desc": "جلب ذكاء المحاذاة إلى العالم.",
+    "bio_title": "السيد غوروموخ ب. أهوجا",
+    "bio_subtitle": "مفكر دوري • مؤلف سلسلة كتب EFV™",
+    "bio_para1": "السيد غوروموخ ب. أهوجا مدفوع بمهمة واحدة: دمقرطة الذكاء وبناء البنية التحتية لمستقبل تخدم فيه التكنولوجيا البشرية بدقة وغرض.",
+    "bio_para2": "بصفته المؤسس والمدير لـ UWO™، يقود السيد غوروموخ ب. أهوجا فريقاً مكرساً لتجاوز حدود الممكن. يركز عمل السيد غوروموخ ب. أهوجا على إنشاء أنظمة بيئية \"تحت سقف واحد\" تبسط العالم المعقد للذكاء الاصطناعي للشركات والأفراد على حد سواء.",
+    "bio_para3": "المبادرات والابتكارات الرئيسية:",
+    "bio_bullet1": "<span class=\"author-glow-term\">مؤلف \"EFV Canon™ - رمز الأصل\":</span> في هذا الكتاب، يستكشف السيد غوروموخ ب. أهوجا المبادئ التأسيسية للتطور التكنولوجي و\"رمز الأصل\" الذي يملي تفاعلنا مع الرقمية.",
+    "bio_bullet2": "<span class=\"author-glow-term\">AISA™:</span> صمم السيد غوروموخ ب. أهوجا هذا النظام السيادي للذكاء الاصطناعي لوضع معايير جديدة للذكاء المسؤول والقابل للتطوير.",
+    "bio_bullet3": "<span class=\"author-glow-term\">AI Mall™:</span> طور السيد غوروموخ ب. أهوجا سوقاً هو الأول من نوعه، يجمع كل حلول الذكاء الاصطناعي الأساسية في وجهة واحدة يسهل الوصول إليها.",
+    "bio_para4": "سواء كان ذلك من خلال المنصات المبنية في UWO™ أو الأفكار المشاركة في كتابات السيد غوروموخ ب. أهوجا، فإن السيد غوروموخ ب. أهوجا ملتزم بـ <span class=\"author-glow-term\">تحويل الغد، اليوم.</span>"
+  }
+}

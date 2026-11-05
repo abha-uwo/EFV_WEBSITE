@@ -1,0 +1,304 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "关于我们",
+    "gallery": "画廊",
+    "marketplace": "市场",
+    "blog": "博客",
+    "blogs": "博客",
+    "feedback": "反馈",
+    "contact": "联系我们",
+    "admin": "管理员",
+    "my_library": "我的图书馆",
+    "quit_dashboard": "退出至仪表板",
+    "change_location": "更改位置"
+  },
+  "hero": {
+    "title": "测量您的 <br> 对齐状态 <br> <span class=\"gold-glow-text\">活在流动中</span>",
+    "subtitle": "EFV™ by UWO™ - 全球首个对齐智能系统 <br> 旨在提升您的能量、频率与振动。",
+    "browse_books": "浏览 EFV™ 书籍",
+    "get_app": "获取 EFV™ APP",
+    "coming_soon": "(即将推出)"
+  },
+  "what_is_efv": {
+    "title": "什么是 <span class=\"gold-text\">EFV<sup>TM</sup> </span>",
+    "subtitle": "EFV™ 帮助您了解您的身体和心灵是如何协同工作的。<br>由 Gurumukh P. Ahuja 先生创建的系统，包括：",
+    "energy_title": "能量",
+    "energy_desc": "控制并改善您的日常能量水平。",
+    "frequency_title": "频率",
+    "frequency_desc": "将您的感受与您的人生目标联系起来。",
+    "vibration_title": "振动",
+    "vibration_desc": "生活在流动与舒适的自然状态中。",
+    "lifestyle_title": "生活方式",
+    "lifestyle_desc": "改善表现的简单日常习惯。"
+  },
+  "books_section": {
+    "title": "EFV<sup>TM</sup> 书籍 <span class=\"gold-text\">(第1-9卷系列)</span>",
+    "subtitle": "第 1 卷和第 2 卷将于本月发行。<br>涵盖以下内容的 9 卷变革系统：",
+    "alignment": "对齐",
+    "flow": "流动",
+    "conscious_living": "意识生活",
+    "energy_science": "能量科学",
+    "emotional_frameworks": "情感框架",
+    "meditation_frequency": "冥想与频率实践",
+    "notify_me": "通知我"
+  },
+  "why_efv_works": {
+    "title": "为什么 EFV<sup>TM</sup> 有效 <span class=\"gold-text\">(科学 + 哲学)</span>",
+    "align_three": "EFV™ 帮助您每天对齐这三者。",
+    "energy_clarity": "能量主导清晰度",
+    "energy_back": "你在外寻找的东西，一直存在于内心。",
+    "freq_emotions": "频率塑造情绪",
+    "freq_back": "改变你的内在代码，现实就会做出回应。",
+    "vib_decisions": "振动影响决定",
+    "vib_back": "停止追逐结果。开始体现力量。"
+  },
+  "final_cta": {
+    "title": "开启您的 <span class=\"gold-glow-text\">对齐之旅</span>",
+    "read_books": "阅读 EFV™ 书籍",
+    "explore_lifestyle": "探索 EFV™ 生活方式"
+  },
+  "footer": {
+    "explore": "探索",
+    "about_efv": "关于 EFV™",
+    "about_uwo": "关于 UWO™",
+    "gallery": "画廊",
+    "terms": "条款与条件",
+    "marketplace": "市场",
+    "blog": "博客",
+    "blogs": "博客",
+    "partner_portal": "合作伙伴门户",
+    "feedback": "反馈",
+    "contact": "联系我们",
+    "privacy": "隐私政策",
+    "tagline": "全球首个 EFV™ 系统。为更美好的生活而设计。",
+    "connect": "联系",
+    "copyright": "&copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup> 是 UWO<sup>TM</sup> 的一项创新。"
+  },
+  "buttons": {
+    "buy_now": "立即购买",
+    "purchase_now": "立即购买",
+    "view_info": "详情",
+    "learn_more": "了解更多",
+    "notify_me": "通知我"
+  },
+  "location": {
+    "title": "选择您的位置",
+    "subtitle": "以您偏好的语言体验门户。",
+    "footer": "设置您的地区可解锁本地化内容和定价。"
+  },
+  "notify_modal": {
+    "title": "获取通知！",
+    "subtitle": "当 <strong id=\"notify-book-name\" class=\"gold-text\">MINDOS</strong> 准备就绪时，我们将在您的电子邮件中通知您。",
+    "placeholder": "输入您的电子邮件地址",
+    "button": "通知我",
+    "confirmation": "<i class=\"fas fa-check-circle\"></i> 确认邮件已发送！<br>如果您没有看到它，请检查您的垃圾邮件文件夹。"
+  },
+  "marketplace_page": {
+    "title": "EFV™ <span class=\"gold-text\">市场</span>",
+    "subtitle": "安全数字与实体资产 dispensary",
+    "filter_all": "全部",
+    "filter_hardcover": "精装版",
+    "filter_paperback": "平装版",
+    "filter_audiobook": "有声书",
+    "filter_ebook": "电子书",
+    "in_stock": "有现货",
+    "out_of_stock": "缺货",
+    "coming_soon": "即将推出",
+    "notion_msg": "目前在我们的平台上不可用。您仍然可以从我们的官方出版合作伙伴处购买本书。",
+    "buy_notion": "在 NotionPress 上购买",
+    "edition_suffix": "版本"
+  },
+  "dashboard_page": {
+    "title": "数字 <span class=\"text-gold-energy\">图书馆</span>",
+    "subtitle": "EFV 安全内容 dispensary",
+    "restricted": "访问受限",
+    "restricted_desc": "请登录以查看您的安全数字资产。",
+    "quit_dashboard": "退出至仪表板",
+    "syncing": "同步图书馆中...",
+    "initializing": "初始化光盘中...",
+    "no_assets": "未找到数字资产",
+    "visit_marketplace": "访问市场",
+    "secure_access": "终身安全访问",
+    "read_percent": "% 已读",
+    "connection_est": "已建立加密连接"
+  },
+  "product_modal": {
+    "close": "关闭",
+    "add_to_cart": "加入购物车",
+    "buy_now": "立即购买",
+    "select_qty": "选择数量：",
+    "subtotal": "小计：",
+    "collection_title": "EFV™ 系列",
+    "collection_desc": "探索能量、频率和振动的变革力量。本神圣系列中的每一卷都旨在使您的意识与宇宙的存在密码保持一致。",
+    "tab_specs": "规格",
+    "tab_desc": "描述",
+    "tab_mfr": "制造商信息",
+    "generic_name_label": "通用名称",
+    "country_origin_label": "原产国",
+    "mfr_address_label": "制造商名称与地址",
+    "packer_address_label": "包装商名称与地址"
+  },
+  "products": {
+    "vol1": {
+      "title": "ORIGIN CODE",
+      "desc": "进入万物起点的旅程——意识、能量和存在开始的地方。本卷为理解现实是如何形成的奠定了基础。"
+    },
+    "vol2": {
+      "title": "MINDOS",
+      "desc": "探索思想和情绪如何塑造我们的内在世界。它以清晰、实用的方式剖析了人类心智的架构。"
+    },
+    "vol3": {
+      "title": "UNIVERSAL ACTIVATION",
+      "desc": "唤醒你内在未开发潜能的的指南。它帮助你认识并激活推动增长和清晰的更深层次频率。"
+    },
+    "vol4": {
+      "title": "RESONANCE BRIDGE",
+      "desc": "架起人类意识与宇宙智能之间的桥梁。本卷展示了对齐如何创造流动、直觉和有意义的同步性。"
+    },
+    "vol5": {
+      "title": "HUMAN OS",
+      "desc": "对人类操作系统的新审视——我们如何思考、决定、进化和构建未来。它将人类意识与 AI 的下一个时代连接起来。"
+    },
+    "vol6": {
+      "title": "EMOTIONOS",
+      "desc": "将情绪智力解释为一种强大的稳定力量。它展示了情感校准如何在人类与智能系统之间创造和谐。"
+    },
+    "vol7": {
+      "title": "MEMORIOS",
+      "desc": "将记忆探索为维系身份的纽带。它审视了跨越时间的连续性如何塑造我们是谁以及我们成为谁。"
+    },
+    "vol8": {
+      "title": "AGENTOS",
+      "desc": "解构自主智能和智能代理的兴起。一个理解未来代理驱动世界的实用蓝图。"
+    },
+    "vol9": {
+      "title": "GOVERNANCEOS",
+      "desc": "专注于 AI 驱动的文明中的伦理、对齐和责任。它定义了确保技术伴随智慧进化的原则。"
+    },
+    "efv_v1_hardcover": {
+      "title": "EFV™ 第1卷：ORIGIN CODE™",
+      "description": "了解能量与对齐的秘密。优质精装书。"
+    },
+    "efv_v1_paperback": {
+      "title": "EFV™ 第1卷：ORIGIN CODE™",
+      "description": "了解能量与对齐的秘密。便携式平装书。"
+    },
+    "efv_v1_ebook": {
+      "title": "EFV™ 第1卷：ORIGIN CODE™",
+      "description": "第1卷的完整数字版本。可在所有设备上访问。"
+    },
+    "efv_v1_audiobook": {
+      "title": "EFV™ 第1卷：ORIGIN CODE™",
+      "description": "第1卷的沉浸式音频体验。随身聆听与对齐。"
+    },
+    "efv_v1_hardcover_en": {
+      "title": "EFV™ 第1卷：THE ORIGIN CODE™",
+      "description": "奠基性第1卷的英文精装版。"
+    },
+    "efv_v1_paperback_en": {
+      "title": "EFV™ 第1卷：THE ORIGIN CODE™",
+      "description": "用英文探索能量与对齐的秘密。便携式平装书。"
+    },
+    "efv_v1_ebook_en": {
+      "title": "EFV™ 第1卷：THE ORIGIN CODE™",
+      "description": "第1卷的完整英文数字版本。"
+    },
+    "efv_v1_audiobook_en": {
+      "title": "EFV™ 第1卷：THE ORIGIN CODE™",
+      "description": "第1卷的沉浸式英文有声书体验。"
+    },
+    "efv_v2_hardcover": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "探索思想和情绪如何塑造我们的内在世界。"
+    },
+    "efv_v2_paperback": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "解码思想、情绪与人类心智架构。"
+    },
+    "efv_v2_ebook": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "第2卷的完整数字版本。可在所有设备上访问。"
+    },
+    "efv_v2_audiobook": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "第2卷的沉浸式有声书体验。"
+    },
+    "efv_v2_hardcover_en": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "第2卷的英文精装版。探索人类心智的架构。"
+    },
+    "efv_v2_paperback_en": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "英文平装版。解码思想、情绪与心智架构。"
+    },
+    "efv_v2_ebook_en": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "第2卷的完整英文数字版本。"
+    },
+    "efv_v2_audiobook_en": {
+      "title": "EFV™ 第2卷：MINDOS™",
+      "description": "第2卷的英文有声书体验。"
+    },
+    "efv_canon_v3_hard": {
+      "title": "EFV™ 第3卷：UNIVERSAL ACTIVATION",
+      "description": "唤醒你内在未开发潜能的指南。"
+    },
+    "efv_canon_v4_hard": {
+      "title": "EFV™ 第4卷：RESONANCE BRIDGE",
+      "description": "架起人类意识与宇宙智能之间的桥梁。"
+    },
+    "efv_canon_v5_hard": {
+      "title": "EFV™ 第5卷：HUMAN OS™",
+      "description": "对人类操作系统的新审视——我们如何思考、决定。"
+    },
+    "efv_canon_v6_hard": {
+      "title": "EFV™ 第6卷：EMOTIONOS™",
+      "description": "情绪智力作为一种强大的稳定力量。"
+    },
+    "efv_canon_v7_hard": {
+      "title": "EFV™ 第7卷：MEMORYOS™",
+      "description": "探索记忆作为身份的纽带。"
+    },
+    "efv_canon_v8_hard": {
+      "title": "EFV™ 第8卷：AGENTOS™",
+      "description": "自主智能与智能代理的兴起。"
+    },
+    "efv_canon_v9_hard": {
+      "title": "EFV™ 第9卷：GOVERNANCEOS™",
+      "description": "专注于伦理、对齐与责任。"
+    }
+  },
+  "about_page": {
+    "title": "关于 <span class=\"gold-text\">EFV<sup>TM</sup></span>",
+    "subtitle": "能量、频率、振动——主导人类潜能的三大力量。",
+    "about_uwo": "关于 UWO<sup>TM</sup>",
+    "uwo_text1": "<strong>Unified Web Options</strong> 是一家致力于健康、科技和生活方式解决方案的新一代人类转型公司。",
+    "uwo_text2": "<strong>我们的使命：</strong> 通过对齐智能提供工具和生态系统，以衡量和提升意识水平。",
+    "about_efv": "关于 EFV<sup>TM</sup>",
+    "efv_text": "EFV<sup>TM</sup>（能量 频率 振动）是由 Gurumukh P. Ahuja 先生设计的核心哲学和技术框架。它解码了主导人类潜能的根本力量：",
+    "energy_label": "<strong>能量：</strong> 控制您的能量，以获得更好的日常表现和健康。",
+    "frequency_label": "<strong>频率：</strong> 将您的感受与您的人生目标联系起来。",
+    "vibration_label": "<strong>振动：</strong> 生活在流动与清晰思考的状态中。",
+    "about_founder": "关于创始人",
+    "founder_name": "Gurumukh P. Ahuja 先生",
+    "founder_desc": "EFV™ 的创始人兼作者。<br>9 卷 EFV™ 系列和健康系统的创建者。",
+    "vision_title": "愿景",
+    "vision_desc": "我们书籍和核心系统的起点。",
+    "mission_title": "使命",
+    "mission_desc": "通过科技与频率的整合，衡量和提升人类的对齐状态。",
+    "uwo_found_title": "UWO™ 创立",
+    "uwo_found_desc": "建立通用健康组织。",
+    "global_launch_title": "全球启动",
+    "global_launch_desc": "将对齐智能带给世界。",
+    "bio_title": "GURUMUKH P. AHUJA 先生",
+    "bio_subtitle": "远见卓识的思想家 • EFV™ 系列作者",
+    "bio_para1": "Gurumukh P. Ahuja 先生秉持着单一的使命：实现智能的民主化，并为科技以精确和目的服务人类的未来构建基础设施。",
+    "bio_para2": "作为 UWO™ 的创始人兼董事，Gurumukh P. Ahuja 先生带领团队致力于突破可能的边界。他的工作重点是创建“一站式”生态系统，为企业和个人简化复杂的人工智能世界。",
+    "bio_para3": "关键举措与创新：",
+    "bio_bullet1": "<span class=\"author-glow-term\">《EFV 经典™ - 起源密码》作者：</span> 在本书中，Gurumukh P. Ahuja 先生探讨了技术进化的奠基性原则以及决定我们如何与数字前沿交互的“起源密码”。",
+    "bio_bullet2": "<span class=\"author-glow-term\">AISA™：</span> Gurumukh P. Ahuja 先生架构了这一主权 AI 系统，为负责任和可扩展的智能树立了新标准。",
+    "bio_bullet3": "<span class=\"author-glow-term\">AI Mall™：</span> Gurumukh P. Ahuja 先生开发了首个同类市场，将所有核心 AI 解决方案聚集在一个便捷的去处。",
+    "bio_para4": "无论是通过在 UWO™ 建立的平台，还是在写作中分享的洞见，Gurumukh P. Ahuja 先生都致力于<span class=\"author-glow-term\">在今天改变明天。</span>"
+  }
+}

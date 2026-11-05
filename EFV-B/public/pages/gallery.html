@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gallery | EFV™ — Energy Frequency Vibration</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <meta name="description"
+        content="Explore the EFV™ Gallery — see how Energy, Frequency, and Vibration make our world beautiful.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <link rel="stylesheet" href="../css/security.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --accent-gold: #FFD369;
+            --luxury-black: #050505;
+            --glass-white: rgba(255, 255, 255, 0.03);
+            --gold-glow: rgba(255, 211, 105, 0.3);
+        }
+
+        .gallery-container {
+            columns: 3 280px;
+            column-gap: 20px;
+            width: 100%;
+            padding: 15px 0;
+        }
+
+        .gallery-item {
+            position: relative;
+            break-inside: avoid;
+            margin-bottom: 18px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: var(--luxury-black);
+            border: 1px solid rgba(255, 211, 105, 0.1);
+            cursor: pointer;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            transform: translateZ(0);
+            will-change: transform, border-color, box-shadow;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            display: block;
+            height: auto;
+            max-height: 350px;
+            object-fit: cover;
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            filter: brightness(0.9) contrast(1.1);
+        }
+
+        /* Luxury Hover State */
+        .gallery-item:hover {
+            transform: translateY(-8px) scale(1.01);
+            border-color: var(--accent-gold);
+            box-shadow:
+                0 20px 40px rgba(0, 0, 0, 0.8),
+                0 0 30px var(--gold-glow);
+            z-index: 10;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+            filter: brightness(1);
+        }
+
+        /* Subtle Overlay Info */
+        .gallery-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+            opacity: 0;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+            transform: translateY(10px);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .gallery-overlay h4 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--accent-gold);
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .gallery-overlay span {
+            font-size: 0.75rem;
+            color: rgba(255, 211, 105, 0.6);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        /* Smooth Lightbox */
+        #lightbox {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        #lightbox.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        #lightbox-content {
+            max-width: 90%;
+            max-height: 85vh;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 211, 105, 0.3);
+            box-shadow: 0 0 100px rgba(255, 211, 105, 0.1);
+            transform: scale(0.95);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        #lightbox.active #lightbox-content {
+            transform: scale(1);
+        }
+
+        .close-lightbox {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            color: var(--accent-gold);
+            font-size: 2.5rem;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+        }
+
+        .close-lightbox:hover {
+            opacity: 0.7;
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 1200px) {
+            .gallery-container {
+                columns: 2 400px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery-container {
+                display: grid;
+                grid-template-columns: repeat(6, 1fr);
+                gap: 10px;
+                columns: auto;
+                padding: 10px 0;
+            }
+
+            .gallery-item {
+                margin-bottom: 0;
+                border-radius: 10px;
+                height: 100%;
+            }
+
+            /* Alternating Pattern: Row of 2, then Row of 3 */
+            /* Items 1,2, 6,7... span 3 cols (2 per row) */
+            .gallery-item:nth-child(5n+1),
+            .gallery-item:nth-child(5n+2) {
+                grid-column: span 3;
+            }
+
+            /* Items 3,4,5, 8,9,10... span 2 cols (3 per row) */
+            .gallery-item:nth-child(5n+3),
+            .gallery-item:nth-child(5n+4),
+            .gallery-item:nth-child(5n+5) {
+                grid-column: span 2;
+            }
+
+            .gallery-item img {
+                height: 100% !important;
+                min-height: 140px;
+                max-height: 180px !important;
+                object-fit: cover;
+            }
+
+            /* Specifically make the 2-per-row images slightly taller for better rhythm */
+            .gallery-item:nth-child(5n+1) img,
+            .gallery-item:nth-child(5n+2) img {
+                max-height: 220px !important;
+            }
+
+            .container {
+                padding: 0 12px;
+            }
+        }
+    </style>
+    <script src="../js/api-config.js"></script>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body data-page="gallery">
+    <div id="particles-js"></div>
+
+    <!-- Navbar — EFV-Website version with JWT/profile handled by main.js -->
+    <nav>
+        <!-- Announcement Bar -->
+        <div class="efv-announcement-bar">
+            <div class="container announcement-container">
+                <span class="announcement-text" data-i18n="announcement.iit_ropar">We are now officially incubated with IIT Ropar – Technology Business Incubator Foundation (TBIF)</span>
+            </div>
+        </div>
+        <div class="container nav-main-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/images/AISA.svg" alt="AISA Logo">
+                <span>EFV<sup>TM</sup></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="gallery.html" class="active gold-text">Gallery</a></li>
+                <li><a href="marketplace.html">Marketplace</a></li>
+                <li><a href="offers.html" data-i18n="nav.offers">Offers</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                <li><a href="Feedback.html">Feedback</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div id="nav-auth-container"></div>
+                <button class="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Gallery Header with Hex Animation -->
+    <header class="section text-center"
+        style="padding-top: 200px; padding-bottom: 40px; position: relative; overflow: hidden;">
+        <div class="hex-grid-anim"></div>
+        <div class="container reveal active">
+            <h1 class="gradient-wipe letter-expand" style="font-size: clamp(2.5rem, 6vw, 4.5rem);">EFV<sup>TM</sup>
+                World</h1>
+            <p class="delay-1" style="color: rgba(248, 249, 250, 0.8); font-size: 1.1rem; margin-top: 20px;">See how
+                Energy, Frequency, and Vibration make our world beautiful.</p>
+        </div>
+    </header>
+
+    <section class="section">
+        <div class="container">
+            <div class="gallery-container">
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback-new-2.jpg">
+                    <img src="../assets/images/feedback-new-2.jpg" alt="Golden foil detail" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>THE ORIGIN CODE</h4>
+                        <span>Product Detail</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/gallery-new-1.jpg">
+                    <img src="../assets/images/gallery-new-1.jpg" alt="Life in Flow" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>LIFE IN FLOW</h4>
+                        <span>Experience</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback/feedback-2.jpg">
+                    <img src="../assets/images/feedback/feedback-2.jpg" alt="EFV Canon in Environment" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>VIBRATION HARMONY</h4>
+                        <span>Lifestyle</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/38 (1).svg">
+                    <img src="../assets/images/38 (1).svg" alt="Abstract calm aura" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>CALMING AURA</h4>
+                        <span>Atmosphere</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback/feedback-5.jpg">
+                    <img src="../assets/images/feedback/feedback-5.jpg" alt="Artistic book layout" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>SYMMETRY</h4>
+                        <span>Artistic</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback/feedback-1.jpg">
+                    <img src="../assets/images/feedback/feedback-1.jpg" alt="Deep Study" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>DEEP STUDY</h4>
+                        <span>Connection</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/39 (1).svg">
+                    <img src="../assets/images/39 (1).svg" alt="Cosmic resonance" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>COSMIC HARMONY</h4>
+                        <span>Balance</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback/feedback-6.jpg">
+                    <img src="../assets/images/feedback/feedback-6.jpg" alt="Perspective View" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>PERSPECTIVE</h4>
+                        <span>Vision</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/collection-stack.jpg">
+                    <img src="../assets/images/collection-stack.jpg" alt="Collection stack" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>THE COLLECTION</h4>
+                        <span>Composition</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback/feedback-4.jpg">
+                    <img src="../assets/images/feedback/feedback-4.jpg" alt="Book in calm setting" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>ZEN SPACE</h4>
+                        <span>Lifestyle</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/40 (1).svg">
+                    <img src="../assets/images/40 (1).svg" alt="Deep resonance" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>DEEP RESONANCE</h4>
+                        <span>Energy</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback-new-3.jpg">
+                    <img src="../assets/images/feedback-new-3.jpg" alt="Interior layout detail" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>INNER WISDOM</h4>
+                        <span>Detail</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/feedback-new-1.jpg">
+                    <img src="../assets/images/feedback-new-1.jpg" alt="Book texture detail" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>PREMIUM FINISH</h4>
+                        <span>Craftsmanship</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/41 (1).svg">
+                    <img src="../assets/images/41 (1).svg" alt="Alignment field" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>WORLD HARMONY</h4>
+                        <span>Alignment</span>
+                    </div>
+                </div>
+
+                <div class="gallery-item reveal" data-type="image" data-src="../assets/images/42 (2).svg">
+                    <img src="../assets/images/42 (2).svg" alt="Universal Code" loading="lazy">
+                    <div class="gallery-overlay">
+                        <h4>UNIVERSAL CODE</h4>
+                        <span>Eternity</span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Lightbox -->
+    <div id="lightbox">
+        <div class="close-lightbox">&times;</div>
+        <img id="lightbox-content" src="" alt="">
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links footer-explore">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="about.html">About EFV<sup>TM</sup></a></li>
+                        <li><a href="https://uwo24.com/" target="_blank"
+                                rel="noopener noreferrer">About UWO<sup>TM</sup></a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="/terms">Terms &amp; Conditions</a></li>
+                        <li><a href="marketplace.html">Marketplace</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                        <li><a href="partner-verification.html"
+                                style="color: var(--gold-energy); font-weight: 700;">Partner Portal</a></li>
+                        <li><a href="Feedback.html">Feedback</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="https://uwo24.com/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-info">
+                    <div class="logo footer-logo">
+                        <img src="../assets/images/AISA.svg" alt="EFV Logo">
+                        <span>EFV<sup>TM</sup></span>
+                    </div>
+                    <p>World's first EFV<sup>TM</sup> system. Designed for better living.</p>
+                </div>
+                <div class="footer-links footer-connect">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/profile.php?id=61585343488735" class="social-icon-link"
+                            aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/FB.svg" alt="Facebook"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.instagram.com/efv_framework/" class="social-icon-link"
+                            aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Insta (1).svg" alt="Instagram"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.linkedin.com/company/efv-framework/" class="social-icon-link"
+                            aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Linkedin.svg" alt="LinkedIn"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.threads.com/@efv_framework" class="social-icon-link" aria-label="Threads"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Threads.svg" alt="Threads"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://x.com/EfvFrame_work" class="social-icon-link" aria-label="X (Twitter)"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/x.png" alt="X (Twitter)"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.youtube.com/@efv_framework" class="social-icon-link" aria-label="YouTube"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/YT (1).svg" alt="YouTube"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://in.pinterest.com/EFV_Framework/" class="social-icon-link"
+                            aria-label="Pinterest" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/pinterset.png" alt="Pinterest" style="width: 26px; height: 26px;">
+                        </a>
+                        <a href="https://wa.me/917610190909" class="social-icon-link" aria-label="WhatsApp"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Whatsapp.svg" alt="WhatsApp"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.reddit.com/user/Ok_Entry1869/" class="social-icon-link" aria-label="Reddit" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/reddit.svg" alt="Reddit" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="mailto:efv@uwo24.com" class="social-icon-link" aria-label="Gmail" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/gmail.png" alt="Gmail" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://medium.com/@efvframework" class="social-icon-link" aria-label="Medium" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/medium.png" alt="Medium" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease; border-radius: 50%;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup> is a UWO<sup>TM</sup> Innovation.
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/particles.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/cart.js?v=22.5"></script>
+    <script src="../js/chatbot.js?v=9.0"></script>
+    <script src="../js/security.js"></script>
+    <script>
+        // Gallery Lightbox — clean abha-EFVF version
+        const galleryItems = document.querySelectorAll('.gallery-item');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxContent = document.getElementById('lightbox-content');
+        const closeLightbox = document.querySelector('.close-lightbox');
+
+        galleryItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const src = item.getAttribute('data-src');
+                if (src) {
+                    lightboxContent.src = src;
+                    lightbox.style.display = 'flex';
+                    setTimeout(() => lightbox.classList.add('active'), 10);
+                }
+            });
+        });
+
+        closeLightbox.addEventListener('click', () => {
+            lightbox.classList.remove('active');
+            setTimeout(() => { lightbox.style.display = 'none'; }, 500);
+        });
+
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                lightbox.classList.remove('active');
+                setTimeout(() => { lightbox.style.display = 'none'; }, 500);
+            }
+        });
+    </script>
+</body>
+
+</html>

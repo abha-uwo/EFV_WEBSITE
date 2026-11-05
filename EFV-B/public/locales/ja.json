@@ -1,0 +1,304 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "about": "会社概要",
+    "gallery": "ギャラリー",
+    "marketplace": "マーケットプレイス",
+    "blog": "ブログ",
+    "blogs": "ブログ一覧",
+    "feedback": "フィードバック",
+    "contact": "お問い合わせ",
+    "admin": "管理者",
+    "my_library": "マイライブラリ",
+    "quit_dashboard": "ダッシュボードを終了",
+    "change_location": "国/地域を変更"
+  },
+  "hero": {
+    "title": "アライメントを測定し <br> 流れの中で生きる <br> <span class=\"gold-glow-text\">ライブ・イン・フロー</span>",
+    "subtitle": "UWO™によるEFV™ — あなたのエネルギー、周波数、振動を高めるために設計された世界初の「アライメント・インテリジェンス」システム。",
+    "browse_books": "EFV™ブックを見る",
+    "get_app": "EFV™アプリを入手",
+    "coming_soon": "(近日公開)"
+  },
+  "what_is_efv": {
+    "title": "<span class=\"gold-text\">EFV<sup>TM</sup> </span>とは？",
+    "subtitle": "EFV™は、身体と心がどのように連動しているかを理解するのに役立ちます。<br>グルムク・P・アフジャ氏によって作成されたシステムで、以下を含みます：",
+    "energy_title": "エネルギー",
+    "energy_desc": "毎日のエネルギーレベルをコントロールし、向上させます。",
+    "frequency_title": "周波数",
+    "frequency_desc": "あなたの感情と人生の目標を結びつけます。",
+    "vibration_title": "振動",
+    "vibration_desc": "流れと安らぎの自然な状態で生きます。",
+    "lifestyle_title": "ライフスタイル",
+    "lifestyle_desc": "パフォーマンスを向上させるための簡単な毎日の習慣。"
+  },
+  "books_section": {
+    "title": "EFV<sup>TM</sup>ブック <span class=\"gold-text\">(第1巻〜第9巻シリーズ)</span>",
+    "subtitle": "今月、第1巻と第2巻が発売されます。<br>以下をカバーする9巻の変容システム：",
+    "alignment": "アライメント",
+    "flow": "フロー",
+    "conscious_living": "意識的な生き方",
+    "energy_science": "エネルギー科学",
+    "emotional_frameworks": "感情の枠組み",
+    "meditation_frequency": "瞑想と周波数の実践",
+    "notify_me": "通知を受け取る"
+  },
+  "why_efv_works": {
+    "title": "EFV<sup>TM</sup>が機能する理由 <span class=\"gold-text\">(科学 ＋ 哲学)</span>",
+    "align_three": "EFV™は、これら3つを毎日整えるのに役立ちます。",
+    "energy_clarity": "エネルギーが明晰さを支配する",
+    "energy_back": "あなたが外に求めているものは、常に内側にありました。",
+    "freq_emotions": "周波数が感情を形成する",
+    "freq_back": "内なるコードを変更すると、現実が反応します。",
+    "vib_decisions": "振動が意思決定に影響を与える",
+    "vib_back": "結果を追いかけるのをやめましょう。力を体現し始めてください。"
+  },
+  "final_cta": {
+    "title": "<span class=\"gold-glow-text\">アライメントの旅</span>を始めましょう",
+    "read_books": "EFV™ブックを読む",
+    "explore_lifestyle": "EFV™ライフスタイルを探る"
+  },
+  "footer": {
+    "explore": "探索",
+    "about_efv": "EFV™について",
+    "about_uwo": "UWO™について",
+    "gallery": "ギャラリー",
+    "terms": "利用規約",
+    "marketplace": "マーケットプレイス",
+    "blog": "ブログ",
+    "blogs": "ブログ一覧",
+    "partner_portal": "パートナーポータル",
+    "feedback": "フィードバック",
+    "contact": "お問い合わせ",
+    "privacy": "プライバシーポリシー",
+    "tagline": "世界初のEFV™システム。より良い生活のために設計されています。",
+    "connect": "連携",
+    "copyright": "&copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup>はUWO<sup>TM</sup>のイノベーションです。"
+  },
+  "buttons": {
+    "buy_now": "今すぐ購入",
+    "purchase_now": "今すぐ購入",
+    "view_info": "詳細",
+    "learn_more": "詳細を見る",
+    "notify_me": "通知を受け取る"
+  },
+  "location": {
+    "title": "地域を選択してください",
+    "subtitle": "ご希望の言語でポータルを体験してください。",
+    "footer": "地域を設定すると、ローカライズされたコンテンツと価格が適用されます。"
+  },
+  "notify_modal": {
+    "title": "通知を受け取る！",
+    "subtitle": "<strong id=\"notify-book-name\" class=\"gold-text\">MINDOS</strong>が準備でき次第、メールでお知らせします。",
+    "placeholder": "メールアドレスを入力してください",
+    "button": "通知を登録する",
+    "confirmation": "<i class=\"fas fa-check-circle\"></i> 確認メールを送信しました！<br>届かない場合は、迷惑メールフォルダをご確認ください。"
+  },
+  "marketplace_page": {
+    "title": "EFV™ <span class=\"gold-text\">マーケットプレイス</span>",
+    "subtitle": "安全なデジタル＆物理アセットディスペンサリー",
+    "filter_all": "すべて",
+    "filter_hardcover": "ハードカバー",
+    "filter_paperback": "ペーパーバック",
+    "filter_audiobook": "オーディオブック",
+    "filter_ebook": "電子書籍",
+    "in_stock": "在庫あり",
+    "out_of_stock": "在庫切れ",
+    "coming_soon": "近日公開",
+    "notion_msg": "現在、当プラットフォームではご利用いただけません。公式出版パートナーからご購入いただけます。",
+    "buy_notion": "NotionPressで購入",
+    "edition_suffix": "版"
+  },
+  "dashboard_page": {
+    "title": "デジタル <span class=\"text-gold-energy\">ライブラリ</span>",
+    "subtitle": "EFV セキュアコンテンツディスペンサリー",
+    "restricted": "アクセス制限",
+    "restricted_desc": "保護されたデジタルアセットを表示するにはログインしてください。",
+    "quit_dashboard": "ダッシュボードを終了",
+    "syncing": "ライブラリを同期中...",
+    "initializing": "ディスクを初期化中...",
+    "no_assets": "デジタルアセットが見つかりません",
+    "visit_marketplace": "マーケットプレイスに移動",
+    "secure_access": "永久セキュアアクセス",
+    "read_percent": "% 読了",
+    "connection_est": "暗号化接続が確立されました"
+  },
+  "product_modal": {
+    "close": "閉じる",
+    "add_to_cart": "カートに追加",
+    "buy_now": "今すぐ購入",
+    "select_qty": "数量選択:",
+    "subtotal": "小計:",
+    "collection_title": "EFV™コレクション",
+    "collection_desc": "エネルギー、周波数、振動の変容力を発見してください。この聖なるシリーズの各巻は、あなたの意識を存在の普遍的なコードに合わせるように設計されています。",
+    "tab_specs": "仕様",
+    "tab_desc": "説明",
+    "tab_mfr": "製造元情報",
+    "generic_name_label": "一般的な名称",
+    "country_origin_label": "原産国",
+    "mfr_address_label": "製造元の名称および所在地",
+    "packer_address_label": "梱包者の名称および所在地"
+  },
+  "products": {
+    "vol1": {
+      "title": "ORIGIN CODE",
+      "desc": "すべての始まりの地点への旅 — 意識、エネルギー、存在が始まるところ。この巻は、現実がどのように形成されるかを理解するための基礎を築きます。"
+    },
+    "vol2": {
+      "title": "MINDOS",
+      "desc": "思考と感情が私たちの内面世界をどのように形成するかを探求します。明快かつ実践的な方法で人間の心の構造を解明します。"
+    },
+    "vol3": {
+      "title": "UNIVERSAL ACTIVATION",
+      "desc": "あなたの内なる未開拓の可能性を目覚めさせるためのガイド。成長と明晰さを促進する深い周波数を認識し、活性化するのに役立ちます。"
+    },
+    "vol4": {
+      "title": "RESONANCE BRIDGE",
+      "desc": "人間の意識と普遍的なインテリジェンスの架け橋。アライメントがいかにフロー、直感、そして意味のあるシンクロニシティを生み出すかを示します。"
+    },
+    "vol5": {
+      "title": "HUMAN OS",
+      "desc": "人間のオペレーティングシステムへの新たな視点 — 私たちがどのように考え、決定し、進化し、未来を築くか。人間の意識をAIの次の時代と結びつけます。"
+    },
+    "vol6": {
+      "title": "EMOTIONOS",
+      "desc": "感情インテリジェンスを強力な安定化の力として説明します。感情の調整が人間と自律型システムの間にいかに調和をもたらすかを示します。"
+    },
+    "vol7": {
+      "title": "MEMORIOS",
+      "desc": "記憶をアイデンティティを繋ぎ止める糸として探求します。時間を通じた連続性が、私たちが誰であり、誰になっていくかをいかに形成するかを考察します。"
+    },
+    "vol8": {
+      "title": "AGENTOS",
+      "desc": "自律型インテリジェンスとインテリジェントエージェントの台頭を紐解きます。目の前にあるエージェント駆動型の世界を理解するための実践的な設計図。"
+    },
+    "vol9": {
+      "title": "GOVERNANCEOS",
+      "desc": "AIを原動力とする文明における倫理、アライメント、責任に焦点を当てます。テクノロジーが知恵とともに進化することを保証する原則を定義します。"
+    },
+    "efv_v1_hardcover": {
+      "title": "EFV™ 第1巻：ORIGIN CODE™",
+      "description": "エネルギーとアライメントの秘密を学びます。プレミアムハードカバー本。"
+    },
+    "efv_v1_paperback": {
+      "title": "EFV™ 第1巻：ORIGIN CODE™",
+      "description": "エネルギーとアライメント의 秘密を学びます。持ち運びに便利なペーパーバック本。"
+    },
+    "efv_v1_ebook": {
+      "title": "EFV™ 第1巻：ORIGIN CODE™",
+      "description": "第1巻の完全デジタル版。すべてのデバイスでアクセス可能。"
+    },
+    "efv_v1_audiobook": {
+      "title": "EFV™ 第1巻：ORIGIN CODE™",
+      "description": "第1巻の臨場感あふれる音声体験。外出先で聴いて調整します。"
+    },
+    "efv_v1_hardcover_en": {
+      "title": "EFV™ 第1巻：THE ORIGIN CODE™",
+      "description": "基礎となる第1巻の英語版ハードカバー。"
+    },
+    "efv_v1_paperback_en": {
+      "title": "EFV™ 第1巻：THE ORIGIN CODE™",
+      "description": "エネルギーとアライメントの秘密を英語で探求します。持ち運びに便利なペーパーバック。"
+    },
+    "efv_v1_ebook_en": {
+      "title": "EFV™ 第1巻：THE ORIGIN CODE™",
+      "description": "第1巻の完全な英語版デジタルバージョン。"
+    },
+    "efv_v1_audiobook_en": {
+      "title": "EFV™ 第1巻：THE ORIGIN CODE™",
+      "description": "第1巻の英語版音声体験。"
+    },
+    "efv_v2_hardcover": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "思考と感情が私たちの内面世界をどのように形成するかを探求します。"
+    },
+    "efv_v2_paperback": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "思考、感情、そして人間の心の構造を解明します。"
+    },
+    "efv_v2_ebook": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "第2巻の完全デジタル版。すべてのデバイスでアクセス可能。"
+    },
+    "efv_v2_audiobook": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "第2巻の臨場感あふれる音声体験。"
+    },
+    "efv_v2_hardcover_en": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "第2巻の英語版ハードカバー。人間の心の構造を探求します。"
+    },
+    "efv_v2_paperback_en": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "英語版ペーパーバック。思考、感情、心の構造を解明。"
+    },
+    "efv_v2_ebook_en": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "第2巻の完全な英語版デジタルバージョン。"
+    },
+    "efv_v2_audiobook_en": {
+      "title": "EFV™ 第2巻：MINDOS™",
+      "description": "第2巻の英語版音声体験。"
+    },
+    "efv_canon_v3_hard": {
+      "title": "EFV™ 第3巻：UNIVERSAL ACTIVATION",
+      "description": "あなたの内なる未開拓の可能性を目覚めさせるためのガイド。"
+    },
+    "efv_canon_v4_hard": {
+      "title": "EFV™ 第4巻：RESONANCE BRIDGE",
+      "description": "人間の意識と普遍的なインテリジェンスの架け橋。"
+    },
+    "efv_canon_v5_hard": {
+      "title": "EFV™ 第5巻：HUMAN OS™",
+      "description": "人間のオペレーティングシステムへの新たな視点。"
+    },
+    "efv_canon_v6_hard": {
+      "title": "EFV™ 第6巻：EMOTIONOS™",
+      "description": "感情インテリジェンスを強力な安定化の力として説明。"
+    },
+    "efv_canon_v7_hard": {
+      "title": "EFV™ 第7巻：MEMORYOS™",
+      "description": "記憶をアイデンティティを繋ぎ止める糸として探求。"
+    },
+    "efv_canon_v8_hard": {
+      "title": "EFV™ 第8巻：AGENTOS™",
+      "description": "自律型インテリジェンスとインテリジェントエージェントの台頭。"
+    },
+    "efv_canon_v9_hard": {
+      "title": "EFV™ 第9巻：GOVERNANCEOS™",
+      "description": "倫理、アライメント、責任に焦点を当てます。"
+    }
+  },
+  "about_page": {
+    "title": "<span class=\"gold-text\">EFV<sup>TM</sup></span>について",
+    "subtitle": "エネルギー、周波数、振動 — 人間の可能性を支配する3つの力。",
+    "about_uwo": "UWO<sup>TM</sup>について",
+    "uwo_text1": "<strong>Unified Web Options</strong> ウェルネス、テクノロジー、ライフスタイルのソリューションを構築する次世代の人類変容企業。",
+    "uwo_text2": "<strong>使命：</strong> アライメント・インテリジェンスを通じて意識を測定し高めるためのツールとエコシステムを提供。",
+    "about_efv": "EFV<sup>TM</sup>について",
+    "efv_text": "EFV<sup>TM</sup> (Energy Frequency Vibration) は、グルムク・P・アフジャ氏によって設計された核心的な哲学および技術的枠組みです。それは人間の可能性を支配する根本的な力を解読します：",
+    "energy_label": "<strong>エネルギー:</strong> 毎日のパフォーマンスと健康を向上させるためにエネルギーをコントロールします。",
+    "frequency_label": "<strong>周波数:</strong> あなたの感情と人生の目標を結びつけます。",
+    "vibration_label": "<strong>振動:</strong> フローと明確な思考の状態で生きます。",
+    "about_founder": "創設者について",
+    "founder_name": "グルムク・P・アフジャ氏",
+    "founder_desc": "EFV™の創設者兼著者。<br>9巻のEFV™シリーズとウェルネスシステムの作成者。",
+    "vision_title": "ビジョン",
+    "vision_desc": "書籍とコアシステムの始まり。",
+    "mission_title": "使命",
+    "mission_desc": "テクノロジーと周波数の統合を通じて、人間アライメントを測定し高めること。",
+    "uwo_found_title": "UWO™ 設立",
+    "uwo_found_desc": "ユニバーサルウェルネス組織の設立。",
+    "global_launch_title": "グローバルローンチ",
+    "global_launch_desc": "世界にアライメント・インテリジェンスをもたらす。",
+    "bio_title": "グルムク・P・アフジャ氏",
+    "bio_subtitle": "先見の明のある思想家 • EFV™シリーズの著者",
+    "bio_para1": "グルムク・P・アフジャ氏は、インテリジェンスを民主化し、テクノロジーが精度と目的を持って人類に貢献する未来のためのインフラを構築するという単一の使命に突き動かされています。",
+    "bio_para2": "UWO™の創設者兼ディレクターとして、グルムク・P・アフジャ氏は可能性の限界を押し広げることに専念するチームを率いています。彼の仕事は、企業や個人向けに人工知能の複雑な世界を簡素化する「ワン屋根の下」のエコシステムを構築することに焦点を当てています。",
+    "bio_para3": "主要な取り組みと革新：",
+    "bio_bullet1": "<span class=\"author-glow-term\">「EFV Canon™ - Origin Code」著者：</span> 本書で、グルムク・P・アフジャ氏は技術進化の基本原則と、私たちがデジタルフロンティアとどのように相互作用するかを決定する「オリジンコード」を探求しています。",
+    "bio_bullet2": "<span class=\"author-glow-term\">AISA™:</span> グルムク・P・アフジャ氏は、責任あるスケーラブルなインテリジェンスにおける新しい基準を設定するために、この主権的なAIシステムを設計しました。",
+    "bio_bullet3": "<span class=\"author-glow-term\">AI Mall™:</span> グルムク・P・アフジャ氏は、不可欠なすべてのAIソリューションを1つのアクセス可能なデスティネーションに集約する、この種で初のマーケットプレイスを開発しました。",
+    "bio_para4": "UWO™で構築されたプラットフォームを通じても、あるいは著作で共有された洞察を通じても、グルムク・P・アフジャ氏は<span class=\"author-glow-term\">「今日、明日を変える」</span>ことに尽力しています。"
+  }
+}

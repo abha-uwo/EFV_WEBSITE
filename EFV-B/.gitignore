@@ -1,0 +1,107 @@
+# ==============================================================
+# EFV Platform Backend - Security Hardened .gitignore
+# ==============================================================
+
+# Dependencies & Build Artefacts
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+dist/
+build/
+.cache/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Local SQLite & Databases
+*.sqlite3
+*.db
+db.sqlite3
+
+# JSON Data Stores & State Backups
+src/data/*.json
+!src/data/categories.json
+coupons_current.json
+partners_current.json
+legacy_ids.json
+test_prod.json
+logs.json
+lib_error_logs.json
+test_results.json
+all_endpoints.json
+
+# Local Uploads & Blobs (Stored in Cloud Buckets)
+src/uploads/
+public/uploads/
+*.mp4
+*.mp3
+*.wav
+*.m4a
+
+# Log Files & Terminal Dumps
+*.log
+*.txt
+!package*.json
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Office & Test Spreadsheets
+*.xlsx
+*.xls
+*.csv
+
+# Python Bytecode & Virtual Envs
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.env/
+
+# Diagnostic Scripts & Scratch Dirs
+scratch/
+src/scratch/
+check-*.js
+check_*.js
+find-*.js
+find_*.js
+src/find*.js
+src/check*.js
+src/test*.js
+genHash*.js
+seed.js
+seedAdmin.js
+seedProducts.js
+test_*.js
+test-*.js
+migrate*.js
+clean_products.js
+update_mongo_products.js
+list_routes.js
+list-bucket.js
+checkHash.js
+dump-partners-coupons.js
+
+# Service accounts & Private Keys
+*key*.json
+*.pem
+*.p12
+
+# Runtime & Coverage data
+pids
+*.pid
+*.seed
+*.pid.lock
+coverage/
+*.lcov
+.nyc_output
+.grunt
+bower_components
+build/Release
+typings/
+*.tsbuildinfo
+.npm
+.eslintcache

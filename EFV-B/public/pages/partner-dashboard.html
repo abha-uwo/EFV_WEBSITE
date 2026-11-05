@@ -1,0 +1,646 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Dashboard | EFV™ Performance</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../js/api-config.js"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --bg-dark: #070B14;
+            --glass: rgba(15, 20, 35, 0.8);
+            --border: rgba(212, 175, 55, 0.2);
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: white;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .dashboard-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .partner-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar-box {
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            color: black;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+        }
+
+        .welcome-text h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.2rem;
+            margin: 0;
+            color: var(--gold);
+        }
+
+        .welcome-text p {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin: 0;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.1), transparent);
+            border-radius: 0 20px 0 100%;
+        }
+
+        .stat-card label {
+            display: block;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .value {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            font-family: 'Cinzel', serif;
+        }
+
+        .stat-card .trend {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .trend.up {
+            color: var(--accent-green);
+        }
+
+        /* Coupon Card */
+        .coupon-banner {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(7, 11, 20, 0.8) 100%);
+            border: 1px solid var(--gold);
+            padding: 25px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .coupon-info h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold);
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+
+        .coupon-display {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .coupon-box {
+            background: var(--gold);
+            border: 2px solid var(--gold);
+            padding: 10px 25px;
+            border-radius: 10px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            color: black;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .coupon-details {
+            display: flex;
+            gap: 40px;
+        }
+
+        .detail-item label {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.6;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .detail-item span {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .copy-btn {
+            background: var(--gold);
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .copy-btn:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        /* Table Section */
+        .table-section {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .table-header h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            opacity: 0.5;
+            letter-spacing: 1px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .status-pill {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .status-paid {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .status-pending {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: black;
+            border: none;
+        }
+
+        .btn-gold:hover {
+            background: #FFD700;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: white;
+        }
+
+        .btn-outline:hover {
+            background: var(--border);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px;
+            opacity: 0.5;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 20px;
+                align-items: flex-start;
+            }
+
+            .nav-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body>
+
+    <div class="dashboard-wrapper">
+        <header>
+            <div class="partner-profile">
+                <div class="avatar-box" id="avatar-initial">-</div>
+                <div class="welcome-text">
+                    <h1 id="partner-name">Loading...</h1>
+                    <p id="partner-company">Authorized Marketing Partner</p>
+                </div>
+            </div>
+
+            <div class="nav-actions">
+                <a href="../index.html" class="btn btn-outline">
+                    <i class="fas fa-arrow-left"></i> Back to Website
+                </a>
+                <a href="partner-support.html" class="btn btn-outline" style="display: inline-flex; align-items: center;">
+                    <i class="fas fa-headset" style="margin-right: 8px;"></i> Support
+                    <span id="msg-badge" class="badge" style="display: none; background: #ff4d4d; color: white; border-radius: 50px; min-width: 20px; height: 20px; padding: 0 5px; font-size: 11px; align-items: center; justify-content: center; font-weight: 700; margin-left: 4px; position: relative; top: -8px;">0</span>
+                </a>
+                <a href="#" onclick="exportCSV()" class="btn btn-outline" id="export-btn">
+                    <i class="fas fa-download"></i> Export Reports
+                </a>
+                <button onclick="logout()" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <!-- Referral Coupon Banner -->
+        <div class="coupon-banner" id="coupon-section" style="display: none;">
+            <div class="coupon-info">
+                <h3><i class="fas fa-ticket-alt"></i> YOUR REFERRAL CODE</h3>
+                <div class="coupon-display">
+                    <div class="coupon-box" id="coupon-code">-------</div>
+                    <button class="copy-btn" onclick="copyCoupon()">
+                        <i class="fas fa-copy"></i> COPY CODE
+                    </button>
+                </div>
+            </div>
+            
+            <div class="coupon-details">
+                <div class="detail-item">
+                    <label>Customer Discount</label>
+                    <span id="coupon-discount">-</span>
+                </div>
+                <div class="detail-item">
+                    <label>Your Commission</label>
+                    <span id="coupon-commission">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <label>Total Sales Count</label>
+                <div class="value" id="stat-sales">0</div>
+                <div class="trend up">Orders referred</div>
+            </div>
+            <div class="stat-card">
+                <label>Total Revenue Generated</label>
+                <div class="value" id="stat-revenue">₹0</div>
+                <div class="trend up">Gross volume</div>
+            </div>
+            <div class="stat-card">
+                <label>Total Commission Earned</label>
+                <div class="value" id="stat-commission-total" style="color: var(--gold);">₹0</div>
+                <div class="trend">Lifetime earnings</div>
+            </div>
+            <div class="stat-card">
+                <label>Unpaid Commission</label>
+                <div class="value" id="stat-commission-unpaid" style="color: var(--accent-green);">₹0</div>
+                <div class="trend">Pending payout</div>
+            </div>
+        </div>
+
+        <!-- Sales Table -->
+        <div class="table-section">
+            <div class="table-header">
+                <h2>Recent Order Referrals</h2>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Product Details</th>
+                        <th>Sale Amount</th>
+                        <th>Commission</th>
+                        <th>Payout Status</th>
+                    </tr>
+                </thead>
+                <tbody id="sales-list">
+                    <!-- Dynamic Data -->
+                </tbody>
+            </table>
+
+            <div id="empty-state" class="empty-state" style="display: none;">
+                <i class="fas fa-search-dollar fa-3x" style="margin-bottom: 20px;"></i>
+                <p>No sales activity tracked yet. Use your partner coupon to start earning!</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = (typeof CONFIG !== 'undefined') ? CONFIG.API_BASE_URL : 'http://localhost:8080';
+        const token = localStorage.getItem('partnerToken');
+        let salesData = [];
+
+        if (!token) {
+            window.location.href = 'partner-verification.html';
+        }
+
+        async function fetchDashboard() {
+            try {
+                const res = await fetch(`${API_BASE}/api/partner-portal/dashboard`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (res.status === 401 || res.status === 403) {
+                    logout();
+                    return;
+                }
+
+                const data = await res.json();
+                salesData = data.sales;
+                renderDashboard(data);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        function renderDashboard(data) {
+            // Header
+            document.getElementById('partner-name').textContent = `Welcome, ${data.partner.name}`;
+            document.getElementById('partner-company').textContent = data.partner.company || 'Direct Marketing Partner';
+            document.getElementById('avatar-initial').textContent = data.partner.name.charAt(0).toUpperCase();
+
+            // Stats
+            document.getElementById('stat-sales').textContent = data.stats.totalSales;
+            document.getElementById('stat-revenue').textContent = `₹${data.stats.totalRevenue.toLocaleString()}`;
+            document.getElementById('stat-commission-total').textContent = `₹${data.stats.totalCommissionEarned.toLocaleString()}`;
+            document.getElementById('stat-commission-unpaid').textContent = `₹${data.stats.unpaidCommission.toLocaleString()}`;
+
+            // Coupon
+            const couponSection = document.getElementById('coupon-section');
+            if (data.coupon) {
+                couponSection.style.display = 'flex';
+                document.getElementById('coupon-code').textContent = data.coupon.code;
+                document.getElementById('coupon-discount').textContent = data.coupon.type === 'Percentage' ? 
+                    `${data.coupon.value}% OFF` : `₹${data.coupon.value} OFF`;
+                document.getElementById('coupon-commission').textContent = `${data.coupon.commissionPercent}% Per Sale`;
+            } else {
+                couponSection.style.display = 'none';
+            }
+
+            // List
+            const list = document.getElementById('sales-list');
+            list.innerHTML = '';
+
+            if (data.sales.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+                return;
+            }
+
+            data.sales.forEach(sale => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="opacity: 0.6;">${new Date(sale.date).toLocaleDateString('en-GB')}</td>
+                    <td style="font-weight: 600; color: var(--gold);">#${sale.orderId}</td>
+                    <td>
+                        <div>${sale.customerName}</div>
+                        <div style="font-size: 0.75rem; color: var(--gold); opacity: 0.8;">${sale.customerEmail}</div>
+                    </td>
+                    <td>${sale.items}</td>
+                    <td style="color: var(--gold); font-weight: 600;">₹${sale.totalPaid}</td>
+                    <td style="color: var(--gold); font-weight: 600;">₹${sale.commissionEarned}</td>
+                    <td>
+                        <span class="status-pill ${sale.isPaid ? 'status-paid' : 'status-pending'}">
+                            ${sale.isPaid ? 'PAID' : 'PENDING'}
+                        </span>
+                    </td>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        function exportCSV() {
+            if (salesData.length === 0) return;
+
+            let csvContent = "data:text/csv;charset=utf-8,";
+            csvContent += "Date,Order ID,Customer Name,Customer Email,Products,Amount,Commission,Status\n";
+
+            salesData.forEach(s => {
+                const row = [
+                    new Date(s.date).toLocaleDateString(),
+                    s.orderId,
+                    s.customerName,
+                    s.customerEmail,
+                    s.items.replace(/,/g, '|'),
+                    s.totalPaid,
+                    s.commissionEarned,
+                    s.isPaid ? 'PAID' : 'PENDING'
+                ].join(",");
+                csvContent += row + "\n";
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `EFV_Partner_Sales_${new Date().toISOString().split('T')[0]}.csv`);
+            document.body.appendChild(link);
+            link.click();
+        }
+
+        function logout() {
+            localStorage.removeItem('partnerToken');
+            localStorage.removeItem('partnerName');
+            window.location.href = 'partner-verification.html';
+        }
+
+        async function copyCoupon() {
+            const code = document.getElementById('coupon-code').textContent;
+            try {
+                await navigator.clipboard.writeText(code);
+                const btn = document.querySelector('.copy-btn');
+                const original = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> COPIED!';
+                btn.style.background = '#22c55e';
+                setTimeout(() => {
+                    btn.innerHTML = original;
+                    btn.style.background = 'var(--gold)';
+                }, 2000);
+            } catch (err) {
+                alert('Coupon code: ' + code);
+            }
+        }
+
+        async function checkNotifications() {
+            try {
+                const res = await fetch(`${API_BASE}/api/partner-messages/notifications/partner`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                const badge = document.getElementById('msg-badge');
+                if (data.unreadCount > 0) {
+                    badge.textContent = data.unreadCount;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (err) {
+                console.error('Notification check failed');
+            }
+        }
+
+        fetchDashboard();
+        checkNotifications();
+        setInterval(checkNotifications, 60000);
+    </script>
+    
+</body>
+
+</html>
+

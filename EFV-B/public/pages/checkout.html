@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | EFV™</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --gold-energy: #FFD369;
+            --dark-bg: #0A0A0B;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            background: var(--dark-bg);
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding-top: 80px;
+            overflow-x: hidden;
+        }
+
+        .checkout-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 40px;
+        }
+
+        @media (max-width: 992px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .checkout-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 40px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Cinzel', serif;
+            color: var(--gold-energy);
+            margin-bottom: 25px;
+        }
+
+        /* Order Summary Styles */
+        .order-items {
+            margin-bottom: 30px;
+        }
+
+        .checkout-item {
+            display: flex;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .checkout-item:last-child {
+            border-bottom: none;
+        }
+
+        .checkout-item-img {
+            width: 80px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--gold-energy);
+        }
+
+        .checkout-item-info {
+            flex: 1;
+        }
+
+        .checkout-item-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .checkout-item-meta {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-bottom: 10px;
+        }
+
+        .checkout-item-price {
+            color: var(--gold-energy);
+            font-weight: 700;
+        }
+
+        .checkout-total-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            font-size: 1.1rem;
+        }
+
+        .checkout-total-row.grand-total {
+            border-top: 1px solid var(--gold-energy);
+            margin-top: 10px;
+            font-size: 1.5rem;
+            color: var(--gold-energy);
+            font-weight: 800;
+        }
+
+        /* Form Styles */
+        .address-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--gold-energy);
+            opacity: 0.9;
+            margin-left: 5px;
+        }
+
+        input,
+        select {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: white;
+            padding: 14px 18px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Outfit', sans-serif;
+            outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            width: 100%;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23FFD369' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 18px;
+            padding-right: 45px;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.95rem;
+        }
+
+        input:hover,
+        select:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 211, 105, 0.3);
+        }
+
+        input:focus,
+        select:focus {
+            background: rgba(255, 211, 105, 0.05);
+            border-color: var(--gold-energy);
+            box-shadow: 0 0 20px rgba(255, 211, 105, 0.15);
+        }
+
+        .btn-checkout {
+            background: var(--gold-energy);
+            color: black;
+            border: none;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 30px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 211, 105, 0.3);
+        }
+
+        .btn-checkout:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .back-link {
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            opacity: 0.6;
+            transition: opacity 0.3s;
+        }
+
+        .back-link:hover {
+            opacity: 1;
+        }
+
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            background: var(--gold-energy);
+            color: black;
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-weight: 700;
+            z-index: 10000;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            text-align: center;
+            min-width: 280px;
+            border: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .toast.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        @media (max-width: 600px) {
+            .toast {
+                width: 85%;
+                padding: 20px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Serviceability Styles */
+        .serviceability-info {
+            grid-column: span 2;
+            padding: 12px 15px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            margin-top: -10px;
+            border: 1px solid transparent;
+            transition: all 0.33s ease;
+        }
+
+        .serviceability-info.checking {
+            display: flex;
+            background: rgba(255, 211, 105, 0.1);
+            color: var(--gold-energy);
+            border-color: rgba(255, 211, 105, 0.2);
+        }
+
+        .serviceability-info.success {
+            display: flex;
+            background: rgba(46, 213, 115, 0.1);
+            color: #2ed573;
+            border-color: rgba(46, 213, 115, 0.2);
+        }
+
+        .serviceability-info.error {
+            display: flex;
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border-color: rgba(255, 71, 87, 0.2);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        /* Mobile Specific Checkout Adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .checkout-container {
+                margin: 30px auto;
+                padding: 0 10px;
+                gap: 20px;
+            }
+
+            .checkout-card {
+                padding: 20px 15px;
+                border-radius: 12px;
+            }
+
+            h2 {
+                font-size: 1.4rem;
+                margin-bottom: 20px;
+            }
+
+            .address-form {
+                grid-template-columns: 1fr !important;
+                gap: 15px;
+            }
+
+            .form-group.full-width,
+            .serviceability-info {
+                grid-column: span 1 !important;
+            }
+
+            input,
+            select {
+                padding: 10px 12px;
+                font-size: 0.95rem;
+            }
+
+            .checkout-total-row.grand-total {
+                font-size: 1.25rem;
+            }
+
+            .btn-checkout {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+
+        /* Payment Mode Selector */
+        .payment-method-card {
+            margin-bottom: 25px;
+        }
+
+        .payment-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .payment-option {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: relative;
+        }
+
+        .payment-option:hover {
+            background: rgba(255, 211, 105, 0.05);
+            border-color: rgba(255, 211, 105, 0.3);
+        }
+
+        .payment-option.active {
+            border-color: var(--gold-energy);
+            background: rgba(255, 211, 105, 0.08);
+            box-shadow: 0 0 15px rgba(255, 211, 105, 0.1);
+        }
+
+        .payment-option input[type="radio"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--glass-border);
+            border-radius: 50%;
+            cursor: pointer;
+            position: relative;
+            margin: 0;
+            transition: all 0.3s;
+        }
+
+        .payment-option input[type="radio"]:checked {
+            border-color: var(--gold-energy);
+        }
+
+        .payment-option input[type="radio"]:checked::after {
+            content: '';
+            width: 10px;
+            height: 10px;
+            background: var(--gold-energy);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 8px var(--gold-energy);
+        }
+
+        .payment-option span {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .payment-option.active span {
+            color: var(--gold-energy);
+        }
+
+        @media (max-width: 600px) {
+            .payment-options {
+                grid-template-columns: 1fr;
+            }
+
+            .back-to-marketplace {
+                font-size: 0.75rem !important;
+                gap: 5px !important;
+            }
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 99999;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+            background: rgba(10, 10, 11, 0.95);
+        }
+
+        .nav-container {
+            width: 100%;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 30px;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            box-sizing: border-box;
+        }
+
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 0 15px;
+            }
+
+            #ship-phone {
+                padding-left: 15px !important;
+            }
+        }
+
+        .phone-error {
+            color: #ff4757;
+            font-size: 0.85rem;
+            margin-top: 8px;
+            display: none;
+            font-weight: 600;
+            padding-left: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+
+        .phone-input-container {
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+
+        .phone-input-container:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 211, 105, 0.3);
+        }
+
+        .phone-input-container:focus-within {
+            background: rgba(255, 211, 105, 0.05);
+            border-color: var(--gold-energy);
+            box-shadow: 0 0 20px rgba(255, 211, 105, 0.15);
+        }
+
+        .phone-prefix {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 15px;
+            background: rgba(255, 255, 255, 0.02);
+            border-right: 1px solid var(--glass-border);
+            height: 52px;
+            flex-shrink: 0;
+        }
+
+        .phone-prefix img {
+            width: 24px;
+            height: 16px;
+            object-fit: cover;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .phone-prefix .dial-code {
+            font-weight: 700;
+            color: var(--gold-energy);
+            font-size: 1rem;
+        }
+
+        #ship-phone {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 12px 18px !important;
+            height: 52px;
+            width: 100%;
+            color: white;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            outline: none;
+        }
+    </style>
+    <script src="../js/api-config.js"></script>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo" style="margin: 0 !important; align-items: flex-start !important;">
+                <img src="../assets/images/AISA.svg" alt="EFV">
+                <span>EFV<sup>TM</sup></span>
+            </a>
+            <a href="marketplace.html" class="back-to-marketplace"
+                style="color:var(--gold-energy); text-decoration:none; font-family:'Cinzel'; font-weight:700; display: flex; align-items: center; gap: 8px; text-shadow: 0 0 10px rgba(255, 211, 105, 0.5); transition: all 0.3s; margin: 0 !important;">
+                <i class="fas fa-arrow-left"></i> <span data-i18n="checkout_page.back">BACK</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="checkout-container">
+        <!-- Left Side: Shipping Address -->
+        <div class="left-section">
+            <!-- New Payment Mode Card -->
+            <div class="checkout-card payment-method-card">
+                <h2 data-i18n="checkout_page.payment_method">Payment Method</h2>
+                <div class="payment-options">
+                    <label class="payment-option active" id="option-online">
+                        <input type="radio" name="payment-mode" id="radio-online" value="Online" checked>
+                        <span data-i18n="checkout_page.online_payment">Online Payment</span>
+                    </label>
+                    <label class="payment-option" id="option-cod">
+                        <input type="radio" name="payment-mode" id="radio-cod" value="COD">
+                        <span data-i18n="checkout_page.cod">Cash on Delivery (COD)</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="checkout-card">
+                <h2 data-i18n="checkout_page.shipping_details">Shipping Details</h2>
+                <form id="shipping-form" class="address-form">
+                     <div class="form-group full-width">
+                        <label data-i18n="profile_page.full_name">Full Name</label>
+                        <input type="text" id="ship-name" placeholder="Gurumukh P Ahuja" required data-i18n-placeholder="checkout_page.name_placeholder">
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="profile_page.phone_number">Mobile Number</label>
+                        <div class="phone-input-container">
+                            <div class="phone-prefix" id="phone-prefix">
+                                <img id="prefix-flag" src="https://flagcdn.com/w40/in.png" alt="Flag">
+                                <span id="prefix-dial-code" class="dial-code">+91</span>
+                            </div>
+                            <input type="tel" id="ship-phone" placeholder="Enter phone number" required data-i18n-placeholder="checkout_page.phone_placeholder">
+                        </div>
+                        <div id="phone-error-msg" class="phone-error" data-i18n="checkout_page.phone_error">Invalid phone number for selected country</div>
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="profile_page.email_address">Email Address</label>
+                        <input type="email" id="ship-email" placeholder="email@example.com" required data-i18n-placeholder="checkout_page.email_placeholder">
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="checkout_page.address_label">House / Flat / Street</label>
+                        <input type="text" id="ship-address" placeholder="Bunglow No, Street Name" required data-i18n-placeholder="checkout_page.address_placeholder">
+                    </div>
+                    <div class="form-group full-width">
+                        <label data-i18n="checkout_page.area_label">Area / Landmark</label>
+                        <input type="text" id="ship-area" placeholder="Near Meta Center, Opposite..." required data-i18n-placeholder="checkout_page.area_placeholder">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="profile_page.city">City</label>
+                        <input type="text" id="ship-city" placeholder="Mumbai" required data-i18n-placeholder="checkout_page.city_placeholder">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="profile_page.state">State</label>
+                        <input type="text" id="ship-state" placeholder="Maharashtra" required data-i18n-placeholder="checkout_page.state_placeholder">
+                    </div>
+                    <div class="form-group">
+                        <label data-i18n="profile_page.pincode" id="ship-pincode-label">Pincode / Zip Code</label>
+                        <input type="text" id="ship-pincode" placeholder="482001" required data-i18n-placeholder="checkout_page.pincode_placeholder" autocomplete="postal-code">
+                        <div id="ship-pincode-helper" class="pincode-helper" style="font-size: 0.8rem; margin-top: 5px; color: rgba(255, 255, 255, 0.6); transition: all 0.3s ease;">Enter 6-digit PIN code</div>
+                        <div id="ship-pincode-error" class="pincode-error" style="display: none; color: #ff6b6b; font-size: 0.8rem; margin-top: 4px; font-weight: 500;"></div>
+                    </div>
+                    <div id="serviceability-status" class="serviceability-info">
+                        <span class="status-dot"></span>
+                        <span class="status-text" data-i18n="checkout_page.checking_delivery">Checking delivery...</span>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Side: Order Summary -->
+        <div class="right-section">
+            <div class="checkout-card">
+                <h2 data-i18n="profile_page.order_summary">Order Summary</h2>
+                <div id="checkout-items-list" class="order-items">
+                    <!-- Items injected by JS -->
+                </div>
+
+                <!-- Coupon System -->
+                <div class="coupon-section"
+                    style="margin-bottom: 30px; padding: 20px; background: rgba(255, 211, 105, 0.05); border-radius: 12px; border: 1px dashed var(--gold-energy);">
+                    <label
+                        style="color: var(--gold-energy); display: block; margin-bottom: 10px; font-weight: 700;" data-i18n="checkout_page.promo_code">PROMO
+                        CODE</label>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="coupon-input" placeholder="Enter code..."
+                            style="flex: 1; text-transform: uppercase; font-weight: 600;" data-i18n-placeholder="checkout_page.coupon_placeholder">
+                        <button id="apply-coupon-btn"
+                            style="background: var(--gold-energy); border: none; padding: 0 20px; border-radius: 8px; font-weight: 700; cursor: pointer;" data-i18n="checkout_page.apply">APPLY</button>
+                    </div>
+                    <div id="coupon-status" style="margin-top: 10px; font-size: 0.85rem; display: none;"></div>
+                </div>
+
+                <div class="checkout-summary">
+                    <div class="checkout-total-row">
+                        <span data-i18n="profile_page.subtotal">Subtotal</span>
+                        <span id="summary-subtotal">₹0.00</span>
+                    </div>
+                    <div class="checkout-total-row">
+                        <span data-i18n="profile_page.shipping">Shipping</span>
+                        <span id="summary-shipping">₹0.00</span>
+                    </div>
+                    <div class="checkout-total-row" id="cod-charge-row" style="color: #FFD369;">
+                        <span data-i18n="checkout_page.cod_charges">COD Charges</span>
+                        <span id="summary-cod">₹0.00</span>
+                    </div>
+                    <div class="checkout-total-row grand-total">
+                        <span data-i18n="profile_page.total">Total</span>
+                        <span id="summary-total">₹0.00</span>
+                    </div>
+                </div>
+
+                <button id="place-order-btn" class="btn-checkout">
+                    <span data-i18n="checkout_page.place_order">PLACE ORDER</span> <i class="fas fa-arrow-right"></i>
+                </button>
+                <p style="font-size: 0.8rem; text-align: center; margin-top: 15px; opacity: 0.5;" data-i18n="checkout_page.secure_payment_msg">
+                    Secure payment via Razorpay SSL encrypted.
+                </p>
+            </div>
+        </div>
+    </div>
+    <div id="checkout-toast" class="toast" data-i18n="checkout_page.order_success">Order Created Successfully!</div>
+
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <script src="https://unpkg.com/libphonenumber-js@1.10.44/bundle/libphonenumber-js.min.js"></script>
+    <script src="../js/postalRules.js"></script>
+    <script src="../js/checkout.js?v=2.2"></script>
+</body>
+
+</html>

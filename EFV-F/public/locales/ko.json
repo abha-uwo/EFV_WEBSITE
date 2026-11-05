@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "home": "홈",
+    "about": "소개",
+    "gallery": "갤러리",
+    "marketplace": "마켓플레이스",
+    "blog": "블로그",
+    "blogs": "블로그",
+    "feedback": "피드백",
+    "contact": "문의하기",
+    "admin": "관리자",
+    "my_library": "내 라이브러리",
+    "quit_dashboard": "대시보드로 나가기",
+    "change_location": "위치 변경"
+  }
+}

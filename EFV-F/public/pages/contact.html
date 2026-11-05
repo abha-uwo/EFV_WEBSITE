@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact | EFV™ — Energy Frequency Vibration</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <meta name="description" content="Get in touch with EFV™. We're here to help — send us a message anytime.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <link rel="stylesheet" href="../css/security.css">
+    <link rel="stylesheet" href="../css/faq.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Contact Form Styles — from abha-EFVF */
+        .contact-form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: var(--gold-energy);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 15px;
+            background: rgba(255, 211, 105, 0.05);
+            border: 1px solid rgba(255, 211, 105, 0.2);
+            border-radius: 10px;
+            color: white;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--gold-energy);
+            background: rgba(255, 211, 105, 0.1);
+            box-shadow: 0 0 15px rgba(255, 211, 105, 0.2);
+        }
+
+        #form-message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            display: none;
+            text-align: center;
+        }
+
+        #form-message.success {
+            display: block;
+            background: rgba(46, 213, 115, 0.1);
+            color: #2ed573;
+            border: 1px solid #2ed573;
+        }
+
+        #form-message.error {
+            display: block;
+            background: rgba(255, 71, 87, 0.1);
+            color: #ff4757;
+            border: 1px solid #ff4757;
+        }
+
+        /* Disable hover pop effect for contact card */
+        .contact-form-container .glass-panel:hover {
+            transform: none !important;
+        }
+    </style>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body data-page="contact">
+    <div id="particles-js"></div>
+
+    <!-- Navbar — EFV-Website version with JWT/profile handled by main.js -->
+    <nav>
+        <div class="container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/images/AISA.svg" alt="AISA Logo">
+                <span>EFV<sup>TM</sup></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="marketplace.html">Marketplace</a></li>
+                <li><a href="offers.html" data-i18n="nav.offers">Offers</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                <li><a href="Feedback.html">Feedback</a></li>
+                <li><a href="contact.html" class="active gold-text">Contact</a></li>
+            </ul>
+            <div class="nav-actions">
+                <div id="nav-auth-container"></div>
+                <button class="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contact Header with Signal Pulse Animation -->
+    <header class="section text-center"
+        style="padding-top: 200px; padding-bottom: 30px; position: relative; overflow: hidden;">
+        <div class="signal-container">
+            <div class="signal-wave"></div>
+            <div class="signal-wave"></div>
+            <div class="signal-wave"></div>
+        </div>
+        <div class="container reveal active">
+            <h1 class="gradient-wipe glow-pulse-text"
+                style="font-size: clamp(2.5rem, 6vw, 4.5rem); text-align: center;">GET IN TOUCH</h1>
+            <p class="delay-1"
+                style="color: rgba(248, 249, 250, 0.9); font-size: 1.1rem; margin-top: 25px; text-align: center;">We're
+                here to help. Send us a message anytime.</p>
+        </div>
+    </header>
+
+    <!-- Contact Form -->
+    <section class="section" style="padding-top: 0;">
+        <div class="container">
+            <div class="contact-form-container">
+                <div class="glass-panel">
+                    <form id="contact-form">
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label>Full Name</label>
+                            <input type="text" id="contact-name" required placeholder="Enter your name">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 25px;">
+                            <label>Email Address</label>
+                            <input type="email" id="contact-email" required placeholder="example@email.com">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 35px;">
+                            <label>Your Message</label>
+                            <textarea id="contact-message" rows="5" required
+                                placeholder="How can we help you?"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-gold magnetic" style="width: 100%;">Send Message</button>
+                        <div id="form-message"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section faq-section" id="faq" style="padding-top: 50px;">
+        <div class="container">
+            <div class="text-center mb-40">
+                <h2 class="slide-blur-in" style="font-size: 1.8rem; font-family: 'Cinzel', serif; letter-spacing: 2px;">FREQUENTLY ASKED <span class="gold-text">QUESTIONS</span></h2>
+                <div class="wave-underline" style="margin: 15px auto; width: 60px;"></div>
+                <p style="opacity: 0.7; font-size: 0.95rem;">Understand the impact of the EFV<sup>TM</sup> Framework</p>
+            </div>
+
+            <div class="faq-container reveal">
+                <!-- FAQ Item 1 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What is EFV<sup>TM</sup>?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            EFV<sup>TM</sup> is a powerful framework that helps you understand Energy, Frequency, and Vibration so you can improve your thinking, decisions, and life direction.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Who should read this book?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Anyone who wants to improve their thinking, performance, and life clarity—students, professionals, entrepreneurs, or anyone interested in personal growth.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Why should I read EFV<sup>TM</sup>?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            EFV<sup>TM</sup> helps you upgrade how your mind works, remove confusion, and create a clear path toward success and purpose.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>What will I learn from this book?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            You will learn how the mind works, how energy flows, and how to align your actions with your vision for better results in life.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Is this book difficult to understand?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            No. The concepts are explained in simple and practical language so anyone can understand and apply them.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 6 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How is EFV<sup>TM</sup> different from other self-help books?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            EFV<sup>TM</sup> introduces a new system of thinking that combines science, mindset, and life philosophy into a practical framework.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 7 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Do I need to read Volume 1 before Volume 2?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            It is recommended because Volume 1 builds the foundation, and Volume 2 goes deeper into how the mind operates.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 8 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Can this book help in business and career?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            Yes. EFV<sup>TM</sup> helps you think clearly, make better decisions, and manage energy, which is useful for career and business growth.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 9 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>How long will it take to see results?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            If you apply the ideas in your daily life, you can start noticing changes in how you think and act very quickly.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 10 -->
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>Is EFV<sup>TM</sup> only about spirituality?</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="faq-answer">
+                        <div class="faq-answer-content">
+                            No. EFV<sup>TM</sup> balances practical life, success, and deeper understanding of the mind, making it useful for everyday life.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links footer-explore">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="about.html">About EFV<sup>TM</sup></a></li>
+                        <li><a href="https://uwo24.com/" target="_blank"
+                                rel="noopener noreferrer">About UWO<sup>TM</sup></a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="/terms">Terms &amp; Conditions</a></li>
+                        <li><a href="marketplace.html">Marketplace</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                        <li><a href="partner-verification.html"
+                                style="color: var(--gold-energy); font-weight: 700;">Partner Portal</a></li>
+                        <li><a href="Feedback.html">Feedback</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="links.html" style="color: var(--gold-energy); font-weight: 700;">Linktree</a></li>
+                        <li><a href="https://uwo24.com/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-info">
+                    <div class="logo footer-logo">
+                        <img src="../assets/images/AISA.svg" alt="EFV Logo">
+                        <span>EFV<sup>TM</sup></span>
+                    </div>
+                    <p>World's first EFV<sup>TM</sup> system. Designed for better living.</p>
+                </div>
+                <div class="footer-links footer-connect">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/profile.php?id=61585343488735" class="social-icon-link"
+                            aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/FB.svg" alt="Facebook"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.instagram.com/efv_framework/" class="social-icon-link"
+                            aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Insta (1).svg" alt="Instagram"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.linkedin.com/company/efv-framework/" class="social-icon-link"
+                            aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Linkedin.svg" alt="LinkedIn"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.threads.com/@efv_framework" class="social-icon-link" aria-label="Threads"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Threads.svg" alt="Threads"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://x.com/EfvFrame_work" class="social-icon-link" aria-label="X (Twitter)"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/x.png" alt="X (Twitter)"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.youtube.com/@efv_framework" class="social-icon-link" aria-label="YouTube"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/YT (1).svg" alt="YouTube"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://in.pinterest.com/EFV_Framework/" class="social-icon-link"
+                            aria-label="Pinterest" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/pinterset.png" alt="Pinterest"
+                                style="width: 26px; height: 26px;">
+                        </a>
+                        <a href="https://wa.me/917610190909" class="social-icon-link" aria-label="WhatsApp"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Whatsapp.svg" alt="WhatsApp"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.reddit.com/user/Ok_Entry1869/" class="social-icon-link" aria-label="Reddit" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/reddit.svg" alt="Reddit" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="mailto:efv@uwo24.com" class="social-icon-link" aria-label="Gmail" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/gmail.png" alt="Gmail" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://medium.com/@efvframework" class="social-icon-link" aria-label="Medium" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/medium.png" alt="Medium" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease; border-radius: 50%;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup> is a UWO<sup>TM</sup> Innovation.
+            </div>
+        </div>
+    </footer>
+
+
+    <!-- Contact Success Modal -->
+    <div class="modal-overlay" id="contact-success-modal">
+        <div class="modal-card" style="text-align: center;">
+            <div class="success-icon-container">
+                <div class="success-icon-circle">
+                    <i class="fas fa-check"></i>
+                </div>
+            </div>
+            <h2 class="gold-text" style="font-family: 'Cinzel', serif; letter-spacing: 2px; margin-bottom: 15px;">
+                MESSAGE SENT!</h2>
+            <p style="opacity: 0.8; line-height: 1.6; margin-bottom: 30px;">Your inquiry has been successfully
+                transmitted to the EFV<sup>TM</sup> executive team. We will calibrate our response and get back to you shortly.</p>
+            <button class="btn btn-gold" id="close-success-modal" style="width: 100%;">CONTINUE</button>
+        </div>
+    </div>
+
+    <script src="../js/particles.js"></script>
+    <script src="../js/api-config.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="../js/cart.js?v=22.5"></script>
+    <script src="../js/chatbot.js?v=9.0"></script>
+    <script src="../js/contact.js"></script>
+    <script src="../js/faq.js"></script>
+    <script src="../js/security.js"></script>
+</body>
+
+</html>

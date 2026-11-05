@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | EFV™</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/dashboard-v2.css">
+    <link rel="stylesheet" href="../css/admin-modal.css">
+    <link rel="stylesheet" href="../css/reader.css">
+    <link rel="stylesheet" href="../css/audiobook.css">
+    <link rel="stylesheet" href="../css/security.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- PDF.js for Library Access -->
+    <script src="../js/pdfjs/pdf.min.js"></script>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body class="dashboard-body">
+
+    <div class="dashboard-container">
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar glass-panel">
+            <div class="sidebar-header">
+                <a href="../index.html" class="logo">
+                    <img src="../assets/images/AISA.svg" alt="EFV Logo">
+                    <span>EFV<sup>TM</sup></span>
+                </a>
+                <div class="nav-actions" style="margin-left: auto; margin-right: 15px;"></div>
+                <button class="dashboard-hamburger" id="dashboard-hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+
+            <!-- User Profile Summary -->
+            <div class="user-profile-sm">
+                <div class="avatar-container">
+                    <img src="https://ui-avatars.com/api/?name=User&background=D4AF37&color=fff" alt="User Avatar"
+                        id="sidebar-avatar"
+                        onerror="this.src='https://ui-avatars.com/api/?name=User&background=D4AF37&color=fff'">
+                    <div class="status-indicator online"></div>
+                </div>
+                <div class="user-info">
+                    <h4 id="sidebar-user-name">Guest User</h4>
+                    <span class="membership-badge" id="sidebar-membership">Standard</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="marketplace.html" class="nav-item" id="nav-back-to-shop">
+                    <i class="fas fa-shopping-bag"></i> <span data-i18n="profile_page.sidebar.browse_store">Browse Store</span>
+                </a>
+                <button class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-th-large"></i> <span data-i18n="profile_page.sidebar.dashboard">Dashboard</span>
+                </button>
+                <button class="nav-item" data-tab="cart">
+                    <i class="fas fa-shopping-cart"></i> <span data-i18n="profile_page.sidebar.cart_items">Cart Items</span>
+                    <span id="sidebar-cart-count" class="badge hidden">0</span>
+                </button>
+                <button class="nav-item" data-tab="orders">
+                    <i class="fas fa-box-open"></i> <span data-i18n="profile_page.sidebar.my_orders">My Orders</span>
+                </button>
+                <button class="nav-item" data-tab="library">
+                    <i class="fas fa-book-reader"></i> <span data-i18n="profile_page.sidebar.my_library">My Library</span>
+                </button>
+                <button class="nav-item" data-tab="notifications">
+                    <i class="fas fa-bell"></i> <span data-i18n="profile_page.sidebar.notifications">Notifications</span>
+                    <span id="unread-notifications-count" class="badge red hidden">0</span>
+                </button>
+                <button class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i> <span data-i18n="profile_page.sidebar.account_settings">Account Settings</span>
+                </button>
+                <button class="nav-item" data-tab="support">
+                    <i class="fas fa-headset"></i> <span data-i18n="profile_page.sidebar.help_support">Help & Support</span>
+                </button>
+
+                <!-- Admin Items -->
+                <button class="nav-item hidden" data-tab="admin" id="sidebar-admin-btn">
+                    <i class="fas fa-user-shield"></i> <span data-i18n="profile_page.sidebar.admin_portal">Admin Portal</span>
+                </button>
+                <button class="nav-item admin-nav hidden" data-tab="admin-orders">
+                    <i class="fas fa-shopping-basket"></i> <span data-i18n="profile_page.sidebar.orders_management">Orders Management</span>
+                </button>
+                <button class="nav-item admin-nav hidden" data-tab="admin-products">
+                    <i class="fas fa-book-medical"></i> <span data-i18n="profile_page.sidebar.product_management">Product Management</span>
+                </button>
+                <button class="nav-item admin-nav hidden" onclick="window.location.href='/admin/country-pricing'">
+                    <i class="fas fa-globe"></i> <span>Country Pricing Management</span>
+                </button>
+                <button class="nav-item admin-nav hidden" data-tab="admin-customers">
+                    <i class="fas fa-users-cog"></i> <span data-i18n="profile_page.sidebar.customers">Customers</span>
+                </button>
+                <button class="nav-item admin-nav hidden" data-tab="admin-payments">
+                    <i class="fas fa-file-invoice-dollar"></i> <span data-i18n="profile_page.sidebar.payments">Payments</span>
+                </button>
+                <button class="nav-item admin-nav hidden" data-tab="admin-shipments">
+                    <i class="fas fa-shipping-fast"></i> <span data-i18n="profile_page.sidebar.shipments">Shipments</span>
+                </button>
+                <button class="nav-item admin-nav hidden" data-tab="admin-coupons">
+                    <i class="fas fa-ticket-alt"></i> <span data-i18n="profile_page.sidebar.coupons">Coupons</span>
+                </button>
+                <button class="nav-item admin-nav hidden" data-tab="admin-support">
+                    <i class="fas fa-headset"></i> <span data-i18n="profile_page.sidebar.user_support">User Support</span>
+                </button>
+                <a href="partners.html" class="nav-item admin-nav hidden" id="sidebar-partners-btn">
+                    <i class="fas fa-handshake"></i> <span data-i18n="profile_page.sidebar.partner_marketing">Partner Marketing</span>
+                </a>
+
+
+                <div style="padding-top: 30px; margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.05);">
+                    <button class="nav-item" id="sidebar-logout-btn-v2"
+                        style="color: #ff4d4d; width: 100%; text-align: left;" onclick="logoutAction()">
+                        <i class="fas fa-sign-out-alt"></i> <span data-i18n="profile_page.sidebar.sign_out">Sign Out</span>
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- RIGHT CONTENT AREA -->
+        <main class="main-content">
+
+            <!-- DASHBOARD OVERVIEW TAB -->
+            <section id="dashboard" class="content-section active">
+                <header class="content-header">
+                    <div class="welcome-text">
+                        <h1 class="gradient-text"><span data-i18n="profile_page.welcome_back">Welcome back,</span> <span class="gold-text"
+                                id="user-name-display">User</span></h1>
+                        <p data-i18n="profile_page.journey_continues">Your alignment journey continues here</p>
+                    </div>
+                    <div class="date-display" id="current-date"></div>
+                </header>
+
+                <div class="stats-grid">
+                    <div class="stat-card glass-panel shine-hover">
+                        <div class="icon-box gold"><i class="fas fa-book"></i></div>
+                        <div class="stat-info">
+                            <h3 data-i18n="profile_page.my_collection">My Collection</h3>
+                            <span id="stat-total-digital" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel shine-hover">
+                        <div class="icon-box blue"><i class="fas fa-shopping-bag"></i></div>
+                        <div class="stat-info">
+                            <h3 data-i18n="profile_page.total_orders">Total Orders</h3>
+                            <span id="stat-total-orders" class="stat-value">0</span>
+                        </div>
+                    </div>
+                    <div class="stat-card glass-panel shine-hover">
+                        <div class="icon-box green"><i class="fas fa-coins"></i></div>
+                        <div class="stat-info">
+                            <h3 data-i18n="profile_page.total_spent">Total Spent</h3>
+                            <span id="stat-total-spent" class="stat-value">?0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid-1" style="max-width: 900px; margin: 0 auto;">
+                    <div class="glass-panel" style="padding: 30px;">
+                        <h3 style="margin: 0 0 20px;"><i class="fas fa-book-reader gold-text"></i> <span data-i18n="profile_page.continue_reading">Continue Reading</span></h3>
+                        <div id="continue-reading-content-v2">
+                            <p class="fade-text" data-i18n="profile_page.start_reading_desc">Start your reading journey by browsing the store.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CART ITEMS TAB -->
+            <section id="cart" class="content-section">
+                <!-- Cart structure from admin-dashboard for consistency -->
+                <header class="content-header">
+                    <div>
+                        <h1><span data-i18n="profile_page.shopping">Shopping</span> <span class="gold-text" data-i18n="profile_page.cart">Cart</span></h1>
+                        <p id="cart-item-count-text">0 items in your cart</p>
+                    </div>
+                </header>
+                <div class="cart-layout-grid" style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
+                    <div class="cart-items-panel">
+                        <div id="dashboard-cart-list" class="items-list"></div>
+                        <div id="cart-empty-state" class="empty-state hidden">
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3 data-i18n="profile_page.cart_empty">Your cart is empty</h3>
+                            <a href="marketplace.html" class="btn btn-gold" data-i18n="profile_page.browse_marketplace">Browse Marketplace</a>
+                        </div>
+                    </div>
+                    <div class="cart-summary-panel">
+                        <div class="glass-panel checkout-summary-panel">
+                            <h3 data-i18n="profile_page.order_summary">Order Summary</h3>
+                            <div class="summary-details">
+                                <div class="summary-row"><span data-i18n="profile_page.subtotal">Subtotal</span><span id="cart-subtotal">?0.00</span>
+                                </div>
+                                <div class="summary-row"><span data-i18n="profile_page.tax">Tax (GST)</span><span id="cart-tax">?0.00</span></div>
+                                <div class="summary-row total"><span data-i18n="profile_page.grand_total">Grand Total</span><span
+                                        id="cart-grand-total">?0.00</span></div>
+                            </div>
+                            <button class="btn btn-gold full-width" id="proceed-to-checkout-btn" data-i18n="profile_page.proceed_checkout">Proceed to
+                                Checkout</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MY ORDERS TAB -->
+            <section id="orders" class="content-section">
+                <header class="content-header"
+                    style="justify-content: space-between; align-items: center; display: flex; margin-bottom: 20px;">
+                    <div>
+                        <h1><span data-i18n="profile_page.my">My</span> <span class="gold-text" data-i18n="profile_page.orders">Orders</span></h1>
+                        <p data-i18n="profile_page.orders_desc">Track your orders and download invoices</p>
+                    </div>
+                    <button class="btn btn-outline small" onclick="syncOrdersStatus()"><i class="fas fa-sync-alt"></i>
+                        <span data-i18n="profile_page.sync">Sync</span></button>
+                </header>
+
+                <style>
+                    .order-filters {
+                        display: flex;
+                        gap: 12px;
+                        margin-bottom: 25px;
+                        overflow-x: auto;
+                        padding-bottom: 5px;
+                    }
+                    .filter-pill {
+                        background: rgba(255, 255, 255, 0.05);
+                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        color: rgba(255, 255, 255, 0.6);
+                        padding: 8px 20px;
+                        border-radius: 50px;
+                        font-size: 0.85rem;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        white-space: nowrap;
+                        font-weight: 500;
+                    }
+                    .filter-pill:hover {
+                        background: rgba(255, 255, 255, 0.1);
+                        color: #fff;
+                    }
+                    .filter-pill.active {
+                        background: var(--gold-energy);
+                        border-color: var(--gold-energy);
+                        color: #000;
+                        font-weight: 700;
+                        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+                    }
+                </style>
+
+                <div class="order-filters">
+                    <div class="filter-pill active" onclick="updateOrderFilter('all', this)" data-i18n="profile_page.filter_all">All Orders</div>
+                    <div class="filter-pill" onclick="updateOrderFilter('active', this)" data-i18n="profile_page.filter_active">Active</div>
+                    <div class="filter-pill" onclick="updateOrderFilter('shipped', this)" data-i18n="profile_page.filter_shipped">Shipped</div>
+                    <div class="filter-pill" onclick="updateOrderFilter('delivered', this)" data-i18n="profile_page.filter_delivered">Delivered</div>
+                    <div class="filter-pill" onclick="updateOrderFilter('cancelled', this)" data-i18n="profile_page.filter_cancelled">Cancelled</div>
+                </div>
+                <div id="dashboard-orders-list" class="orders-list"></div>
+                <div id="orders-empty-state" class="empty-state hidden">
+                    <div style="text-align: center; padding: 60px 20px; opacity: 0.5;">
+                        <div
+                            style="width: 80px; height: 80px; background: rgba(255,211,105,0.05); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; border: 1px solid rgba(255,211,105,0.1);">
+                            <i class="fas fa-box-open gold-text" style="font-size: 2rem;"></i>
+                        </div>
+                        <h3 style="font-family: 'Cinzel', serif; letter-spacing: 2px;" data-i18n="profile_page.no_orders">No orders found</h3>
+                        <p style="font-size: 0.85rem; max-width: 300px; margin: 10px auto;" data-i18n="profile_page.no_orders_desc">Your journey awaits.
+                            Discover our collection in the marketplace.</p>
+                        <a href="marketplace.html" class="btn btn-gold small"
+                            style="margin-top: 20px; display: inline-flex; align-items: center; gap: 8px;">
+                            <i class="fas fa-shopping-bag"></i> <span data-i18n="profile_page.browse_store">Browse Store</span>
+                        </a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- MY LIBRARY TAB -->
+            <section id="library" class="content-section">
+                <header class="content-header"
+                    style="justify-content: space-between; align-items: center; display: flex;">
+                    <div>
+                        <h1><span data-i18n="profile_page.my">My</span> <span class="gold-text" data-i18n="profile_page.library">Library</span></h1>
+                        <p data-i18n="profile_page.library_desc">Your digital collection</p>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-danger small" onclick="deleteAllLibraryItems()"
+                            style="width: auto; padding: 0 15px; font-weight: 700; background: rgba(255, 77, 77, 0.15); border: 1px solid rgba(255, 77, 77, 0.4); color: #ff6b6b;">
+                            <i class="fas fa-trash-alt"></i> <span data-i18n="profile_page.delete_all">DELETE ALL</span>
+                        </button>
+                        <button class="btn btn-outline small" onclick="syncLibraryWithBackend()"><i
+                                class="fas fa-sync-alt"></i> <span data-i18n="profile_page.sync">Sync</span></button>
+                    </div>
+                </header>
+
+                <!-- Library Sub-Tabs -->
+                <div class="library-sub-tabs">
+                    <button class="library-sub-tab active" data-library-tab="all" onclick="filterLibraryView('all')">
+                        <i class="fas fa-layer-group"></i> <span data-i18n="profile_page.lib_tab_all">All</span>
+                    </button>
+                    <button class="library-sub-tab" data-library-tab="ebooks" onclick="filterLibraryView('ebooks')">
+                        <i class="fas fa-book"></i> <span data-i18n="profile_page.lib_tab_ebooks">E-Books</span>
+                    </button>
+                    <button class="library-sub-tab" data-library-tab="audiobooks"
+                        onclick="filterLibraryView('audiobooks')">
+                        <i class="fas fa-headphones"></i> <span data-i18n="profile_page.lib_tab_audiobooks">Audiobooks</span>
+                    </button>
+                    <button class="library-sub-tab" data-library-tab="vol1" onclick="filterLibraryView('vol1')">
+                        <i class="fas fa-bookmark"></i> Volume 1
+                    </button>
+                    <button class="library-sub-tab" data-library-tab="vol2" onclick="filterLibraryView('vol2')">
+                        <i class="fas fa-bookmark"></i> Volume 2
+                    </button>
+                </div>
+
+                <!-- E-Books / All grid -->
+                <div id="dashboard-library-list" class="items-grid"></div>
+
+                <!-- Audiobooks grid -->
+                <div id="dashboard-audiobooks-list" class="items-grid" style="display:none;"></div>
+
+                <div id="library-empty-state" class="empty-state hidden">
+                    <i class="fas fa-book-open"></i>
+                    <h3 data-i18n="profile_page.library_empty">Library is empty</h3>
+                </div>
+            </section>
+
+            <!-- NOTIFICATIONS TAB -->
+            <section id="notifications" class="content-section">
+                <header class="content-header">
+                    <h1><span data-i18n="profile_page.account">Account</span> <span class="gold-text" data-i18n="profile_page.notifications_title">Notifications</span></h1>
+                </header>
+                <div id="notifications-list" class="notifications-list"></div>
+                <div id="notifications-empty-state" class="empty-state hidden">
+                    <i class="fas fa-bell-slash"></i>
+                    <h3 data-i18n="profile_page.no_notifications">No new notifications</h3>
+                </div>
+            </section>
+
+            <!-- SETTINGS TAB -->
+            <section id="settings" class="content-section">
+                <header class="content-header">
+                    <h1><span data-i18n="profile_page.account">Account</span> <span class="gold-text" data-i18n="profile_page.center">Center</span></h1>
+                    <p data-i18n="profile_page.settings_desc">Manage your profile and security</p>
+                </header>
+                <div class="settings-tabs" style="margin-bottom: 30px;">
+                    <button class="settings-tab-btn active" data-settings-tab="profile-tab" data-i18n="profile_page.profile_tab">Profile</button>
+                    <button class="settings-tab-btn" data-settings-tab="security-tab" data-i18n="profile_page.security_tab">Security</button>
+                    <button class="settings-tab-btn" data-settings-tab="addresses-tab" data-i18n="profile_page.addresses_tab">Addresses</button>
+                </div>
+                <div class="settings-content-area">
+                    <div id="profile-tab" class="settings-pane active">
+                        <div class="settings-card glass-panel">
+                            <form id="profile-form-v2"
+                                style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                <div class="form-group"><label data-i18n="profile_page.full_name">Full Name</label><input type="text" id="settings-name-v2"
+                                         class="glass-input"></div>
+                                <div class="form-group"><label data-i18n="profile_page.email_address">Email Address</label><input type="email"
+                                        id="settings-email-v2" readonly class="glass-input" style="opacity: 0.7;"></div>
+                                <div class="form-group"><label data-i18n="profile_page.phone_number">Phone Number</label><input type="tel"
+                                        id="settings-phone-v2" class="glass-input"></div>
+                                <button type="submit" class="btn btn-gold"
+                                    style="grid-column: span 2; width: 200px;" data-i18n="profile_page.save_changes">Save Changes</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div id="security-tab" class="settings-pane" style="display: none;">
+                        <div class="settings-card glass-panel" style="max-width: 500px;">
+                            <h3 style="margin-bottom: 25px; color: var(--gold-text);"><i class="fas fa-shield-alt"></i>
+                                <span data-i18n="profile_page.security_settings">Security Settings</span></h3>
+
+                            <form id="change-password-form" style="display: flex; flex-direction: column; gap: 18px;">
+                                <div class="form-group">
+                                    <label
+                                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; opacity: 0.8;" data-i18n="profile_page.current_password">Current
+                                        Password</label>
+                                    <input type="password" id="current-password" class="glass-input" required
+                                        placeholder="********" data-i18n-placeholder="profile_page.password_placeholder">
+                                </div>
+                                <div class="form-group">
+                                    <label
+                                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; opacity: 0.8;" data-i18n="profile_page.new_password">New
+                                        Password</label>
+                                    <input type="password" id="new-password" class="glass-input" required
+                                        placeholder="Minimum 6 characters" data-i18n-placeholder="profile_page.new_password_placeholder">
+                                </div>
+                                <div class="form-group">
+                                    <label
+                                        style="display: block; margin-bottom: 8px; font-size: 0.9rem; opacity: 0.8;" data-i18n="profile_page.confirm_password">Confirm
+                                        New Password</label>
+                                    <input type="password" id="confirm-password" class="glass-input" required
+                                        placeholder="********" data-i18n-placeholder="profile_page.password_placeholder">
+                                </div>
+
+                                <div style="margin-top: 10px; display: flex; gap: 15px; align-items: center;">
+                                    <button type="submit" class="btn btn-gold" id="change-pass-btn" data-i18n="profile_page.update_password">Update
+                                        Password</button>
+                                </div>
+                            </form>
+
+                            <div
+                                style="margin-top: 40px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.05);">
+                                <h4 style="margin-bottom: 15px; color: #ff4d4d; font-size: 0.9rem;" data-i18n="profile_page.account_session">Account Session</h4>
+                                <button class="btn btn-outline" onclick="logoutAction()"
+                                    style="border-color: rgba(255, 77, 77, 0.3); color: #ff4d4d;">
+                                    <i class="fas fa-sign-out-alt"></i> <span data-i18n="profile_page.sign_out_device">Sign Out from this Device</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="addresses-tab" class="settings-pane" style="display: none;">
+                        <div class="settings-card glass-panel">
+                            <div
+                                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                                <h3 data-i18n="profile_page.addresses">Addresses</h3>
+                                <button class="btn btn-gold small" onclick="window.openAddressModal()" data-i18n="profile_page.add_new">+ Add New</button>
+                            </div>
+                            <div id="saved-addresses-grid-v2"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- HELP & SUPPORT TAB -->
+            <section id="support" class="content-section">
+                <header class="content-header">
+                    <h1><span data-i18n="profile_page.help">Help</span> & <span class="gold-text" data-i18n="profile_page.support">Support</span></h1>
+                </header>
+                <div class="settings-grid">
+                    <div class="settings-card glass-panel">
+                        <h3 data-i18n="profile_page.send_message">Send a Message</h3>
+                        <form id="user-support-form" style="display: flex; flex-direction: column; gap: 15px;">
+                            <input type="text" id="support-subject" placeholder="Subject" required class="glass-input" data-i18n-placeholder="profile_page.subject_placeholder">
+                            <textarea id="support-message" placeholder="Message" required class="glass-input"
+                                rows="5" data-i18n-placeholder="profile_page.message_placeholder"></textarea>
+                            <button type="submit" class="btn btn-gold full-width" id="send-support-btn" data-i18n="profile_page.send_message_btn">Send
+                                Message</button>
+                        </form>
+                    </div>
+                    <div class="settings-card glass-panel">
+                        <h3 data-i18n="profile_page.direct_support">Direct Support</h3>
+                        <button class="btn btn-outline full-width"
+                            onclick="location.href='mailto:support@efv.com'" data-i18n="profile_page.email_us">Email Us</button>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="margin-top: 30px; padding: 25px;">
+                    <h3 style="margin-bottom: 20px;"><i class="fas fa-history gold-text"></i> <span data-i18n="profile_page.my_inquiries">My Inquiries</span></h3>
+                    <div id="user-support-history">
+                        <p class="fade-text" data-i18n="profile_page.no_inquiries">No previous inquiries found.</p>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+
+
+    <!-- ALL DASHBOARD MODALS (Placed here for proper fixed positioning) -->
+
+    <!-- Order Detail Modal -->
+    <div id="order-detail-modal" class="reader-overlay" style="display: none; z-index: 100000;">
+        <div style="position: fixed; top: 0; left: 0; right: 0; z-index: 100001; background: rgba(8,10,16,0.97); border-bottom: 1px solid rgba(255,211,105,0.15); padding: 14px 24px; display: flex; align-items: center; justify-content: space-between; backdrop-filter: blur(20px);">
+            <div class="reader-title" style="font-size: 0.85rem; letter-spacing: 2px;">
+                <i class="fas fa-box-open gold-text"></i> <span data-i18n="profile_page.order_details">ORDER DETAILS</span>
+                <span id="modal-order-id" style="color: rgba(255,211,105,0.8); margin-left: 10px; font-size: 0.75rem;"></span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span id="modal-order-date" style="font-size: 0.72rem; opacity: 0.4;"></span>
+                <button class="btn-icon" onclick="closeOrderDetailModal()" style="width:32px; height:32px; border-radius:50%; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); display:flex; align-items:center; justify-content:center;">
+                    <i class="fas fa-times" style="font-size:0.8rem;"></i>
+                </button>
+            </div>
+        </div>
+        <div class="reader-canvas-container" style="padding: 80px 20px 30px; overflow-y: auto; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh;">
+            <div style="width: 100%; max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 14px;">
+                <div class="glass-panel" id="modal-tracking-panel" style="padding: 20px; border-radius: 16px; border-color: rgba(255,211,105,0.12);">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:18px;">
+                        <div style="width:30px; height:30px; background:rgba(255,211,105,0.1); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fas fa-route gold-text" style="font-size:0.8rem;"></i>
+                        </div>
+                        <span style="font-size:0.72rem; font-weight:700; letter-spacing:2px; opacity:0.6; text-transform:uppercase;" data-i18n="profile_page.tracking_status">Tracking Status</span>
+                    </div>
+                    <div id="modal-order-timeline" class="tracking-timeline-v2"></div>
+                </div>
+                <div class="glass-panel" style="padding: 20px; border-radius: 16px; border-color: rgba(255,211,105,0.12);">
+                    <div style="display:flex; align-items:center; gap:10px; margin-bottom:16px;">
+                        <div style="width:30px; height:30px; background:rgba(255,211,105,0.1); border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            <i class="fas fa-shopping-bag gold-text" style="font-size:0.8rem;"></i>
+                        </div>
+                        <span style="font-size:0.72rem; font-weight:700; letter-spacing:2px; opacity:0.6; text-transform:uppercase;" data-i18n="profile_page.order_items">Order Items</span>
+                    </div>
+                    <div id="modal-order-items" style="display: flex; flex-direction: column; gap: 10px;"></div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div class="glass-panel" style="padding: 18px; border-radius: 16px; border-color: rgba(255,211,105,0.12);">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+                            <div style="width:28px; height:28px; background:rgba(255,211,105,0.1); border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                <i class="fas fa-receipt gold-text" style="font-size:0.75rem;"></i>
+                            </div>
+                            <span style="font-size:0.65rem; font-weight:700; letter-spacing:1.5px; opacity:0.5; text-transform:uppercase;" data-i18n="profile_page.payment">Payment</span>
+                        </div>
+                        <div style="display:flex; flex-direction:column; gap:8px; font-size:0.8rem;">
+                            <div style="display:flex; justify-content:space-between; opacity:0.6;">
+                                <span data-i18n="profile_page.subtotal">Subtotal</span> <span id="modal-subtotal">?0</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; opacity:0.6;">
+                                <span data-i18n="profile_page.shipping">Shipping</span> <span style="color:#4CAF50; font-weight:600;">FREE</span>
+                            </div>
+                            <div id="modal-discount-row" style="display:none; justify-content:space-between; color:#4CAF50; font-weight:600;">
+                                <span id="modal-discount-label">Offer Discount</span> <span id="modal-discount">-₹0.00</span>
+                            </div>
+                            <div style="height:1px; background:rgba(255,255,255,0.07); margin:4px 0;"></div>
+                            <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--gold-text);">
+                                <span data-i18n="profile_page.total">Total</span> <span id="modal-total">?0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="glass-panel" style="padding: 18px; border-radius: 16px; border-color: rgba(255,211,105,0.12);">
+                        <div style="display:flex; align-items:center; gap:8px; margin-bottom:14px;">
+                            <div style="width:28px; height:28px; background:rgba(255,211,105,0.1); border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                <i class="fas fa-map-marker-alt gold-text" style="font-size:0.75rem;"></i>
+                            </div>
+                            <span style="font-size:0.65rem; font-weight:700; letter-spacing:1.5px; opacity:0.5; text-transform:uppercase;" data-i18n="profile_page.ship_to">Ship To</span>
+                        </div>
+                        <div id="modal-shipping-address" style="font-size:0.78rem; line-height:1.7; opacity:0.8;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- CHECKOUT OVERLAY -->
+    <div id="checkout-overlay" class="reader-overlay" style="display: none; z-index: 100000;">
+        <div class="reader-toolbar glass-panel">
+            <div class="reader-title"><i class="fas fa-shield-check gold-text"></i> <span data-i18n="profile_page.secure_checkout">Secure Checkout</span></div>
+            <button class="btn-icon" onclick="closeCheckout()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="reader-canvas-container" style="display: flex; justify-content: center; align-items: flex-start; padding-top: 95px; padding-bottom: 40px; overflow-y: auto;">
+            <div class="checkout-container step-1" id="checkout-container-v2" style="width: 95%; display: grid; gap: 20px;">
+                <div class="checkout-steps-col">
+                    <div id="checkout-step-address" class="checkout-step-card glass-panel active" style="padding: 20px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                            <h3 style="margin: 0;"><span class="step-num">1</span> <span data-i18n="profile_page.select_address">Select Delivery Address</span></h3>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn btn-outline small" onclick="window.skipAddressStep()"><i class="fas fa-edit"></i> <span data-i18n="profile_page.fill_manually">Fill Manually</span></button>
+                                <button class="btn btn-gold small" onclick="window.openAddressModal()"><i class="fas fa-plus"></i> <span data-i18n="profile_page.add_new">Add New</span></button>
+                            </div>
+                        </div>
+                        <div id="checkout-address-list" class="checkout-address-grid"></div>
+                        <div style="margin-top: 30px; text-align: right;">
+                            <button id="btn-confirm-address" class="btn btn-gold" onclick="continueToSummary()" disabled data-i18n="profile_page.deliver_selected">Deliver to Selected Address</button>
+                        </div>
+                    </div>
+                    <div id="checkout-step-summary" class="checkout-step-card glass-panel" style="padding: 20px; display: none;">
+                        <h3 style="margin-bottom: 15px;"><span class="step-num">2</span> <span data-i18n="profile_page.order_summary">Order Summary</span></h3>
+                        <div id="checkout-items-summary" class="summary-items-list"></div>
+                        <div class="delivery-address-preview" style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h5 style="color: var(--gold-text); margin-bottom: 10px;" data-i18n="profile_page.shipping_to">Shipping To:</h5>
+                            <p id="selected-address-preview" style="font-size: 0.9rem; opacity: 0.8; margin: 0;"></p>
+                        </div>
+                        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+                            <button class="btn btn-outline" onclick="backToAddress()" data-i18n="profile_page.back">Back</button>
+                            <button class="btn btn-gold" onclick="proceedToPayment()" data-i18n="profile_page.confirm_pay">Confirm & Pay Now</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="checkout-pricing-col">
+                    <div class="glass-panel pricing-card" style="padding: 15px; position: sticky; top: 0;">
+                        <h4 style="margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;" data-i18n="profile_page.payment_details">Payment Details</h4>
+                        <div class="price-rows" style="display: flex; flex-direction: column; gap: 12px;">
+                            <div style="display: flex; justify-content: space-between; opacity: 0.7;">
+                                <span data-i18n="profile_page.cart_subtotal">Cart Subtotal</span> <span id="chk-subtotal">?0.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; opacity: 0.7;">
+                                <span data-i18n="profile_page.delivery_charges">Delivery Charges</span> <span style="color: #4CAF50;">FREE</span>
+                            </div>
+                            <div id="chk-discount-row" style="display: none; justify-content: space-between; color: #4CAF50; font-weight: 600;">
+                                <span id="chk-discount-label">Offer Discount</span> <span id="chk-discount">-₹0.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; opacity: 0.7;">
+                                <span data-i18n="profile_page.tax_gst">Tax (GST 18%)</span> <span id="chk-tax">₹0.00</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.1); font-weight: 800; font-size: 1.2rem; color: var(--gold-text);">
+                                <span data-i18n="profile_page.total_payable">Total Payable</span> <span id="chk-total">?0.00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <!-- <script src="https://checkout.razorpay.com/v1/checkout.js"></script> -->
+    <script src="../js/api-config.js"></script>
+    <script src="../js/postalRules.js"></script>
+    <script src="../js/profile.js"></script>
+    <script src="../js/security.js"></script>
+
+    <!-- Addresses Modal -->
+    <div id="address-modal" class="resume-modal-overlay" style="display: none;">
+        <div class="resume-modal glass-panel">
+            <h2 id="address-modal-title" data-i18n="profile_page.add_address_title">ADD NEW ADDRESS</h2>
+            <form id="address-form">
+                <input type="hidden" id="address-id">
+                <input type="hidden" id="addr-country">
+
+                <div class="modal-form-row">
+                    <input type="text" id="addr-name" placeholder="Full Name" required class="glass-input" data-i18n-placeholder="profile_page.full_name">
+                    <!-- Phone with country code prefix automatically fetched from user's selected country -->
+                    <div style="display:flex; gap:6px; flex:1;">
+                        <input type="text" id="addr-phone-code" value="+91" placeholder="+91" readonly
+                            class="glass-input" style="width:70px; flex-shrink:0; opacity:0.9; cursor:default; text-align:center; font-weight:700; color:var(--gold-text); background:rgba(212,175,55,0.08);">
+                        <input type="tel" id="addr-phone" placeholder="Mobile Number" required class="glass-input"
+                            style="flex:1;" data-i18n-placeholder="profile_page.mobile_number">
+                    </div>
+                </div>
+                <div class="modal-form-row three-col">
+                    <input type="text" id="addr-pincode" placeholder="Pincode" required class="glass-input" data-i18n-placeholder="profile_page.pincode">
+                    <input type="text" id="addr-city" placeholder="City" required class="glass-input" data-i18n-placeholder="profile_page.city">
+                    <input type="text" id="addr-state" placeholder="State" required class="glass-input" data-i18n-placeholder="profile_page.state">
+                </div>
+                <input type="text" id="addr-house" placeholder="House No / Building Name" required class="glass-input" data-i18n-placeholder="profile_page.house_placeholder">
+                <input type="text" id="addr-area" placeholder="Area / Street / Locality" required class="glass-input" data-i18n-placeholder="profile_page.area_placeholder">
+                <input type="text" id="addr-landmark" placeholder="Landmark (Optional)" class="glass-input" data-i18n-placeholder="profile_page.landmark_placeholder">
+                <div class="address-type-group">
+                    <label><input type="radio" name="addr-type" value="Home" checked> <span data-i18n="profile_page.home">Home</span></label>
+                    <label><input type="radio" name="addr-type" value="Work"> <span data-i18n="profile_page.work">Work</span></label>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="addr-default">
+                    <label for="addr-default" data-i18n="profile_page.set_default">Set as default address</label>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="btn btn-gold" data-i18n="profile_page.save_address">Save Address</button>
+                    <button type="button" onclick="closeAddressModal()" class="btn btn-outline" data-i18n="profile_page.cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- RETURN MODAL -->
+    <div id="return-modal" class="resume-modal-overlay" style="display: none;">
+        <div class="resume-modal glass-panel" style="max-width: 500px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="margin: 0; color: var(--gold-text);"><i class="fas fa-undo"></i> <span data-i18n="profile_page.return_request">Return Request</span></h3>
+                <button class="btn-icon" onclick="closeReturnModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <form id="return-request-form" style="display: flex; flex-direction: column; gap: 15px;">
+                <input type="hidden" id="return-order-id">
+                <input type="text" id="display-order-id" class="glass-input" readonly style="opacity: 0.7;">
+                <div id="return-items-list" class="glass-panel" style="padding: 10px; max-height: 150px; overflow-y: auto;"></div>
+                <select id="return-reason" class="glass-input" required>
+                    <option value="" disabled selected data-i18n="profile_page.select_reason">Select a reason</option>
+                    <option value="Damaged product" data-i18n="profile_page.reason_damaged">Damaged product</option>
+                    <option value="Wrong product received" data-i18n="profile_page.reason_wrong">Wrong product received</option>
+                    <option value="Quality issue" data-i18n="profile_page.reason_quality">Quality issue</option>
+                    <option value="Other" data-i18n="profile_page.reason_other">Other</option>
+                </select>
+                <input type="file" id="return-proof" class="glass-input" accept="image/*">
+                <div style="display: flex; gap: 10px; margin-top: 10px;">
+                    <button type="submit" class="btn btn-gold" style="flex: 2;" data-i18n="profile_page.submit">Submit</button>
+                    <button type="button" onclick="closeReturnModal()" class="btn btn-outline" style="flex: 1;" data-i18n="profile_page.cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

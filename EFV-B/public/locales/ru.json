@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "home": "Главная",
+    "about": "О нас",
+    "gallery": "Галерея",
+    "marketplace": "Магазин",
+    "blog": "Блог",
+    "blogs": "Блоги",
+    "feedback": "Отзывы",
+    "contact": "Контакты",
+    "admin": "Админ",
+    "my_library": "Моя библиотека",
+    "quit_dashboard": "ВЫЙТИ В ПАНЕЛЬ",
+    "change_location": "Изменить локацию"
+  }
+}

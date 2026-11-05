@@ -1,0 +1,631 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Admin | EFV™ Corporate Portal</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../js/api-config.js"></script>
+    <link rel="stylesheet" href="../css/toast.css">
+    <script src="../js/toast.js"></script>
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #FFD700;
+            --gold-dim: rgba(212, 175, 55, 0.15);
+            --bg-primary: #070B14;
+            --bg-secondary: #0d1117;
+            --bg-card: rgba(15, 20, 35, 0.85);
+            --text-primary: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.55);
+            --border: rgba(255, 211, 105, 0.18);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .admin-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .logo {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 3px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card h3 {
+            font-size: 2.2rem;
+            color: var(--gold);
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.6;
+        }
+
+        .main-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            padding: 20px 30px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px 30px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(255, 255, 255, 0.02);
+            color: var(--gold);
+        }
+
+        td {
+            padding: 20px 30px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.1);
+            color: #22c55e;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .status-inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            font-size: 0.85rem;
+        }
+
+        .btn-gold {
+            background: var(--gold);
+            color: black;
+        }
+
+        .btn-gold:hover {
+            background: var(--gold-light);
+            box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--gold);
+        }
+
+        .btn-outline:hover {
+            background: var(--gold-dim);
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            width: 90%;
+            max-width: 500px;
+            border-radius: 20px;
+            overflow: hidden;
+            animation: modalSlide 0.3s ease-out;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-dim);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 12px;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .form-control:focus {
+            border-color: var(--gold);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            .card-header {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            table {
+                min-width: 600px;
+            }
+
+            .card-body {
+                overflow-x: auto;
+            }
+        }
+    </style>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body>
+
+    <div class="admin-wrapper">
+        <header>
+            <a href="../index.html" class="logo">EFV <span
+                    style="font-size: 0.8rem; vertical-align: middle;">PARTNERS</span></a>
+            <div>
+                <button class="btn btn-outline" onclick="location.href='admin-dashboard.html'">Back to Admin</button>
+                <button class="btn btn-gold" onclick="openPartnerModal()">+ Add New Partner</button>
+            </div>
+        </header>
+
+        <div class="stats-grid" id="stats-summary">
+            <div class="stat-card">
+                <h3 id="stat-partners">0</h3>
+                <p>Active Partners</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-revenue">₹0</h3>
+                <p>Total Partner Revenue</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="stat-commission">₹0</h3>
+                <p>Unpaid Commissions</p>
+            </div>
+        </div>
+
+        <div class="main-card">
+            <div class="card-header">
+                <h2 style="font-family: 'Cinzel', serif; font-size: 1.2rem;">Partner Management</h2>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="partner-search" class="form-control" placeholder="Search partner..."
+                        style="width: 200px; padding: 8px 15px; background: var(--gold); color: black; font-weight: 600;">
+                </div>
+            </div>
+            <div class="card-body">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Partner Info</th>
+                            <th>Created</th>
+                            <th>Status</th>
+                            <th>Orders</th>
+                            <th>Rev Generated</th>
+                            <th>Unpaid Comm.</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="partners-list">
+                        <tr>
+                            <td colspan="7" style="text-align: center; padding: 40px; opacity: 0.5;">Loading partners...
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- PARTNER MODAL -->
+    <div class="modal" id="partner-modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <h3>Add New Marketing Partner</h3>
+                <button onclick="closeModal()"
+                    style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;">&times;</button>
+            </div>
+            <form id="partner-form" style="padding: 30px;">
+                <div class="form-group">
+                    <label>Partner Name</label>
+                    <input type="text" id="p-name" class="form-control" required placeholder="e.g. Company A">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="p-email" class="form-control" placeholder="contact@companya.com">
+                </div>
+                <div class="form-group">
+                    <label>Company/Agency</label>
+                    <input type="text" id="p-company" class="form-control" placeholder="Company A Ltd.">
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="text" id="p-phone" class="form-control" placeholder="+91 9999999999">
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;"
+                        onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-gold" style="flex: 1;">Save Partner</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- COUPON MODAL -->
+    <div class="modal" id="coupon-modal">
+        <div class="modal-content">
+            <div class="card-header">
+                <h3>Generate Partner Coupon</h3>
+                <button onclick="closeModal()"
+                    style="background: none; border: none; color: white; cursor: pointer; font-size: 1.2rem;">&times;</button>
+            </div>
+            <form id="coupon-form" style="padding: 30px;">
+                <input type="hidden" id="c-partner-id">
+                <input type="hidden" id="c-partner-name">
+
+                <div class="form-group">
+                    <label>Unique Coupon Code</label>
+                    <input type="text" id="c-code" class="form-control" required placeholder="e.g. COMPANYA10"
+                        style="text-transform: uppercase;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Discount Value</label>
+                        <input type="number" id="c-discount" class="form-control" required placeholder="10">
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select id="c-type" class="form-control">
+                            <option value="Percentage">Percentage (%)</option>
+                            <option value="Flat">Flat Amount (₹)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Our Partner Commission (%)</label>
+                    <input type="number" id="c-commission" class="form-control" required placeholder="20">
+                    <small style="font-size: 0.7rem; opacity: 0.5;">Commission paid to partner on each successful
+                        order.</small>
+                </div>
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button type="button" class="btn btn-outline" style="flex: 1;"
+                        onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-gold" style="flex: 1;">Create Coupon</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = (typeof CONFIG !== 'undefined') ? CONFIG.API_BASE_URL : 'http://localhost:8080';
+        const token = localStorage.getItem('authToken');
+
+        if (!token) {
+            window.location.href = 'index.html';
+        }
+
+        async function fetchPartners() {
+            try {
+                const res = await fetch(`${API_BASE}/api/partners`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.status === 401) {
+                    window.location.href = '../index.html';
+                    return;
+                }
+                const data = await res.json();
+                renderStats(data);
+                renderPartners(data);
+            } catch (error) {
+                console.error('Fetch Partners Error:', error);
+                document.getElementById('partners-list').innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; color: #ef4444;">Error: ${error.message}</td></tr>`;
+            }
+        }
+
+        function renderStats(partners) {
+            let totalRevenue = 0;
+            let totalCommission = 0;
+            partners.forEach(p => {
+                totalRevenue += (p.stats?.totalRevenue || 0);
+                totalCommission += (p.stats?.unpaidCommission || 0);
+            });
+
+            document.getElementById('stat-partners').textContent = partners.length;
+            document.getElementById('stat-revenue').textContent = `₹${totalRevenue.toLocaleString()}`;
+            document.getElementById('stat-commission').textContent = `₹${totalCommission.toLocaleString()}`;
+        }
+
+        function renderPartners(data) {
+            const list = document.getElementById('partners-list');
+            list.innerHTML = '';
+
+            if (data.length === 0) {
+                list.innerHTML = `<tr><td colspan="7" style="text-align: center; padding: 40px; opacity: 0.5;">No partners added yet.</td></tr>`;
+                return;
+            }
+
+            data.forEach(p => {
+                const row = document.createElement('tr');
+                const isActivated = p.isActivated || false;
+
+                row.innerHTML = `
+                    <td>
+                        <div style="font-weight: 700; color: var(--gold);">${p.name}</div>
+                        <div style="font-size: 0.75rem; color: var(--gold); opacity: 0.8;">${p.email}</div>
+                        ${p.stats?.hasCoupon ? `<div style="font-size: 0.75rem; color: var(--gold); margin-top: 4px; font-weight: 600;">Token: ${p.partner_token || 'N/A'}</div>` : ''}
+                        <div style="font-size: 0.7rem; opacity: 0.4;">${p.company || 'Individual'}</div>
+                    </td>
+                    <td style="font-size: 0.8rem; opacity: 0.6;">${new Date(p.createdAt || Date.now()).toLocaleDateString('en-GB')}</td>
+                    <td>
+                        <div style="margin-bottom: 5px;">
+                            <span class="status-badge ${p.isActive ? 'status-active' : 'status-inactive'}">${p.isActive ? 'ACTIVE' : 'DISABLED'}</span>
+                        </div>
+                        <div>
+                            <span class="status-badge" style="background: ${isActivated ? 'rgba(34,197,94,0.1)' : 'rgba(212,175,55,0.1)'}; color: ${isActivated ? '#22c55e' : 'var(--gold)'}; border: 1px solid ${isActivated ? '#22c55e' : 'var(--gold)'}; padding: 2px 8px; font-size: 0.6rem;">
+                                ${isActivated ? 'PORTAL ACTIVE' : 'PENDING ACTIVATION'}
+                            </span>
+                        </div>
+                    </td>
+                    <td style="text-align: center; font-weight: 600; color: var(--gold);">${p.stats?.totalOrders || 0}</td>
+                    <td style="font-weight: 600; color: var(--gold);">₹${(p.stats?.totalRevenue || 0).toLocaleString()}</td>
+                    <td style="color: #22c55e; font-weight: 700;">₹${(p.stats?.unpaidCommission || 0).toLocaleString()}</td>
+                    <td>
+                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.7rem;" onclick="openCouponModal('${p._id}', '${p.name}')">Coupon</button>
+                            <button class="btn btn-gold" style="padding: 6px 12px; font-size: 0.7rem;" onclick="payoutPartner('${p._id}', ${p.stats?.unpaidCommission || 0})">Payout</button>
+                            <button class="btn" style="padding: 6px 12px; font-size: 0.7rem; background: #ef4444; color: white;" onclick="deletePartner('${p._id}')"><i class="fas fa-trash"></i></button>
+                        </div>
+                    </td>
+                `;
+                list.appendChild(row);
+            });
+        }
+
+        function openPartnerModal() {
+            document.getElementById('partner-modal').style.display = 'flex';
+        }
+
+        function openCouponModal(id, name) {
+            document.getElementById('c-partner-id').value = id;
+            document.getElementById('c-partner-name').value = name;
+            document.getElementById('coupon-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+
+        document.getElementById('partner-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const body = {
+                name: document.getElementById('p-name').value,
+                email: document.getElementById('p-email').value,
+                company: document.getElementById('p-company').value,
+                phone: document.getElementById('p-phone').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/partners`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                });
+                if (res.ok) {
+                    closeModal();
+                    fetchPartners();
+                    showToast('Marketing Partner successfully added!', 'success');
+                    e.target.reset();
+                } else {
+                    const err = await res.json();
+                    showToast(err.message || 'Error creating partner', 'error');
+                }
+            } catch (error) {
+                showToast('Error connecting to server', 'error');
+            }
+        });
+
+        document.getElementById('coupon-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const body = {
+                code: document.getElementById('c-code').value.toUpperCase(),
+                type: document.getElementById('c-type').value,
+                value: document.getElementById('c-discount').value,
+                isPartnerCoupon: true,
+                partnerId: document.getElementById('c-partner-id').value,
+                partnerName: document.getElementById('c-partner-name').value,
+                commissionPercent: document.getElementById('c-commission').value
+            };
+
+            try {
+                const res = await fetch(`${API_BASE}/api/coupons`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(body)
+                });
+                if (res.ok) {
+                    showToast(`Coupon ${body.code} generated successfully!`, 'success');
+                    closeModal();
+                    e.target.reset();
+                    fetchPartners();
+                } else {
+                    const err = await res.json();
+                    showToast(err.message || 'Error generating coupon', 'error');
+                }
+            } catch (error) {
+                showToast('Error generating coupon', 'error');
+            }
+        });
+
+        async function payoutPartner(id, amount) {
+            if (amount <= 0) return showToast('No unpaid commissions available.', 'info');
+            if (!confirm(`Mark ₹${amount} as PAID for this partner?`)) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/partners/${id}/payout`, {
+                    method: 'POST',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const result = await res.json();
+                showToast(result.message, 'success');
+                fetchPartners();
+            } catch (error) {
+                showToast('Payout error', 'error');
+            }
+        }
+
+        async function deletePartner(id) {
+            if (!confirm('Are you sure? This will deactivate linked coupons.')) return;
+            try {
+                const res = await fetch(`${API_BASE}/api/partners/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) {
+                    fetchPartners();
+                }
+            } catch (err) { alert('Delete failed'); }
+        }
+
+        fetchPartners();
+    </script>
+
+</body>
+
+</html>
+

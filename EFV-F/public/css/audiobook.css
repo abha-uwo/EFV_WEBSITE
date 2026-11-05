@@ -1,0 +1,1098 @@
+/* ═══════════════════════════════════════════════════════════════
+   EFV™ PREMIUM AUDIOBOOK EXPERIENCE
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ─── LIBRARY SUB-TABS ─────────────────────────────────────── */
+.library-sub-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 30px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 211, 105, 0.1);
+    padding: 5px;
+    border-radius: 14px;
+    width: fit-content;
+}
+
+.library-sub-tab {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.library-sub-tab:hover {
+    color: white;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.library-sub-tab.active {
+    background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(253, 185, 49, 0.08));
+    color: var(--gold-text);
+    font-weight: 600;
+    box-shadow: 0 2px 10px rgba(255, 215, 0, 0.08);
+}
+
+.library-sub-tab i {
+    font-size: 0.85rem;
+}
+
+/* ─── AUDIOBOOK LIBRARY CARD ───────────────────────────────── */
+.audiobook-card {
+    background: var(--card-bg);
+    border: 1px solid rgba(255, 211, 105, 0.12);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.audiobook-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD700, #FDB931, #FFD700);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.audiobook-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255, 211, 105, 0.4);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(255, 215, 0, 0.06);
+}
+
+.audiobook-card:hover::before {
+    opacity: 1;
+}
+
+.audiobook-card-inner {
+    display: flex;
+    gap: 18px;
+    padding: 20px;
+}
+
+.audiobook-card-cover {
+    width: 110px;
+    height: 150px;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.audiobook-card-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.audiobook-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 4px;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.audiobook-card-price {
+    font-size: 0.85rem;
+    color: var(--gold-text);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.audiobook-card-stats {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+}
+
+.audiobook-stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.04);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.audiobook-stat-pill i {
+    color: var(--gold-text);
+    font-size: 0.65rem;
+}
+
+.audiobook-card-progress {
+    margin-top: auto;
+}
+
+.audiobook-progress-bar-wrap {
+    height: 4px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.audiobook-progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FDB931);
+    border-radius: 4px;
+    transition: width 0.6s ease;
+    position: relative;
+}
+
+.audiobook-progress-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -1px;
+    bottom: -1px;
+    width: 8px;
+    background: #FFD700;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+}
+
+.audiobook-progress-text {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.4);
+}
+
+.audiobook-card-actions {
+    display: flex;
+    gap: 8px;
+    padding: 0 20px 18px;
+}
+
+.btn-continue-listening {
+    flex: 1;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+    color: #000;
+    font-weight: 700;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.15);
+}
+
+.btn-continue-listening:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.25);
+    filter: brightness(1.08);
+}
+
+.btn-chapters-view {
+    padding: 10px 16px;
+    border: 1px solid rgba(255, 211, 105, 0.25);
+    border-radius: 10px;
+    background: transparent;
+    color: var(--gold-text);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.3s ease;
+}
+
+.btn-chapters-view:hover {
+    background: rgba(255, 211, 105, 0.08);
+    border-color: var(--gold-text);
+}
+
+/* ─── BOOK DETAIL SCREEN (OVERLAY) ──────────────────────────── */
+.audiobook-detail-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(3, 5, 9, 0.97);
+    z-index: 10001;
+    display: flex;
+    flex-direction: column;
+    animation: abDetailFadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+@keyframes abDetailFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.ab-detail-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(8, 10, 16, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 211, 105, 0.12);
+    padding: 14px 30px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.ab-detail-header-title {
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ab-detail-header-title i {
+    color: var(--gold-text);
+}
+
+.ab-detail-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.ab-detail-close:hover {
+    background: rgba(255, 77, 77, 0.15);
+    border-color: rgba(255, 77, 77, 0.3);
+    color: #ff4d4d;
+}
+
+.ab-detail-body {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    padding: 0 30px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    align-items: flex-start;
+}
+
+.ab-detail-hero {
+    flex: 1;
+    min-width: 300px;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: sticky;
+    top: 90px;
+    padding: 20px 0;
+}
+
+.ab-detail-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+.ab-detail-cover {
+    width: 200px;
+    height: 280px;
+    border-radius: 16px;
+    object-fit: cover;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 215, 0, 0.05);
+    border: 1px solid rgba(255, 211, 105, 0.15);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.4s ease;
+}
+
+
+.ab-detail-title {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #fff;
+    margin: 25px 0 8px;
+    text-align: center;
+    max-width: 500px;
+    line-height: 1.3;
+}
+
+.ab-detail-meta {
+    display: flex;
+    gap: 20px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ab-detail-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.ab-detail-meta-item i {
+    color: var(--gold-text);
+    font-size: 0.75rem;
+}
+
+.ab-detail-meta-item strong {
+    color: white;
+    font-weight: 600;
+}
+
+/* Progress bar in detail view */
+.ab-detail-progress-wrap {
+    width: 100%;
+    max-width: 400px;
+    margin: 25px auto 0;
+}
+
+.ab-detail-progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+    margin-bottom: 8px;
+}
+
+.ab-detail-progress-track {
+    height: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.ab-detail-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #FFD700, #FDB931);
+    border-radius: 6px;
+    transition: width 0.8s ease;
+}
+
+.ab-detail-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn-view-chapters {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+    color: #000;
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 25px rgba(255, 215, 0, 0.2);
+    letter-spacing: 0.5px;
+}
+
+.btn-view-chapters:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+}
+
+/* ─── CHAPTER LIST ──────────────────────────────────────────── */
+.ab-chapters-section {
+    flex: 2;
+    min-width: 300px;
+    padding: 20px 0;
+    margin: 0;
+}
+
+.ab-chapters-heading {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.ab-chapters-heading::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.ab-chapters-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* ─── CHAPTER CARD ──────────────────────────────────────────── */
+.chapter-card {
+    background: rgba(255, 255, 255, 0.025);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.chapter-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: var(--gold-text);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.chapter-card:hover {
+    background: rgba(255, 211, 105, 0.04);
+    border-color: rgba(255, 211, 105, 0.2);
+    transform: translateX(4px);
+}
+
+.chapter-card:hover::before {
+    opacity: 1;
+}
+
+.chapter-card.playing {
+    background: rgba(255, 215, 0, 0.06);
+    border-color: rgba(255, 215, 0, 0.3);
+}
+
+.chapter-card.playing::before {
+    opacity: 1;
+}
+
+.chapter-card.completed {
+    opacity: 0.65;
+}
+
+.chapter-card.completed::after {
+    content: '✓';
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #27ae60;
+    font-weight: 800;
+    font-size: 1rem;
+}
+
+.chapter-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(255, 211, 105, 0.08);
+    color: var(--gold-text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 211, 105, 0.15);
+}
+
+.chapter-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.chapter-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: white;
+    margin: 0 0 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chapter-duration {
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.chapter-play-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700, #FDB931);
+    border: none;
+    color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(255, 215, 0, 0.2);
+}
+
+.chapter-play-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.35);
+}
+
+/* ─── CUSTOM AUDIO PLAYER ───────────────────────────────────── */
+.efv-audio-player-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(3, 5, 9, 0.98);
+    z-index: 10002;
+    display: flex;
+    flex-direction: column;
+    animation: playerSlideUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes playerSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.efv-player-toolbar {
+    padding: 14px 30px;
+    background: rgba(8, 10, 16, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255, 211, 105, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+}
+
+.efv-player-toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.efv-player-toolbar-left i {
+    color: var(--gold-text);
+}
+
+.efv-player-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 30px;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ambient glow behind the cover */
+.efv-player-body::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 350px;
+    height: 350px;
+    background: radial-gradient(circle, rgba(255, 215, 0, 0.06) 0%, transparent 70%);
+    pointer-events: none;
+    animation: ambientPulse 4s ease-in-out infinite;
+}
+
+@keyframes ambientPulse {
+
+    0%,
+    100% {
+        opacity: 0.5;
+        transform: translateX(-50%) scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: translateX(-50%) scale(1.1);
+    }
+}
+
+.efv-player-cover {
+    width: 220px;
+    height: 300px;
+    border-radius: 18px;
+    object-fit: cover;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), 0 0 50px rgba(255, 215, 0, 0.04);
+    border: 1px solid rgba(255, 211, 105, 0.12);
+    position: relative;
+    z-index: 1;
+    transition: transform 0.5s ease;
+}
+
+.efv-player-cover.is-playing {
+    animation: coverFloat 3s ease-in-out infinite;
+}
+
+@keyframes coverFloat {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+.efv-player-chapter-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 28px 0 6px;
+    text-align: center;
+    max-width: 500px;
+    z-index: 1;
+}
+
+.efv-player-book-title {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.4);
+    text-align: center;
+    z-index: 1;
+}
+
+/* Seek bar */
+.efv-player-seek-container {
+    width: 100%;
+    max-width: 500px;
+    margin-top: 35px;
+    z-index: 1;
+}
+
+.efv-player-time-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.4);
+    margin-bottom: 8px;
+    font-feature-settings: 'tnum';
+    font-variant-numeric: tabular-nums;
+}
+
+.efv-seek-bar {
+    width: 100%;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.efv-seek-bar::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    transition: transform 0.2s;
+}
+
+.efv-seek-bar::-webkit-slider-thumb:hover {
+    transform: scale(1.3);
+}
+
+.efv-seek-bar::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+}
+
+/* Player Controls */
+.efv-player-controls {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 30px;
+    z-index: 1;
+}
+
+.efv-ctrl-btn {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    font-size: 1.2rem;
+    transition: all 0.2s ease;
+    padding: 8px;
+}
+
+.efv-ctrl-btn:hover {
+    color: var(--gold-text);
+    transform: scale(1.15);
+}
+
+.efv-ctrl-btn:disabled {
+    opacity: 0.25;
+    cursor: not-allowed;
+}
+
+.efv-ctrl-btn:disabled:hover {
+    color: rgba(255, 255, 255, 0.6);
+    transform: none;
+}
+
+.efv-play-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+    border: none;
+    color: #000;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 30px rgba(255, 215, 0, 0.25);
+}
+
+.efv-play-btn:hover {
+    transform: scale(1.08);
+    box-shadow: 0 10px 40px rgba(255, 215, 0, 0.35);
+}
+
+.efv-play-btn:active {
+    transform: scale(0.95);
+}
+
+/* Speed Control */
+.efv-speed-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+    z-index: 1;
+}
+
+.efv-speed-label {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.35);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.efv-speed-options {
+    display: flex;
+    gap: 6px;
+}
+
+.efv-speed-btn {
+    padding: 5px 14px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    transition: all 0.2s ease;
+}
+
+.efv-speed-btn:hover {
+    border-color: rgba(255, 211, 105, 0.3);
+    color: white;
+}
+
+.efv-speed-btn.active {
+    background: rgba(255, 215, 0, 0.12);
+    border-color: var(--gold-text);
+    color: var(--gold-text);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.1);
+}
+
+/* Chapter progress indicator in player */
+.efv-player-chapter-indicator {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.3);
+    margin-top: 15px;
+    letter-spacing: 1px;
+    z-index: 1;
+}
+
+/* ─── RESUME MODAL ────────────────────────────────────────────── */
+.resume-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(4, 6, 10, 0.85);
+    backdrop-filter: blur(8px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000000;
+    animation: fadeIn 0.3s ease;
+}
+
+.resume-modal-overlay.active {
+    display: flex;
+}
+
+.resume-modal {
+    background: rgba(12, 14, 20, 0.95);
+    border: 1px solid rgba(255, 215, 0, 0.15);
+    padding: 35px 30px;
+    border-radius: 18px;
+    text-align: center;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.05);
+}
+
+.resume-modal h3 {
+    color: #fff;
+    font-size: 1.4rem;
+    margin: 15px 0 10px;
+}
+
+.resume-modal p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.resume-modal i.fa-headphones {
+    font-size: 2.5rem;
+    color: #FFD700;
+    margin-bottom: 5px;
+}
+
+.resume-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.btn-resume-primary {
+    padding: 14px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #FFD700 0%, #FDB931 100%);
+    color: #000;
+    font-weight: 800;
+    border: none;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-resume-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 215, 0, 0.25);
+}
+
+.btn-resume-secondary {
+    padding: 14px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--gold-text);
+    border: 1px solid rgba(255, 211, 105, 0.2);
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.95rem;
+    font-family: 'Outfit', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.2s ease;
+}
+
+.btn-resume-secondary:hover {
+    background: rgba(255, 215, 0, 0.08);
+    border-color: rgba(255, 215, 0, 0.4);
+    color: #fff;
+}
+
+/* ─── RESPONSIVE ────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .library-sub-tabs {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .library-sub-tab {
+        padding: 8px 16px;
+        font-size: 0.82rem;
+    }
+
+    .audiobook-card-inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .audiobook-card-stats {
+        justify-content: center;
+    }
+
+    .ab-detail-body {
+        padding: 0 15px 40px;
+        gap: 20px;
+    }
+
+    .ab-detail-hero {
+        position: static;
+        padding: 30px 20px 0;
+        max-width: 100%;
+    }
+
+    .ab-detail-cover {
+        width: 160px;
+        height: 220px;
+    }
+
+    .ab-detail-title {
+        font-size: 1.3rem;
+    }
+
+    .efv-player-cover {
+        width: 160px;
+        height: 220px;
+    }
+
+    .efv-player-chapter-title {
+        font-size: 1.1rem;
+    }
+
+    .efv-player-controls {
+        gap: 15px;
+    }
+
+    .efv-play-btn {
+        width: 56px;
+        height: 56px;
+        font-size: 1.3rem;
+    }
+
+    .ab-chapters-section {
+        padding: 0;
+    }
+
+    .chapter-card {
+        padding: 14px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .audiobook-card-actions {
+        flex-direction: column;
+    }
+
+    .ab-detail-actions {
+        flex-direction: column;
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .btn-view-chapters {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .efv-player-seek-container {
+        max-width: 100%;
+    }
+}

@@ -1,0 +1,10 @@
+
+@media (max-width: 768px) {
+    /* Critical dark theme override for mobile */
+    .main-content .total span,
+    .main-content .total b,
+    .main-content .gold-text,
+    .main-content h1 .gold-text {
+        color: var(--gold-text) !important;
+    }
+}

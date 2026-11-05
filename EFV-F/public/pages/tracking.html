@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order | EFV™ — Live Shipment Tracking</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <meta name="description"
+        content="Track your EFV book order in real-time. Get live shipment updates, current location, and delivery timeline powered by NimbusPost.">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="../js/api-config.js"></script>
+
+    <style>
+        :root {
+            --gold: #D4AF37;
+            --gold-light: #FFD700;
+            --gold-dim: rgba(212, 175, 55, 0.15);
+            --bg-primary: #070B14;
+            --bg-secondary: #0d1117;
+            --bg-card: rgba(15, 20, 35, 0.85);
+            --text-primary: #ffffff;
+            --text-dim: rgba(255, 255, 255, 0.55);
+            --border: rgba(255, 211, 105, 0.18);
+            --success: #22c55e;
+            --error: #ef4444;
+            --accent-blue: #3b82f6;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Animated Starfield Background */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(212, 175, 55, 0.04) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(59, 130, 246, 0.03) 0%, transparent 60%),
+                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Header / Nav */
+        .track-nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 40px;
+            background: rgba(7, 11, 20, 0.85);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .track-nav .logo img { height: 32px; }
+
+        .track-nav .nav-links { display: flex; gap: 24px; list-style: none; }
+        .track-nav .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
+        .track-nav .nav-links a:hover { color: var(--gold); }
+
+        .page-wrapper {
+            position: relative;
+            z-index: 1;
+            padding: 110px 20px 60px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ── SEARCH AREA ── */
+        .hero-banner {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .hero-banner h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #fff 30%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .live-status-ribbon {
+            display: none;
+            background: var(--gold-dim);
+            border: 1px solid var(--border);
+            border-radius: 50px;
+            padding: 8px 20px;
+            font-size: 0.85rem;
+            color: var(--gold-light);
+            margin: 0 auto 24px;
+            width: fit-content;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInDown 0.6s ease;
+        }
+
+        .live-status-ribbon .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        .search-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(20px);
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+
+        .search-group { display: flex; gap: 12px; }
+        .search-group input {
+            flex: 1;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 14px 20px;
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+        .search-group input:focus { border-color: var(--gold); background: rgba(255,255,255,0.08); }
+
+        .btn-track {
+            background: linear-gradient(135deg, var(--gold), #B8860B);
+            color: #000;
+            border: none;
+            border-radius: 10px;
+            padding: 0 25px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-track:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212,175,55,0.3); }
+
+        /* ── LOADING ── */
+        .loader-wrap { display: none; text-align: center; padding: 40px; }
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid var(--gold-dim); border-top-color: var(--gold);
+            border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 15px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── RESULT UI ── */
+        #tracking-result { display: none; flex-direction: column; gap: 24px; }
+
+        .summary-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .meta-group { display: flex; flex-direction: column; gap: 4px; }
+        .meta-group small { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
+        .meta-group span { font-weight: 600; color: #fff; font-size: 1.1rem; }
+
+        /* ── PROGRESS TRACKER ── */
+        .progress-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 30px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .step-container {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-container::before {
+            content: '';
+            position: absolute;
+            top: 25px;
+            left: 5%;
+            right: 5%;
+            height: 2px;
+            background: rgba(255,255,255,0.05);
+            z-index: -1;
+        }
+
+        .progress-bar-fill {
+            position: absolute;
+            top: 25px;
+            left: 5%;
+            height: 2px;
+            background: var(--gold);
+            z-index: 0;
+            width: 0%;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 0 10px var(--gold);
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+            text-align: center;
+        }
+
+        .step-dot {
+            width: 50px;
+            height: 50px;
+            background: #0d121d;
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.5s;
+            position: relative;
+        }
+
+        .step-dot i { color: rgba(255,255,255,0.2); font-size: 1.1rem; transition: 0.5s; }
+
+        .step.completed .step-dot { background: rgba(34, 197, 94, 0.1); border-color: var(--success); }
+        .step.completed .step-dot i { color: var(--success); }
+
+        .step.active .step-dot {
+            background: var(--gold-dim);
+            border-color: var(--gold);
+            box-shadow: 0 0 20px rgba(212,175,55,0.4);
+            animation: stepPulse 2s infinite;
+        }
+        .step.active .step-dot i { color: var(--gold); }
+
+        .step-label { font-size: 0.72rem; font-weight: 600; color: var(--text-dim); transition: 0.4s; }
+        .step.active .step-label { color: var(--gold); }
+        .step.completed .step-label { color: #fff; }
+
+        @keyframes stepPulse {
+            0% { box-shadow: 0 0 0 0 rgba(212,175,55,0.4); }
+            70% { box-shadow: 0 0 0 12px rgba(212,175,55,0); }
+            100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
+        }
+
+        /* ── TIMELINE ── */
+        .timeline-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .timeline-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .timeline-header h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-dim); }
+
+        .log-item {
+            display: flex;
+            gap: 20px;
+            position: relative;
+            padding-bottom: 24px;
+        }
+
+        .log-item::before {
+            content: '';
+            position: absolute;
+            left: 7px;
+            top: 15px;
+            bottom: 0;
+            width: 1px;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .log-item:last-child { padding-bottom: 0; }
+        .log-item:last-child::before { display: none; }
+
+        .log-indicator {
+            width: 15px; height: 15px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid var(--bg-primary);
+            flex-shrink: 0;
+            margin-top: 4px;
+            z-index: 1;
+        }
+
+        .log-item.active .log-indicator {
+            background: var(--gold);
+            box-shadow: 0 0 8px var(--gold);
+            transform: scale(1.2);
+        }
+
+        .log-content { flex: 1; }
+        .log-status { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; transition: 0.3s; }
+        .log-item.active .log-status { color: var(--gold); font-size: 1.05rem; }
+        
+        .log-details { font-size: 0.8rem; color: var(--text-dim); display: flex; align-items: center; gap: 8px; }
+        .log-time { font-size: 0.75rem; color: rgba(255,255,255,0.3); margin-top: 4px; }
+
+        .log-item.active {
+            background: rgba(212,175,55,0.03);
+            border-radius: 12px;
+            padding: 15px;
+            margin-left: -15px;
+            margin-right: -15px;
+            border: 1px solid rgba(212,175,55,0.1);
+            transform: scale(1.02);
+        }
+
+        /* ── UTILS ── */
+        .btn-refresh {
+            background: none; border: 1px solid var(--border); color: var(--gold);
+            padding: 8px 16px; border-radius: 8px; font-size: 0.8rem; cursor: pointer;
+            display: flex; align-items: center; gap: 8px; transition: 0.3s;
+        }
+        .btn-refresh:hover { background: var(--gold-dim); }
+
+        @keyframes pulse { 0% { opacity: 0.4; } 50% { opacity: 1; } 100% { opacity: 0.4; } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 600px) {
+            .step-label { display: none; }
+            .step.active .step-label { display: block; position: absolute; top: 60px; width: 100px; }
+            .summary-card { flex-direction: column; align-items: flex-start; }
+            .track-nav { padding: 16px 20px; }
+            .track-nav .nav-links { display: none; }
+        }
+    </style>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body>
+    <nav class="track-nav">
+        <a href="../index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
+            <img src="../assets/images/AISA.svg" alt="EFV™ Logo" style="height: 32px;">
+            <span style="font-family: 'Cinzel', serif; color: var(--gold); font-weight: 700; font-size: 1.2rem; letter-spacing: 1px;">EFV<sup style="font-size: 0.6rem;">TM</sup></span>
+        </a>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="marketplace.html">Store</a></li>
+            <li><a href="profile.html?tab=orders">My Orders</a></li>
+        </ul>
+    </nav>
+
+    <div class="page-wrapper">
+        <div class="hero-banner">
+            <div class="live-status-ribbon" id="status-ribbon">
+                <div class="dot"></div>
+                <span id="ribbon-text">Real-time sync active</span>
+            </div>
+            <h1>Track Your Shipment</h1>
+        </div>
+
+        <div class="search-card">
+            <form id="tracking-form" class="search-group">
+                <input type="text" id="order-id-input" placeholder="Enter Order ID (e.g., ORD-123456)" required>
+                <button type="submit" class="btn-track">TRACK NOW</button>
+            </form>
+        </div>
+
+        <div class="loader-wrap" id="loading-state">
+            <div class="spinner"></div>
+            <p style="color: var(--gold); font-size: 0.9rem;">Fetching live data from Nimbus Dashboard...</p>
+        </div>
+
+        <div id="tracking-result">
+            <!-- Order Meta -->
+            <div class="summary-card">
+                <div class="meta-group">
+                    <small>Current Status</small>
+                    <span id="display-status" style="color: var(--gold);">—</span>
+                </div>
+                <div class="meta-group">
+                    <small>Est. Delivery</small>
+                    <span id="display-eta">Pending Sync</span>
+                </div>
+                <div class="meta-group">
+                    <small>Last Location</small>
+                    <span id="display-location">Checking...</span>
+                </div>
+                <div class="meta-group">
+                    <small>Order ID</small>
+                    <span id="display-order-id">—</span>
+                </div>
+                <div class="meta-group">
+                    <small>Tracking AWB</small>
+                    <span id="display-awb">—</span>
+                </div>
+                <div class="meta-group">
+                    <small>Carrier</small>
+                    <span id="display-carrier">—</span>
+                </div>
+                <div class="meta-group" id="track-btn-group" style="display: none; align-items: flex-start;">
+                    <small>Direct Link</small>
+                    <a id="display-track-btn" href="#" target="_blank" class="btn-track" style="padding: 6px 14px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; font-weight: 700;">Track Shipment</a>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-card">
+                <div class="progress-bar-fill" id="pb-fill"></div>
+                <div class="step-container">
+                    <div class="step" id="step-0">
+                        <div class="step-dot"><i class="fas fa-check-circle"></i></div>
+                        <div class="step-label">Confirmed</div>
+                    </div>
+                    <div class="step" id="step-1">
+                        <div class="step-dot"><i class="fas fa-box"></i></div>
+                        <div class="step-label">Picked Up</div>
+                    </div>
+                    <div class="step" id="step-2">
+                        <div class="step-dot"><i class="fas fa-truck-loading"></i></div>
+                        <div class="step-label">In Transit</div>
+                    </div>
+                    <div class="step" id="step-3">
+                        <div class="step-dot"><i class="fas fa-motorcycle"></i></div>
+                        <div class="step-label">Out for Delivery</div>
+                    </div>
+                    <div class="step" id="step-4">
+                        <div class="step-dot"><i class="fas fa-home"></i></div>
+                        <div class="step-label">Delivered</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="timeline-container">
+                <div class="timeline-header">
+                    <h3>Tracking Updates</h3>
+                    <button class="btn-refresh" onclick="trackOrder(currentOrderId)">
+                        <i class="fas fa-sync-alt"></i> REFRESH
+                    </button>
+                </div>
+                <div id="timeline-log">
+                    <!-- Events will be injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = (typeof CONFIG !== 'undefined') ? CONFIG.API_BASE_URL : 'http://localhost:8080';
+        let currentOrderId = null;
+        let pollingInterval = null;
+
+        // ── STATUS MAPPING ──
+        const MILESTONE_MAP = {
+            'confirmed': 0, 'booked': 0, 'manifested': 0, 'processing': 0, 'paid': 0,
+            'picked up': 1, 'pickedup': 1, 'in depot': 1, 'pickup scheduled': 1,
+            'in transit': 2, 'shipped': 2, 'reached at hub': 2, 'departed from hub': 2, 'at hub': 2, 'dispatched': 2,
+            'out for delivery': 3, 'outfordelivery': 3, 'delivery': 3, 'reached destination': 3,
+            'delivered': 4, 'complete': 4, 'delivered successfully': 4
+        };
+
+        const LABELS = ['Order Confirmed', 'Picked Up', 'In Transit', 'Out for Delivery', 'Delivered'];
+
+        // ── Handle URL Params ──
+        const urlParams = new URLSearchParams(window.location.search);
+        const pid = urlParams.get('id') || urlParams.get('order');
+        if (pid) {
+            document.getElementById('order-id-input').value = pid;
+            setTimeout(() => trackOrder(pid), 500);
+        }
+
+        document.getElementById('tracking-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const val = document.getElementById('order-id-input').value.trim();
+            if (val) trackOrder(val);
+        });
+
+        async function trackOrder(orderId) {
+            currentOrderId = orderId;
+            showLoading();
+
+            try {
+                const token = localStorage.getItem('authToken');
+                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                
+                const res = await fetch(`${API_BASE}/api/shipments/track-by-order/${encodeURIComponent(orderId)}`, { headers });
+                const json = await res.json();
+
+                if (!res.ok) throw new Error(json.message || 'Tracking failed');
+                
+                renderResult(json.data);
+                startPolling();
+            } catch (err) {
+                console.error(err);
+                alert(err.message || "Order not found or tracking unavailable yet.");
+                hideAll();
+            }
+        }
+
+        function renderResult(data) {
+            hideLoading();
+            document.getElementById('tracking-result').style.display = 'flex';
+            
+            // Basic Info
+            document.getElementById('display-order-id').textContent = data.orderId || '—';
+            document.getElementById('display-awb').textContent = data.awbNumber || 'Awaiting Sync';
+            
+            // ETA & Location
+            const nData = data.liveTracking?.data || {};
+            const eta = nData.expected_date || nData.edd || nData.eta || 'Calculating...';
+            const loc = nData.current_location || nData.last_location || nData.delivery_city || 'In Transit';
+            document.getElementById('display-eta').textContent = (eta && eta !== 'Calculating...') ? new Date(eta).toLocaleDateString() : eta;
+            document.getElementById('display-location').textContent = loc;
+            
+            const rawStatus = (data.shippingStatus || data.status || '').toLowerCase();
+            const mIdx = determineMilestone(rawStatus);
+            document.getElementById('display-status').textContent = LABELS[mIdx] || data.status;
+
+            // Update Ribbon
+            document.getElementById('status-ribbon').style.display = 'flex';
+            document.getElementById('ribbon-text').textContent = `Status: ${LABELS[mIdx] || data.status}`;
+
+            // Render Progress
+            updateProgress(mIdx);
+
+            // Carrier & Direct Link Action
+            document.getElementById('display-carrier').textContent = data.courierName || 'Courier';
+            const trackBtnGroup = document.getElementById('track-btn-group');
+            const trackBtn = document.getElementById('display-track-btn');
+            if (data.trackingLink) {
+                trackBtn.href = data.trackingLink;
+                trackBtnGroup.style.display = 'flex';
+            } else {
+                trackBtnGroup.style.display = 'none';
+            }
+
+            // Render Timeline
+            renderTimeline(data.liveTracking?.data || { history: [] }, mIdx, data.courierName);
+        }
+
+        function determineMilestone(status) {
+            const s = status.toLowerCase();
+            // Complex keyword matching
+            if (s.includes('delivered')) return 4;
+            if (s.includes('out for delivery') || s.includes('outfordelivery')) return 3;
+            if (s.includes('transit') || s.includes('shipped') || s.includes('hub') || s.includes('departed')) return 2;
+            if (s.includes('picked') || s.includes('pickup') || s.includes('manifested')) return 1;
+            return 0;
+        }
+
+        function updateProgress(activeIdx) {
+            const bar = document.getElementById('pb-fill');
+            const pct = activeIdx === 0 ? 0 : (activeIdx / 4) * 90;
+            bar.style.width = `${pct}%`;
+
+            for (let i = 0; i <= 4; i++) {
+                const el = document.getElementById(`step-${i}`);
+                if (!el) continue;
+                el.classList.remove('active', 'completed');
+                if (i < activeIdx) el.classList.add('completed');
+                else if (i === activeIdx) el.classList.add('active');
+            }
+        }
+
+        function renderTimeline(nimbusData, activeMilestoneIdx, courierName) {
+            const container = document.getElementById('timeline-log');
+            const history = nimbusData.history || nimbusData.tracking_events || nimbusData.events || [];
+
+            if (history.length === 0) {
+                const msg = courierName === 'Lulu' 
+                    ? 'Tracking information will be available once your order has been shipped.'
+                    : 'Carrier logs will appear here live once dispatched.';
+                container.innerHTML = `<p style="text-align:center; padding:20px; color:var(--text-dim); font-size:0.85rem;">${msg}</p>`;
+                return;
+            }
+
+            // Sort history DESC
+            const sorted = [...history].sort((a,b) => new Date(b.event_time || b.timestamp || 0) - new Date(a.event_time || a.timestamp || 0));
+
+            container.innerHTML = sorted.map((ev, idx) => {
+                const rawName = (ev.status_name || ev.activity || ev.status || 'Update').toLowerCase();
+                const mappedIdx = determineMilestone(rawName);
+                
+                // If it matches the current milestone, use the clean label
+                const displayStatus = (mappedIdx === activeMilestoneIdx && idx === 0) ? LABELS[mappedIdx] : (ev.status_name || ev.activity || ev.status || 'Update');
+                const loc = ev.location || ev.city || ev.hub || '';
+                const time = ev.event_time || ev.timestamp;
+                const formattedTime = time ? new Date(time).toLocaleString('en-IN', {
+                    day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit'
+                }) : '';
+
+                return `
+                    <div class="log-item ${idx === 0 ? 'active' : ''}">
+                        <div class="log-indicator"></div>
+                        <div class="log-content">
+                            <div class="log-status">${displayStatus}</div>
+                            ${loc ? `<div class="log-details"><i class="fas fa-map-marker-alt" style="color:var(--gold)"></i> ${loc}</div>` : ''}
+                            <div class="log-time">${formattedTime}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function startPolling() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            pollingInterval = setInterval(() => {
+                if (currentOrderId) trackOrderPolling(currentOrderId);
+            }, 15000); // 15 sec
+        }
+
+        async function trackOrderPolling(orderId) {
+            try {
+                const token = localStorage.getItem('authToken');
+                const headers = token ? { 'Authorization': `Bearer ${token}` } : {};
+                const res = await fetch(`${API_BASE}/api/shipments/track-by-order/${encodeURIComponent(orderId)}`, { headers });
+                const json = await res.json();
+                if (res.ok) renderResult(json.data);
+            } catch (e) {}
+        }
+
+        function showLoading() {
+            document.getElementById('loading-state').style.display = 'block';
+            document.getElementById('tracking-result').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loading-state').style.display = 'none';
+        }
+        
+        function hideAll() {
+            hideLoading();
+            document.getElementById('tracking-result').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
+

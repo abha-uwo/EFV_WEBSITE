@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace | EFV™ – Energy Frequency Vibration</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/animations.css">
+    <link rel="stylesheet" href="../css/responsive.css">
+    <link rel="stylesheet" href="../css/chatbot.css">
+    <link rel="stylesheet" href="../css/product-modal.css?v=13.0">
+    <link rel="stylesheet" href="../css/security.css">
+
+    <!-- PDF.js Library for Secure In-App Viewer (Local) -->
+    <script src="../js/pdfjs/pdf.min.js"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style id="anti-blur-override">
+        .product-modal-card,
+        .product-modal-card *,
+        .product-modal-overlay,
+        .tc-card,
+        .tc-card *,
+        .tc-modal-overlay {
+            filter: none !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+            transform: perspective(1px) scale(1) translateY(0) !important;
+            image-rendering: -webkit-optimize-contrast !important;
+            image-rendering: crisp-edges !important;
+        }
+
+        body.modal-open>nav,
+        body.modal-open>header,
+        body.modal-open>section {
+            filter: brightness(0.5) !important;
+            pointer-events: none !important;
+        }
+    </style>
+    <style>
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            transition: opacity 0.3s ease;
+        }
+
+        @media (max-width: 1100px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .product-card {
+            text-align: center;
+            max-width: 450px;
+            margin: 0 auto;
+            animation: fadeIn 0.8s ease forwards;
+        }
+
+        .price {
+            display: block;
+            font-size: 1.5rem;
+            color: var(--gold-energy);
+            margin: 16px 0;
+            font-weight: 700;
+        }
+
+        /* â”€â”€â”€ Out of Stock — Overlay on book cover â”€â”€â”€ */
+        .efv-oos-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.72);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5;
+            border-radius: 6px;
+        }
+
+        .efv-oos-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #c0392b, #8e0000);
+            color: #fff;
+            font-size: 0.62rem;
+            font-weight: 900;
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 50px;
+            border: 1px solid rgba(255, 100, 100, 0.4);
+            box-shadow: 0 4px 18px rgba(180, 0, 0, 0.5), 0 0 12px rgba(255, 50, 50, 0.15);
+            white-space: nowrap;
+            animation: efv-oos-pulse 2.5s ease-in-out infinite;
+        }
+
+        @keyframes efv-oos-pulse {
+
+            0%,
+            100% {
+                box-shadow: 0 4px 18px rgba(180, 0, 0, 0.5), 0 0 12px rgba(255, 50, 50, 0.15);
+            }
+
+            50% {
+                box-shadow: 0 4px 26px rgba(220, 0, 0, 0.7), 0 0 22px rgba(255, 80, 80, 0.30);
+            }
+        }
+
+        /* â”€â”€â”€ Out of Stock — Status label (below description, above actions) â”€â”€â”€ */
+        .efv-oos-status-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            color: #ff5f5f;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 6px 0 10px;
+            padding: 5px 14px;
+            border: 1px solid rgba(255, 80, 80, 0.25);
+            border-radius: 50px;
+            background: rgba(220, 0, 0, 0.08);
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* â”€â”€â”€ Hindi Paperback — NotionPress block â”€â”€â”€ */
+        .efv-notion-block {
+            margin: 6px 0 4px;
+            padding: 10px 12px;
+            background: rgba(212, 175, 55, 0.06);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .efv-notion-msg {
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.65);
+            line-height: 1.45;
+            margin: 0 0 10px;
+            font-style: italic;
+        }
+
+        .efv-notion-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            background: linear-gradient(135deg, #d4a017, #c8860a, #f0c040);
+            color: #0b132b;
+            font-size: 0.7rem;
+            font-weight: 900;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            padding: 8px 18px;
+            border-radius: 50px;
+            border: none;
+            text-decoration: none;
+            box-shadow: 0 4px 16px rgba(212, 160, 23, 0.35), 0 2px 6px rgba(0, 0, 0, 0.4);
+            transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .efv-notion-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.18) 0%, transparent 60%);
+            pointer-events: none;
+            border-radius: inherit;
+        }
+
+        .efv-notion-btn:hover {
+            transform: translateY(-3px) scale(1.04);
+            box-shadow: 0 8px 28px rgba(212, 160, 23, 0.55), 0 4px 10px rgba(0, 0, 0, 0.5);
+            color: #0b132b;
+            text-decoration: none;
+        }
+
+        .efv-notion-btn:active {
+            transform: translateY(-1px) scale(1.01);
+        }
+    </style>
+    <!-- Google Identity Services -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <!-- Global I18n System (Loaded early to prevent FOUT) -->
+    <script src="../js/i18n.js"></script>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body data-page="marketplace">
+    <div id="particles-js"></div>
+
+    <nav>
+        <!-- Announcement Bar -->
+        <div class="efv-announcement-bar">
+            <div class="container announcement-container">
+                <span class="announcement-text" data-i18n="announcement.iit_ropar">We are now officially incubated with IIT Ropar – Technology Business Incubator Foundation (TBIF)</span>
+            </div>
+        </div>
+        <div class="container nav-main-container">
+            <a href="../index.html" class="logo">
+                <img src="../assets/images/AISA.svg" alt="AISA Logo">
+                <span>EFV<sup>TM</sup></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="marketplace.html">Marketplace</a></li>
+                <li><a href="offers.html" data-i18n="nav.offers">Offers</a></li>
+                <li><a href="blogs.html" class="active gold-text">Blogs</a></li>
+                <li><a href="Feedback.html">Feedback</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+
+
+            <div class="nav-actions">
+                <div id="nav-auth-container"></div>
+                <button class="hamburger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="section text-center" id="insight-header"
+        style="padding-top: 150px; padding-bottom: 60px; position: relative; overflow: hidden; min-height: 50vh; display: flex; align-items: center; justify-content: center; background-size: cover; background-position: center; background-blend-mode: overlay; background-color: rgba(2, 8, 23, 0.8);">
+        <div class="vortex-container">
+            <div class="vortex-ring"></div>
+            <div class="vortex-ring"></div>
+        </div>
+        <div class="container reveal active" style="position: relative; z-index: 10; max-width: 900px; text-align: left;">
+            <div class="loading-state" id="header-loading">
+                <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--gold-energy);"></i>
+            </div>
+            <!-- Injected dynamically -->
+        </div>
+    </header>
+
+    <section class="section" style="padding-top: 40px; background: #020817;">
+        <div class="container" style="display: flex; gap: 40px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap;">
+            
+            <!-- Left Sidebar: Social Sharing -->
+            <aside style="width: 50px; display: flex; flex-direction: column; gap: 15px; position: sticky; top: 120px; height: fit-content;" class="social-share-sidebar">
+                <button class="share-btn" onclick="window.open('https://twitter.com/intent/tweet?url=' + encodeURIComponent(window.location.href), '_blank')" aria-label="Share on X">
+                    <i class="fab fa-x-twitter"></i>
+                </button>
+                <button class="share-btn" onclick="window.open('https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(window.location.href), '_blank')" aria-label="Share on LinkedIn">
+                    <i class="fab fa-linkedin-in"></i>
+                </button>
+                <button class="share-btn" onclick="window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(window.location.href), '_blank')" aria-label="Share on Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </button>
+                <button class="share-btn" onclick="window.open('https://wa.me/?text=' + encodeURIComponent(window.location.href), '_blank')" aria-label="Share on WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </button>
+                <button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href); alert('Link copied to clipboard!');" aria-label="Copy Link">
+                    <i class="fas fa-link"></i>
+                </button>
+            </aside>
+
+            <style>
+                .share-btn {
+                    width: 40px; height: 40px; border-radius: 50%;
+                    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,211,105,0.2);
+                    color: rgba(255,255,255,0.7); cursor: pointer; transition: all 0.3s ease;
+                    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+                }
+                .share-btn:hover {
+                    background: var(--gold-energy); color: #020817; transform: scale(1.1);
+                    box-shadow: 0 0 15px rgba(212,175,55,0.3); border-color: var(--gold-energy);
+                }
+                
+                .insight-rich-content {
+                    color: rgba(255,255,255,0.85);
+                    font-size: 1.15rem;
+                    line-height: 1.8;
+                }
+                .insight-rich-content h1, .insight-rich-content h2, .insight-rich-content h3 {
+                    color: #fff; margin-top: 40px; margin-bottom: 20px; font-weight: 700;
+                }
+                .insight-rich-content p { margin-bottom: 25px; }
+                .insight-rich-content img {
+                    max-width: 100%; border-radius: 12px; margin: 30px 0;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                }
+                .insight-rich-content blockquote {
+                    border-left: 4px solid var(--gold-energy);
+                    padding-left: 20px; margin: 30px 0; font-style: italic;
+                    color: rgba(255,255,255,0.9); background: rgba(255,211,105,0.05); padding: 20px;
+                    border-radius: 0 12px 12px 0;
+                }
+                .insight-rich-content ul, .insight-rich-content ol {
+                    margin-bottom: 25px; padding-left: 20px;
+                }
+                .insight-rich-content li { margin-bottom: 10px; }
+
+                .author-box {
+                    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,211,105,0.2);
+                    border-radius: 16px; padding: 40px; margin-top: 60px; display: flex; gap: 30px;
+                    align-items: center; box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+                }
+                @media (max-width: 768px) {
+                    .author-box { flex-direction: column; text-align: center; }
+                    .social-share-sidebar { flex-direction: row; width: 100%; position: static; justify-content: center; margin-bottom: 20px; }
+                }
+            </style>
+
+            <!-- Main Content Area -->
+            <article style="flex: 1; min-width: 0;" id="insight-body">
+                <div class="loading-state" style="text-align: center; padding: 100px 0; opacity: 0.5;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 3rem; margin-bottom: 20px;"></i>
+                    <p>Loading Insight...</p>
+                </div>
+            </article>
+
+        </div>
+    </section>
+
+    <!-- Script to load single insight -->
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const slug = urlParams.get('slug');
+            const API_BASE = (typeof CONFIG !== 'undefined' && CONFIG.API_BASE_URL) ? CONFIG.API_BASE_URL : 'http://localhost:8080';
+
+            if (!slug) {
+                document.getElementById('insight-body').innerHTML = '<h2 style="color:red;text-align:center;">Insight not found</h2>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/insights/${slug}`);
+                if (!res.ok) throw new Error('Not found');
+                const insight = await res.json();
+
+                // Update Header
+                const header = document.getElementById('insight-header');
+                const bgImage = insight.banner ? (insight.banner.startsWith('http') ? insight.banner : `${API_BASE}/${insight.banner}`) : '../assets/images/vol1-cover.png';
+                header.style.backgroundImage = `url('${bgImage}')`;
+                
+                const date = new Date(insight.createdAt).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+
+                header.querySelector('.container').innerHTML = `
+                    <span style="display: inline-block; background: var(--gold-energy); color: #0b132b; font-weight: 800; font-size: 0.8rem; padding: 6px 16px; border-radius: 50px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px;">
+                        ${insight.category}
+                    </span>
+                    <h1 style="font-size: clamp(2.5rem, 5vw, 4rem); margin-bottom: 20px; line-height: 1.2; color: #fff; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">
+                        ${insight.title}
+                    </h1>
+                    <div style="display: flex; align-items: center; gap: 20px; color: rgba(255,255,255,0.8); font-size: 0.95rem; text-shadow: 0 2px 10px rgba(0,0,0,0.8);">
+                        <span><i class="fas fa-calendar" style="margin-right: 8px;"></i> ${date}</span>
+                        <span><i class="fas fa-clock" style="margin-right: 8px;"></i> ${insight.readTime || '5 min read'}</span>
+                        <span><i class="fas fa-eye" style="margin-right: 8px;"></i> ${insight.views || 0} views</span>
+                    </div>
+                `;
+
+                // Update Body
+                const body = document.getElementById('insight-body');
+                body.innerHTML = `
+                    <div class="insight-rich-content">
+                        ${insight.content}
+                    </div>
+
+                    <div class="author-box">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; background: linear-gradient(135deg, #0b132b, #1a2a5e); border: 2px solid var(--gold-energy); display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: var(--gold-energy); flex-shrink: 0;">
+                            <i class="fas fa-user-astronaut"></i>
+                        </div>
+                        <div>
+                            <h3 style="color: #fff; font-size: 1.5rem; margin-bottom: 10px;">${insight.author || 'EFV™ Research Team'}</h3>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.95rem; line-height: 1.6;">
+                                The EFV™ research and development teams explore consciousness systems, human alignment, energy frameworks, cognitive architecture, and future intelligence.
+                            </p>
+                        </div>
+                    </div>
+                `;
+
+            } catch (e) {
+                document.getElementById('insight-body').innerHTML = '<h2 style="color:#ff5f5f;text-align:center;">Failed to load insight. It may have been removed.</h2>';
+                document.getElementById('header-loading').innerHTML = '';
+            }
+        });
+    </script>
+
+    <!-- Side Cart (Managed by cart.js if not present) -->
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-links footer-explore">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="about.html">About EFV<sup>TM</sup></a></li>
+                        <li><a href="https://uwo24.com/" target="_blank"
+                                rel="noopener noreferrer">About UWO<sup>TM</sup></a></li>
+                        <li><a href="gallery.html">Gallery</a></li>
+                        <li><a href="/terms">Terms &amp; Conditions</a></li>
+                        <li><a href="marketplace.html">Marketplace</a></li>
+                        <li><a href="blogs.html">Blogs</a></li>
+                        <li><a href="partner-verification.html"
+                                style="color: var(--gold-energy); font-weight: 700;">Partner Portal</a></li>
+                        <li><a href="Feedback.html">Feedback</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="https://uwo24.com/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-info">
+                    <div class="logo footer-logo">
+                        <img src="../assets/images/AISA.svg" alt="EFV Logo">
+                        <span>EFV<sup>TM</sup></span>
+                    </div>
+                    <p>World's first EFV<sup>TM</sup> system. Designed for better living.</p>
+                </div>
+                <div class="footer-links footer-connect">
+                    <h4>Connect</h4>
+                    <div class="social-icons">
+                        <a href="https://www.facebook.com/profile.php?id=61585343488735" class="social-icon-link"
+                            aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/FB.svg" alt="Facebook"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.instagram.com/efv_framework/" class="social-icon-link"
+                            aria-label="Instagram" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Insta (1).svg" alt="Instagram"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.linkedin.com/company/efv-framework/" class="social-icon-link"
+                            aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Linkedin.svg" alt="LinkedIn"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.threads.com/@efv_framework" class="social-icon-link" aria-label="Threads"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Threads.svg" alt="Threads"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://x.com/EfvFrame_work" class="social-icon-link" aria-label="X (Twitter)"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/x.png" alt="X (Twitter)"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.youtube.com/@efv_framework" class="social-icon-link" aria-label="YouTube"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/YT (1).svg" alt="YouTube"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://in.pinterest.com/EFV_Framework/" class="social-icon-link"
+                            aria-label="Pinterest" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/pinterset.png" alt="Pinterest"
+                                style="width: 26px; height: 26px;">
+                        </a>
+                        <a href="https://wa.me/917610190909" class="social-icon-link" aria-label="WhatsApp"
+                            target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/Whatsapp.svg" alt="WhatsApp"
+                                style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="https://www.reddit.com/user/Ok_Entry1869/" class="social-icon-link" aria-label="Reddit" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/reddit.svg" alt="Reddit" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease;">
+                        </a>
+                        <a href="mailto:efv@uwo24.com" class="social-icon-link" aria-label="Gmail" target="_blank"
+                            rel="noopener noreferrer">
+                            <img src="../assets/images/gmail.png" alt="Gmail" style="width: 26px; height: 26px;">
+                        </a>
+                        <a href="https://medium.com/@efvframework" class="social-icon-link" aria-label="Medium" target="_blank" rel="noopener noreferrer">
+                            <img src="../assets/images/medium.png" alt="Medium" style="width: 32px; height: 32px; transition: transform 0.3s ease, opacity 0.3s ease; border-radius: 50%;">
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; UWO<sup>TM</sup> &mdash; EFV<sup>TM</sup> is a UWO<sup>TM</sup> Innovation.
+            </div>
+        </div>
+    </footer>
+
+    <script src="../js/api-config.js"></script>
+    <script src="../js/particles.js"></script>
+    <script src="../js/main.js"></script>
+    <script src="../js/cart.js?v=22.5"></script>
+    <script src="../js/chatbot.js?v=9.0"></script>
+    <script src="../js/security.js"></script>
+</body>
+
+</html>

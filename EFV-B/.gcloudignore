@@ -1,0 +1,14 @@
+# Exclude local files from GCP upload
+node_modules
+.git
+.env
+npm-debug.log
+src/data/auth_debug.log
+src/uploads/
+public/assets/images/*.mp4
+public/assets/images/*.pdf
+logs.json
+errors.json
+*.log
+*.txt
+!package*.json

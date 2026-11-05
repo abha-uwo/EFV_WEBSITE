@@ -1,0 +1,396 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy | EFV™</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="../js/api-config.js"></script>
+    <script src="../js/i18n.js"></script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            overflow: hidden;
+            background: transparent;
+        }
+
+        /* ── Particles Canvas fills full viewport behind everything ── */
+        #particles-js {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        #particles-js canvas {
+            display: block;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* ── Popup Overlay ── */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 100;
+            background: rgba(3, 5, 9, 0.45);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* ── Modal Card ── */
+        .privacy-card {
+            width: 100%;
+            max-width: 620px;
+            max-height: 82vh;
+            background: rgba(10, 16, 32, 0.92);
+            backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(255, 211, 105, 0.25);
+            border-radius: 28px;
+            padding: 52px 44px 40px;
+            position: relative;
+            box-shadow:
+                0 0 0 1px rgba(255, 211, 105, 0.06),
+                0 32px 80px rgba(0, 0, 0, 0.7),
+                0 0 60px rgba(255, 211, 105, 0.04) inset;
+            display: flex;
+            flex-direction: column;
+            animation: popUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            overflow: hidden;
+        }
+
+        /* gold top edge glow */
+        .privacy-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 10%; right: 10%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,211,105,0.6), transparent);
+        }
+
+        @keyframes popUp {
+            0%   { transform: scale(0.88) translateY(16px); opacity: 0; filter: blur(8px); }
+            100% { transform: scale(1)    translateY(0);     opacity: 1; filter: blur(0);  }
+        }
+
+        /* ── Close Button ── */
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 38px;
+            height: 38px;
+            background: rgba(255, 211, 105, 0.08);
+            border: 1px solid rgba(255, 211, 105, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD369;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            z-index: 10;
+            flex-shrink: 0;
+        }
+
+        .close-btn:hover {
+            background: #FFD369;
+            color: #030509;
+            transform: rotate(90deg) scale(1.1);
+            border-color: #FFD369;
+        }
+
+        /* ── Header ── */
+        .card-header {
+            text-align: center;
+            margin-bottom: 28px;
+            flex-shrink: 0;
+        }
+
+        .shield-icon {
+            width: 56px;
+            height: 56px;
+            background: rgba(255, 211, 105, 0.1);
+            border: 1px solid rgba(255, 211, 105, 0.25);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFD369;
+            font-size: 1.4rem;
+            margin: 0 auto 18px;
+        }
+
+        .card-header h2 {
+            font-family: 'Cinzel', serif;
+            color: #f0f4f8;
+            font-size: 1.7rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: none;
+            letter-spacing: 0.02em;
+        }
+
+        .card-header h2 span {
+            color: #FFD369;
+        }
+
+        .card-header p {
+            color: rgba(240, 244, 248, 0.5);
+            font-size: 0.85rem;
+        }
+
+        /* ── Scrollable Content ── */
+        .card-content {
+            overflow-y: auto;
+            flex: 1;
+            padding-right: 8px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 211, 105, 0.3) transparent;
+        }
+
+        .card-content::-webkit-scrollbar { width: 4px; }
+        .card-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 211, 105, 0.3);
+            border-radius: 10px;
+        }
+
+        /* ── Policy Sections ── */
+        .policy-section {
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255, 211, 105, 0.07);
+        }
+
+        .policy-section:last-child { border-bottom: none; }
+
+        .policy-section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #FFD369;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .policy-section-title i {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .policy-section p {
+            color: rgba(240, 244, 248, 0.72);
+            font-size: 0.9rem;
+            line-height: 1.8;
+        }
+
+        .policy-section ul {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .policy-section ul li {
+            color: rgba(240, 244, 248, 0.7);
+            font-size: 0.88rem;
+            line-height: 1.7;
+            padding: 3px 0 3px 20px;
+            position: relative;
+        }
+
+        .policy-section ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #FFD369;
+            opacity: 0.5;
+        }
+
+        /* ── Highlight Box ── */
+        .highlight-box {
+            background: rgba(255, 211, 105, 0.07);
+            border: 1px solid rgba(255, 211, 105, 0.2);
+            border-radius: 10px;
+            padding: 14px 18px;
+            margin-top: 14px;
+            text-align: center;
+            color: #FFD369 !important;
+            font-weight: 600;
+            font-size: 0.85rem !important;
+        }
+
+        /* ── Footer Note ── */
+        .footer-note {
+            text-align: center;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(255, 211, 105, 0.08);
+            color: rgba(240, 244, 248, 0.35);
+            font-size: 0.78rem;
+            flex-shrink: 0;
+        }
+
+        .footer-note a {
+            color: #FFD369;
+            text-decoration: none;
+            opacity: 0.8;
+        }
+
+        .footer-note a:hover {
+            opacity: 1;
+            text-decoration: underline;
+        }
+
+        @media (max-width: 480px) {
+            .privacy-card { padding: 40px 24px 28px; max-height: 90vh; }
+            .card-header h2 { font-size: 1.4rem; }
+        }
+    </style>
+
+    <!-- Google tag (gtag.js) - GA4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-D2Z48EXJ9Z"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-D2Z48EXJ9Z');
+    </script>
+
+    <!-- Meta Pixel Code -->
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', '1015594134713138');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1015594134713138&ev=PageView&noscript=1"
+    /></noscript>
+    <!-- End Meta Pixel Code -->
+    <!-- Microsoft Clarity Tracking Code -->
+    <script type="text/javascript">
+        (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+        })(window, document, "clarity", "script", "xna8nwpoq6");
+    </script>
+</head>
+
+<body>
+    <div id="particles-js"></div>
+
+    <div class="popup-overlay">
+        <div class="privacy-card">
+
+            <!-- Close Button -->
+            <a href="javascript:history.back()" class="close-btn" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </a>
+
+            <!-- Header -->
+            <div class="card-header">
+                <div class="shield-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h2>Privacy <span>Policy</span></h2>
+                <p>Protecting your frequency and your data.</p>
+            </div>
+
+            <!-- Scrollable Content -->
+            <div class="card-content">
+
+                <div class="policy-section">
+                    <div class="policy-section-title">
+                        <i class="fas fa-database"></i>
+                        What We Collect
+                    </div>
+                    <p>We only collect information necessary to serve you within the EFV™ ecosystem:</p>
+                    <ul>
+                        <li>Name &amp; email address (at registration)</li>
+                        <li>Phone number (optional, for order updates)</li>
+                        <li>Shipping address (for physical orders only)</li>
+                        <li>Payment transaction references (no card details stored)</li>
+                        <li>Reading &amp; listening progress for your digital library</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <div class="policy-section-title">
+                        <i class="fas fa-cogs"></i>
+                        How We Use Your Data
+                    </div>
+                    <p>Your data is used solely to enhance your Alignment Intelligence experience. We never sell or share your information with advertisers.</p>
+                    <ul>
+                        <li>Process orders &amp; deliver products</li>
+                        <li>Send order confirmations &amp; shipping updates</li>
+                        <li>Provide access to your digital library</li>
+                        <li>Send important platform announcements (opt-out anytime)</li>
+                    </ul>
+                </div>
+
+                <div class="policy-section">
+                    <div class="policy-section-title">
+                        <i class="fas fa-lock"></i>
+                        Data Security
+                    </div>
+                    <p>All data is stored on encrypted, secured cloud infrastructure. Passwords are hashed and never stored in plain text. Payments are processed by certified gateways — we never see your card details.</p>
+                    <div class="highlight-box">
+                        <i class="fas fa-check-circle" style="margin-right: 8px;"></i>
+                        Your data is encrypted at rest &amp; in transit. We never sell your information.
+                    </div>
+                </div>
+
+                <div class="policy-section">
+                    <div class="policy-section-title">
+                        <i class="fas fa-user-shield"></i>
+                        Your Rights
+                    </div>
+                    <p>You may at any time request a copy of your data, correct inaccuracies, delete your account, or opt out of communications — via our <a href="contact.html" style="color: #FFD369; text-decoration: none;">support channel</a>.</p>
+                </div>
+
+            </div>
+
+            <!-- Footer Note -->
+            <div class="footer-note">
+                Last Updated: <strong style="color: rgba(255,211,105,0.6);">February 2026</strong>
+                &nbsp;·&nbsp;
+                For data requests, <a href="contact.html">contact support</a>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="../js/particles.js"></script>
+</body>
+
+</html>
