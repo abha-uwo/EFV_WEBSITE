@@ -1,0 +1,35 @@
+**/node_modules
+**/.next
+**/.git
+**/.env
+**/.env*
+!**/.env.example
+**/.env.local
+**/.env.*.local
+**/data/requests.log
+**/*.log
+**/.DS_Store
+
+# Sensitive JSON database records
+**/src/data/users.json
+**/src/data/admins.json
+**/src/data/orders.json
+**/src/data/cart.json
+**/src/data/bot_leads.json
+**/src/data/partners.json
+**/src/data/partner_messages.json
+**/src/data/partner_sales.json
+**/src/data/payments.json
+**/src/data/chat_conversations.json
+**/src/data/support.json
+**/src/data/notification_logs.json
+**/src/data/notify_requests.json
+**/src/data/order_cancellations.json
+**/src/data/return_requests.json
+**/src/data/purchases.json
+**/src/data/shipments.json
+
+# Keys and secrets
+**/*key*.json
+**/*.pem
+**/*.p12
