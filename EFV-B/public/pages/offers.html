@@ -67,7 +67,7 @@
             overflow: hidden;
             border: var(--glass-border);
             box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6), var(--gold-glow);
-            background: #000;
+            background: radial-gradient(circle at 80% 50%, rgba(212, 175, 55, 0.15) 0%, rgba(20, 20, 22, 0.7) 45%, rgba(10, 10, 12, 0.95) 100%), linear-gradient(135deg, #070709 0%, #131318 100%);
         }
 
         .carousel-slide {
@@ -483,12 +483,6 @@
 
     <!-- Navigation Header -->
     <nav>
-        <!-- Announcement Bar -->
-        <div class="efv-announcement-bar">
-            <div class="container announcement-container">
-                <span class="announcement-text" data-i18n="announcement.iit_ropar">We are now officially incubated with IIT Ropar – Technology Business Incubator Foundation (TBIF)</span>
-            </div>
-        </div>
         <div class="container nav-main-container">
             <a href="../index.html" class="logo">
                 <img src="../assets/images/AISA.svg" alt="EFV Logo">
@@ -528,7 +522,6 @@
                         <p class="carousel-subtitle">Experience our premium cosmic collections at promotional prices. Creating harmony between mind, body, and universe.</p>
                         <a href="marketplace.html" class="carousel-btn">Explore Marketplace</a>
                     </div>
-                    <img src="../assets/images/collection-stack.jpg" class="carousel-image" alt="Luxury Cosmic Background" onerror="this.src='../img/vol1-cover.png'">
                 </div>
             </div>
         </div>
@@ -604,6 +597,7 @@
                                 style="color: var(--gold-energy); font-weight: 700;" data-i18n="footer.partner_portal">Partner Portal</a></li>
                         <li><a href="Feedback.html" data-i18n="footer.feedback">Feedback</a></li>
                         <li><a href="contact.html" data-i18n="footer.contact">Contact</a></li>
+                        <li><a href="links.html" style="color: var(--gold-energy); font-weight: 700;" data-i18n="footer.linktree">Linktree</a></li>
                         <li><a href="https://uwo24.com/privacy-policy" target="_blank" rel="noopener noreferrer" data-i18n="footer.privacy">Privacy Policy</a></li>
                     </ul>
                 </div>
@@ -680,7 +674,7 @@
             
             <!-- Modal Header / Banner -->
             <div style="position: relative; width: 100%; height: 220px; overflow: hidden; flex-shrink: 0;">
-                <img id="modal-offer-banner" src="" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/images/collection-stack.jpg'">
+                <img id="modal-offer-banner" src="" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='../assets/images/vol1-cover.png'">
                 <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(0,0,0,0.3) 0%, rgba(10,10,10,1) 100%);"></div>
                 <button onclick="closeOfferModal()" style="position: absolute; top: 15px; right: 15px; background: rgba(0, 0, 0, 0.6); border: 1px solid rgba(212, 175, 55, 0.4); color: var(--luxury-gold); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; font-size: 1.1rem; z-index: 10;" onmouseover="this.style.background='var(--luxury-gold)'; this.style.color='#000'; this.style.boxShadow='var(--gold-glow)';" onmouseout="this.style.background='rgba(0,0,0,0.6)'; this.style.color='var(--luxury-gold)'; this.style.boxShadow='none';">&times;</button>
                 <div style="position: absolute; bottom: 15px; left: 20px; right: 20px;">

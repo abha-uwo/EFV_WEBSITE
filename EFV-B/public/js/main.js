@@ -351,7 +351,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedConfig = JSON.parse(localStorage.getItem('efv_store_config'));
             if (savedConfig) applyFooterConfig(savedConfig);
 
-            const apiBase = window.API_BASE_URL || (window.location.origin.includes(':3000') ? 'http://localhost:8080' : window.location.origin);
+            const apiBase = window.API_BASE || window.API_BASE_URL || (window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') ? 'http://localhost:8080' : window.location.origin);
             fetch(`${apiBase}/api/settings/store`)
                 .then(res => res.json())
                 .then(data => {

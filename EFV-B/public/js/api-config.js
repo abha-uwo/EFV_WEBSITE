@@ -14,5 +14,6 @@ const CONFIG = {
 
 // Global Exposure
 window.API_BASE = CONFIG.API_BASE_URL;
+window.API_BASE_URL = CONFIG.API_BASE_URL;
 
 console.log(`🔗 EFV API connected to: ${CONFIG.API_BASE_URL}`);

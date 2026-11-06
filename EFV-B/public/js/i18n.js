@@ -585,14 +585,14 @@
         } catch (e) {}
 
         if (navActions) {
-            const changeLocationBtnHtml = _isAdmin ? `
+            const changeLocationBtnHtml = `
                 <div style="border-top:1px solid rgba(255,255,255,0.05);padding:8px 0;">
                     <button id="i18n-change-location-btn" style="background:transparent;border:none;width:100%;text-align:left;padding:12px 18px;color:#d4af37;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:10px;">
                         <i class="fas fa-map-marker-alt"></i>
                         <span data-i18n="nav.change_location">Change Location</span>
                     </button>
                 </div>
-            ` : '';
+            `;
 
             const switcherHtml = `
                 <div style="position:relative;margin-right:15px;display:inline-flex;align-items:center;" id="i18n-switcher-container" class="notranslate">
@@ -684,10 +684,106 @@
             }, 100);
         };
 
-        // Show popup as a mandatory starting point on first visit
-        if (!localStorage.getItem('efv_country_selected') && !sessionStorage.getItem('efv_country_selected')) {
-            window.openCountryPopup();
+        // Automatic Visitor Country Detection via Backend IPData Geolocation Service
+        async function autoDetectCountry() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const testIp = urlParams.get('test_ip') || urlParams.get('ip');
+
+            // 1. Check if logged-in user has an explicitly saved account country preference
+            let hasAccountCountry = false;
+            try {
+                const userRaw = localStorage.getItem('efv_user') || localStorage.getItem('efv_auth_user');
+                if (userRaw && !testIp) {
+                    const parsedUser = JSON.parse(userRaw);
+                    const userCountry = parsedUser.country || (parsedUser.address && parsedUser.address.country);
+                    if (userCountry) {
+                        hasAccountCountry = true;
+                        console.log(`🌍 [i18n] Preserving logged-in user profile country: ${userCountry}`);
+                        return;
+                    }
+                }
+            } catch (e) {}
+
+            // 2. Check if user explicitly selected a country in this active session
+            const sessionManual = !testIp && sessionStorage.getItem('efv_manual_country_session');
+            if (sessionManual) {
+                console.log(`🌍 [i18n] Preserving session manual country choice: ${sessionManual}`);
+                return;
+            }
+
+            try {
+                const apiBase = window.API_BASE || (window.CONFIG && window.CONFIG.API_BASE_URL) || 'http://localhost:8080';
+                const testQuery = testIp ? `?test_ip=${encodeURIComponent(testIp)}` : '';
+                const res = await fetch(`${apiBase}/api/geolocation/detect${testQuery}`, {
+                    headers: { 'Accept': 'application/json' },
+                    cache: 'no-store',
+                    signal: AbortSignal.timeout(3500)
+                });
+
+                if (res.ok) {
+                    const data = await res.json();
+                    if (data && data.country_code) {
+                        const detectedCode = String(data.country_code).trim().toUpperCase();
+                        const matchingCountry = countries.find(c => c.code === detectedCode);
+                        const dialCode = data.calling_code || (matchingCountry ? matchingCountry.dialCode : '91');
+                        const countryName = data.country_name || (matchingCountry ? matchingCountry.name : detectedCode);
+
+                        console.log(`🌍 [i18n] Auto-detected country: ${countryName} (${detectedCode}) via ${data.source || 'ipdata'} [Currency: ${data.currency ? data.currency.code : 'default'}]`);
+
+                        localStorage.setItem('efv_selected_country', detectedCode);
+                        localStorage.setItem('efv_country_selected', 'true');
+                        sessionStorage.setItem('efv_country_selected', 'true');
+                        localStorage.setItem('efv_selected_country_data', JSON.stringify({
+                            iso2: detectedCode,
+                            dialCode: dialCode,
+                            name: countryName,
+                            currency: data.currency
+                        }));
+
+                        // Apply appropriate language if user hasn't explicitly set language preference
+                        if (!localStorage.getItem('efv_lang_selected_manually') && matchingCountry && matchingCountry.lang) {
+                            applyLanguage(matchingCountry.lang);
+                        }
+
+                        // Dispatch country changed event for cart, checkout, marketplace, and profile
+                        window.dispatchEvent(new CustomEvent('efv-country-changed', {
+                            detail: {
+                                iso2: detectedCode,
+                                dialCode: dialCode,
+                                countryName: countryName,
+                                currency: data.currency,
+                                source: data.source
+                            }
+                        }));
+                        return;
+                    }
+                }
+            } catch (err) {
+                console.warn('⚠️ [i18n] Auto-country detection failed or timed out:', err.message);
+            }
+
+            // Fallback: If no country selected at all and detection failed, set safe default without popup
+            if (!localStorage.getItem('efv_selected_country')) {
+                const defaultCode = 'IN';
+                const defaultCountry = countries.find(c => c.code === defaultCode) || { code: 'IN', dialCode: '91', name: 'India', lang: 'en' };
+                localStorage.setItem('efv_selected_country', defaultCode);
+                localStorage.setItem('efv_country_selected', 'true');
+                localStorage.setItem('efv_selected_country_data', JSON.stringify({
+                    iso2: defaultCode,
+                    dialCode: defaultCountry.dialCode,
+                    name: defaultCountry.name
+                }));
+                window.dispatchEvent(new CustomEvent('efv-country-changed', {
+                    detail: {
+                        iso2: defaultCode,
+                        dialCode: defaultCountry.dialCode
+                    }
+                }));
+            }
         }
+
+        // Non-blocking auto detection without showing popup
+        autoDetectCountry();
 
         document.querySelectorAll('.i18n-country-btn').forEach(btn => {
             btn.addEventListener('mouseenter', () => {
@@ -716,10 +812,13 @@
 
                 localStorage.setItem('efv_country_selected', 'true');
                 sessionStorage.setItem('efv_country_selected', 'true');
+                sessionStorage.setItem('efv_manual_country_session', countryCode);
+                localStorage.setItem('efv_country_selected_manually', 'true'); // Flag indicating explicit manual choice
                 localStorage.setItem('efv_selected_country', countryCode);
                 localStorage.setItem('efv_selected_country_data', JSON.stringify({
                     iso2: selectedCountryData.code,
-                    dialCode: selectedCountryData.dialCode
+                    dialCode: selectedCountryData.dialCode,
+                    name: selectedCountryData.name
                 }));
 
                 applyLanguage(lang);
@@ -728,7 +827,8 @@
                 window.dispatchEvent(new CustomEvent('efv-country-changed', { 
                     detail: { 
                         iso2: selectedCountryData.code, 
-                        dialCode: selectedCountryData.dialCode 
+                        dialCode: selectedCountryData.dialCode,
+                        countryName: selectedCountryData.name
                     } 
                 }));
 

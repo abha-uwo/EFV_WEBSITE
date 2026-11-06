@@ -543,12 +543,27 @@ document.addEventListener('DOMContentLoaded', () => {
         let originalPriceVal = product.originalPrice;
         let hasLocalizedPrice = false;
 
-        if (countryKey && product.countryPricing && product.countryPricing[countryKey]) {
-            const cp = product.countryPricing[countryKey];
-            if (cp.enabled !== false && cp.price !== undefined && cp.price !== null && cp.price !== '') {
-                displayPrice = Number(cp.price);
-                originalPriceVal = cp.mrp !== undefined && cp.mrp !== null && cp.mrp !== '' ? Number(cp.mrp) : null;
-                hasLocalizedPrice = true;
+        // Check if product has explicit pricing for this country (by key, code, or name)
+        if (product.countryPricing && typeof product.countryPricing === 'object') {
+            const possibleKeys = [
+                countryKey,
+                selectedCountry,
+                selectedCountry.toLowerCase(),
+                (countryKey || '').toLowerCase()
+            ].filter(Boolean);
+
+            for (const rawKey of Object.keys(product.countryPricing)) {
+                const cleanKey = rawKey.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+                const matched = possibleKeys.some(pk => pk.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === cleanKey);
+                if (matched) {
+                    const cp = product.countryPricing[rawKey];
+                    if (cp && cp.enabled !== false && cp.price !== undefined && cp.price !== null && cp.price !== '') {
+                        displayPrice = Number(cp.price);
+                        originalPriceVal = cp.mrp !== undefined && cp.mrp !== null && cp.mrp !== '' ? Number(cp.mrp) : null;
+                        hasLocalizedPrice = true;
+                        break;
+                    }
+                }
             }
         }
 

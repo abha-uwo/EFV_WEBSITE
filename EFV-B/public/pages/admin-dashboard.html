@@ -2610,7 +2610,7 @@
             </div>
 
             <div class="modal-main-content">
-                <form id="admin-product-form">
+                <form id="admin-product-form" novalidate onsubmit="window.handleProductFormSubmit(event)">
                     <input type="hidden" id="admin-prod-id">
 
                     <!-- Section 1: Product Info -->
@@ -2736,9 +2736,14 @@
                             <i class="fas fa-globe"></i>
                             <h3>Country-wise Pricing</h3>
                         </div>
-                        <button type="button" class="btn btn-gold small" onclick="window.openPricingSelectionModal()" style="padding: 5px 10px; font-size: 0.75rem; background: rgba(46, 204, 113, 0.15); border-color: rgba(46, 204, 113, 0.5); color: #2ecc71;">
-                            <i class="fas fa-file-excel"></i> Excel Import
-                        </button>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button" class="btn btn-gold small" onclick="window.openAddCustomCountryModal()" style="padding: 5px 12px; font-size: 0.75rem; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.5); color: #ffd700; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600;">
+                                <i class="fas fa-plus-circle"></i> Add Country
+                            </button>
+                            <button type="button" class="btn btn-gold small" onclick="window.openPricingSelectionModal()" style="padding: 5px 10px; font-size: 0.75rem; background: rgba(46, 204, 113, 0.15); border-color: rgba(46, 204, 113, 0.5); color: #2ecc71;">
+                                <i class="fas fa-file-excel"></i> Excel Import
+                            </button>
+                        </div>
                     </div>
                     <p style="font-size: 0.75rem; opacity: 0.6; margin-bottom: 10px;">Define different prices for each country. Leave Selling Price blank to use the global default price. Or use Excel Import for bulk updates.</p>
                     <div style="margin-bottom: 10px; position: relative;">
@@ -2760,16 +2765,17 @@
                         }
                     </style>
                     <div style="margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; background: rgba(0,0,0,0.4); max-height: 380px; overflow-y: auto; overflow-x: auto;">
-                        <table style="width: 100%; min-width: 700px; border-collapse: collapse; text-align: left;">
+                        <table style="width: 100%; min-width: 740px; border-collapse: collapse; text-align: left;">
                             <thead style="position: sticky; top: 0; background: #141414; z-index: 5; box-shadow: 0 2px 8px rgba(0,0,0,0.6);">
                                 <tr style="border-bottom: 2px solid rgba(212, 175, 55, 0.3); color: var(--gold-text); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">
-                                    <th style="padding: 12px 10px; background: #141414; width: 24%;">Country</th>
-                                    <th style="padding: 12px 8px; background: #141414; width: 10%; text-align: center;">Currency</th>
+                                    <th style="padding: 12px 10px; background: #141414; width: 22%;">Country</th>
+                                    <th style="padding: 12px 6px; background: #141414; width: 10%; text-align: center;">Currency</th>
                                     <th style="padding: 12px 8px; background: #141414; width: 16%;">Selling Price</th>
                                     <th style="padding: 12px 8px; background: #141414; width: 16%;">MRP</th>
-                                    <th style="padding: 12px 8px; background: #141414; width: 12%; text-align: center;">GST %</th>
-                                    <th style="padding: 12px 8px; background: #141414; width: 11%; text-align: center;">Discount</th>
-                                    <th style="padding: 12px 8px; background: #141414; width: 11%; text-align: center;">Status</th>
+                                    <th style="padding: 12px 8px; background: #141414; width: 11%; text-align: center;">GST %</th>
+                                    <th style="padding: 12px 8px; background: #141414; width: 10%; text-align: center;">Discount</th>
+                                    <th style="padding: 12px 6px; background: #141414; width: 8%; text-align: center;">Status</th>
+                                    <th style="padding: 12px 6px; background: #141414; width: 7%; text-align: center;">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="admin-country-pricing-tbody">
@@ -2846,8 +2852,7 @@
                         <div class="premium-grid"
                             style="grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                             <div class="p-form-group">
-                                <input type="number" id="admin-prod-total-chapters" class="p-input" placeholder=" "
-                                    min="1">
+                                <input type="number" id="admin-prod-total-chapters" class="p-input" placeholder=" ">
                                 <label class="p-label">Total Chapters</label>
                             </div>
                             <div class="p-form-group">
@@ -2946,7 +2951,7 @@
                 </button>
                 <div style="display:flex; gap:10px;">
                     <button type="button" onclick="closeProductModal()" class="p-btn p-btn-secondary">Cancel</button>
-                    <button type="submit" form="admin-product-form" class="p-btn p-btn-primary" id="admin-save-btn">
+                    <button type="button" class="p-btn p-btn-primary" id="admin-save-btn" onclick="window.handleProductFormSubmit(event)">
                         <i class="fas fa-save"></i> UPDATE PRODUCT
                     </button>
                 </div>
@@ -3001,6 +3006,53 @@
                 <button type="submit" form="admin-coupon-form" class="p-btn p-btn-primary">
                     <i class="fas fa-plus-circle"></i> CREATE COUPON
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Custom Country Pricing Modal -->
+    <div id="modal-add-custom-country-pricing" class="admin-premium-overlay" style="z-index: 200005; display: none;">
+        <div class="admin-premium-card" style="max-width: 480px; background: #0c101d; border: 1px solid rgba(212, 175, 55, 0.3); border-radius: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.8);">
+            <div class="modal-header-premium" style="display: flex; justify-content: space-between; align-items: center; padding: 18px 24px; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                <h2 style="font-size: 1.15rem; color: #ffd700; margin: 0; display: flex; align-items: center; gap: 8px;">
+                    <i class="fas fa-globe"></i> Add Country Pricing
+                </h2>
+                <button type="button" onclick="window.closeAddCustomCountryModal()" class="close-premium" style="background: none; border: none; color: rgba(255,255,255,0.6); font-size: 1.4rem; cursor: pointer;">&times;</button>
+            </div>
+            <div class="modal-main-content" style="padding: 22px 24px;">
+                <p style="font-size: 0.8rem; color: rgba(255,255,255,0.6); margin: 0 0 16px 0; line-height: 1.4;">
+                    Select any country from the global list or enter custom details. A new row will be added to the pricing table where you can set Selling Price, MRP, and GST.
+                </p>
+                
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 600; color: #ffd700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Choose Country</label>
+                    <select id="add-country-select" onchange="window.onCustomCountrySelectChanged(this.value)" style="width: 100%; height: 42px; background: rgba(255,255,255,0.05); border: 1px solid rgba(212,175,55,0.3); border-radius: 8px; color: white; padding: 0 12px; font-size: 0.88rem; outline: none;">
+                        <option value="">-- Select from 35+ Countries --</option>
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 14px;">
+                    <label style="display: block; font-size: 0.78rem; font-weight: 600; color: #ffd700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Country Name</label>
+                    <input type="text" id="add-country-name-input" placeholder="e.g. Australia" style="width: 100%; height: 40px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: white; padding: 0 12px; font-size: 0.88rem; box-sizing: border-box; outline: none;">
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 22px;">
+                    <div>
+                        <label style="display: block; font-size: 0.78rem; font-weight: 600; color: #ffd700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Currency Code</label>
+                        <input type="text" id="add-country-curr-input" placeholder="e.g. AUD" maxlength="6" style="width: 100%; height: 40px; text-transform: uppercase; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: white; padding: 0 12px; font-size: 0.88rem; box-sizing: border-box; outline: none;">
+                    </div>
+                    <div>
+                        <label style="display: block; font-size: 0.78rem; font-weight: 600; color: #ffd700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">Flag (Emoji)</label>
+                        <input type="text" id="add-country-flag-input" placeholder="e.g. 🇦🇺" style="width: 100%; height: 40px; background: rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: white; padding: 0 12px; font-size: 1rem; box-sizing: border-box; outline: none;">
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: flex-end;">
+                    <button type="button" class="btn btn-outline small" onclick="window.closeAddCustomCountryModal()" style="padding: 8px 16px; font-size: 0.82rem; border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8);">Cancel</button>
+                    <button type="button" class="btn btn-gold small" onclick="window.confirmAddCustomCountry()" style="padding: 8px 20px; font-size: 0.82rem; background: #ffd700; color: #000; font-weight: 700; border: none; border-radius: 6px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                        <i class="fas fa-plus"></i> Add to Table
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -3435,8 +3487,8 @@
         </div>
     </div>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <script src="../js/api-config.js?v=34.0"></script>
-    <script src="../js/admin.js?v=34.0"></script>
+    <script src="../js/api-config.js?v=37.0"></script>
+    <script src="../js/admin.js?v=37.0"></script>
     <script src="../js/admin-blogs.js?v=34.0"></script>
     <script src="../js/chatbot.js?v=34.0"></script>
     <script src="../js/security.js?v=34.0"></script>

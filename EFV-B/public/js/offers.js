@@ -32,7 +32,7 @@ function getOfferBadgeText(offer) {
 
 // Helper to get correct banner image URL
 function getOfferImageUrl(url) {
-    if (!url) return '../assets/images/collection-stack.jpg';
+    if (!url) return '';
     if (url.startsWith('http://') || url.startsWith('https://')) return url;
     if (url.startsWith('/api/')) return `${CONFIG.API_BASE_URL}${url}`;
     if (url.startsWith('uploads/') || url.startsWith('/uploads/')) {
@@ -190,7 +190,7 @@ function renderCarousel() {
                     <p class="carousel-subtitle">${offer.description}</p>
                     <button class="carousel-btn" onclick="claimOffer('${offer._id || offer.id}')">${ctaText}</button>
                 </div>
-                <img src="${getOfferImageUrl(offer.bannerUrl)}" class="carousel-image" alt="${offer.name}" onerror="this.src='../assets/images/collection-stack.jpg'">
+                ${offer.bannerUrl ? `<img src="${getOfferImageUrl(offer.bannerUrl)}" class="carousel-image" alt="${offer.name}" onerror="this.style.display='none'">` : ''}
             </div>
         `;
         
@@ -227,7 +227,6 @@ function renderPlaceholderCarousel() {
                 <p class="carousel-subtitle">Unlock premium discounts, bundle codes, and special packages to calibrate your personal Energetics today.</p>
                 <a href="marketplace.html" class="carousel-btn">View Catalog</a>
             </div>
-            <img src="../assets/images/collection-stack.jpg" class="carousel-image" alt="Cosmic Space">
         </div>
     `;
 }

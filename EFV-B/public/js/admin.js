@@ -25,6 +25,45 @@ const SUPPORTED_COUNTRIES = [
 ];
 window.SUPPORTED_COUNTRIES = SUPPORTED_COUNTRIES;
 
+const WORLD_CUSTOM_COUNTRIES = [
+    { name: 'Australia', code: 'AU', currency: 'AUD', flag: '🇦🇺' },
+    { name: 'Canada', code: 'CA', currency: 'CAD', flag: '🇨🇦' },
+    { name: 'Netherlands', code: 'NL', currency: 'EUR', flag: '🇳🇱' },
+    { name: 'Singapore', code: 'SG', currency: 'SGD', flag: '🇸🇬' },
+    { name: 'New Zealand', code: 'NZ', currency: 'NZD', flag: '🇳🇿' },
+    { name: 'Switzerland', code: 'CH', currency: 'CHF', flag: '🇨🇭' },
+    { name: 'Brazil', code: 'BR', currency: 'BRL', flag: '🇧🇷' },
+    { name: 'South Africa', code: 'ZA', currency: 'ZAR', flag: '🇿🇦' },
+    { name: 'Mexico', code: 'MX', currency: 'MXN', flag: '🇲🇽' },
+    { name: 'Sweden', code: 'SE', currency: 'SEK', flag: '🇸🇪' },
+    { name: 'Norway', code: 'NO', currency: 'NOK', flag: '🇳🇴' },
+    { name: 'Denmark', code: 'DK', currency: 'DKK', flag: '🇩🇰' },
+    { name: 'Poland', code: 'PL', currency: 'PLN', flag: '🇵🇱' },
+    { name: 'Turkey', code: 'TR', currency: 'TRY', flag: '🇹🇷' },
+    { name: 'Indonesia', code: 'ID', currency: 'IDR', flag: '🇮🇩' },
+    { name: 'Malaysia', code: 'MY', currency: 'MYR', flag: '🇲🇾' },
+    { name: 'Thailand', code: 'TH', currency: 'THB', flag: '🇹🇭' },
+    { name: 'Vietnam', code: 'VN', currency: 'VND', flag: '🇻🇳' },
+    { name: 'Philippines', code: 'PH', currency: 'PHP', flag: '🇵🇭' },
+    { name: 'Ireland', code: 'IE', currency: 'EUR', flag: '🇮🇪' },
+    { name: 'Belgium', code: 'BE', currency: 'EUR', flag: '🇧🇪' },
+    { name: 'Austria', code: 'AT', currency: 'EUR', flag: '🇦🇹' },
+    { name: 'Qatar', code: 'QA', currency: 'QAR', flag: '🇶🇦' },
+    { name: 'Kuwait', code: 'KW', currency: 'KWD', flag: '🇰🇼' },
+    { name: 'Bahrain', code: 'BH', currency: 'BHD', flag: '🇧🇭' },
+    { name: 'Oman', code: 'OM', currency: 'OMR', flag: '🇴🇲' },
+    { name: 'Israel', code: 'IL', currency: 'ILS', flag: '🇮🇱' },
+    { name: 'Egypt', code: 'EG', currency: 'EGP', flag: '🇪🇬' },
+    { name: 'Nigeria', code: 'NG', currency: 'NGN', flag: '🇳🇬' },
+    { name: 'Kenya', code: 'KE', currency: 'KES', flag: '🇰🇪' },
+    { name: 'Argentina', code: 'AR', currency: 'ARS', flag: '🇦🇷' },
+    { name: 'Chile', code: 'CL', currency: 'CLP', flag: '🇨🇱' },
+    { name: 'Colombia', code: 'CO', currency: 'COP', flag: '🇨🇴' },
+    { name: 'Hong Kong', code: 'HK', currency: 'HKD', flag: '🇭🇰' },
+    { name: 'Taiwan', code: 'TW', currency: 'TWD', flag: '🇹🇼' }
+];
+window.WORLD_CUSTOM_COUNTRIES = WORLD_CUSTOM_COUNTRIES;
+
 // --- DYNAMIC CURRENCY SYMBOL HELPER FOR ORDERS ---
 const ADMIN_CURRENCY_SYMBOLS = {
     'INR': '₹', 'USD': '$', 'GBP': '£', 'EUR': '€',
@@ -359,11 +398,13 @@ window.renderAdminCountryPricingRows = function(product) {
             key: c.key,
             name: c.name,
             flag: c.flag || '🌐',
-            currency: c.currency || 'USD'
+            code: c.code || '',
+            currency: c.currency || 'USD',
+            isCustom: false
         });
     });
 
-    // 2. Add all countries from product.countryPricing (e.g. 79 imported countries from Excel)
+    // 2. Add all countries from product.countryPricing (including custom added + Excel imported)
     if (product && product.countryPricing && typeof product.countryPricing === 'object') {
         Object.keys(product.countryPricing).forEach(rawKey => {
             const cpData = product.countryPricing[rawKey];
@@ -371,27 +412,46 @@ window.renderAdminCountryPricingRows = function(product) {
             const cleanKey = rawKey.replace(/[^a-zA-Z0-9]/g, '');
             if (!cleanKey) return;
 
-            let existingMatched = null;
-            for (const c of SUPPORTED_COUNTRIES) {
-                if (c.key.toLowerCase() === cleanKey.toLowerCase() || c.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === cleanKey.toLowerCase()) {
-                    existingMatched = c;
-                    break;
-                }
+            let existingMatched = SUPPORTED_COUNTRIES.find(c => 
+                c.key.toLowerCase() === cleanKey.toLowerCase() || 
+                c.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === cleanKey.toLowerCase() ||
+                (c.code && c.code.toLowerCase() === cleanKey.toLowerCase())
+            );
+
+            let customMatched = null;
+            if (!existingMatched && typeof WORLD_CUSTOM_COUNTRIES !== 'undefined') {
+                customMatched = WORLD_CUSTOM_COUNTRIES.find(c => 
+                    c.name.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() === cleanKey.toLowerCase() ||
+                    (c.code && c.code.toLowerCase() === cleanKey.toLowerCase())
+                );
             }
 
             if (existingMatched) {
                 countryMap.set(existingMatched.key, {
                     key: existingMatched.key,
-                    name: existingMatched.name,
-                    flag: existingMatched.flag || '🌐',
-                    currency: cpData.currency || existingMatched.currency || 'USD'
+                    name: cpData.name || existingMatched.name,
+                    flag: cpData.flag || existingMatched.flag || '🌐',
+                    code: cpData.code || existingMatched.code || '',
+                    currency: cpData.currency || existingMatched.currency || 'USD',
+                    isCustom: false
+                });
+            } else if (customMatched) {
+                countryMap.set(cleanKey, {
+                    key: cleanKey,
+                    name: cpData.name || customMatched.name,
+                    flag: cpData.flag || customMatched.flag || '🌐',
+                    code: cpData.code || customMatched.code || '',
+                    currency: cpData.currency || customMatched.currency || 'USD',
+                    isCustom: true
                 });
             } else if (!countryMap.has(cleanKey)) {
                 countryMap.set(cleanKey, {
                     key: cleanKey,
                     name: cpData.name || rawKey,
-                    flag: '🌐',
-                    currency: cpData.currency || 'USD'
+                    flag: cpData.flag || '🌐',
+                    code: cpData.code || '',
+                    currency: cpData.currency || 'USD',
+                    isCustom: true
                 });
             }
         });
@@ -399,11 +459,22 @@ window.renderAdminCountryPricingRows = function(product) {
 
     const countriesList = Array.from(countryMap.values());
     const supportedKeys = new Set(SUPPORTED_COUNTRIES.map(c => c.key));
+
+    // Sort: Countries with configured prices (>0) first, then supported defaults, then others alphabetically
     countriesList.sort((a, b) => {
+        const cpA = product && product.countryPricing ? window.getCountryPricingData(product.countryPricing, a) : null;
+        const cpB = product && product.countryPricing ? window.getCountryPricingData(product.countryPricing, b) : null;
+        const hasPriceA = cpA && (cpA.price !== undefined && cpA.price !== '' && cpA.price !== null && Number(cpA.price) > 0);
+        const hasPriceB = cpB && (cpB.price !== undefined && cpB.price !== '' && cpB.price !== null && Number(cpB.price) > 0);
+        
+        if (hasPriceA && !hasPriceB) return -1;
+        if (!hasPriceA && hasPriceB) return 1;
+        
         const isSupA = supportedKeys.has(a.key);
         const isSupB = supportedKeys.has(b.key);
         if (isSupA && !isSupB) return -1;
         if (!isSupA && isSupB) return 1;
+        
         return a.name.localeCompare(b.name);
     });
 
@@ -413,20 +484,30 @@ window.renderAdminCountryPricingRows = function(product) {
         const mrpVal = (cp && cp.mrp !== undefined && cp.mrp !== null) ? cp.mrp : '';
         const gstVal = (cp && cp.gstPercent !== undefined) ? cp.gstPercent : ((cp && cp.taxRate !== undefined) ? cp.taxRate : 0);
         const enabledVal = (cp && cp.enabled !== undefined) ? cp.enabled : true;
+        const currencyVal = (cp && cp.currency) ? cp.currency : c.currency;
 
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
         tr.className = 'admin-country-pricing-row';
         tr.setAttribute('data-country-key', c.key);
-        tr.setAttribute('data-country-name', c.name.toLowerCase());
+        tr.setAttribute('data-country-name', c.name);
+        tr.setAttribute('data-country-currency', currencyVal);
+        tr.setAttribute('data-country-flag', c.flag);
+        tr.setAttribute('data-country-code', c.code || '');
+        tr.setAttribute('data-is-custom', c.isCustom ? 'true' : 'false');
+
+        const badgeHtml = c.isCustom 
+            ? `<span style="font-size: 0.62rem; background: rgba(212, 175, 55, 0.2); color: #ffd700; padding: 2px 5px; border-radius: 4px; font-weight: 700; margin-left: auto;">CUSTOM</span>` 
+            : '';
 
         tr.innerHTML = `
             <td style="padding: 10px 8px; display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 1.1rem;">${c.flag}</span>
-                <span style="font-weight: 500; font-size: 0.85rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px;" title="${c.name}">${c.name}</span>
+                <span style="font-weight: 500; font-size: 0.85rem; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="${c.name}">${c.name}</span>
+                ${badgeHtml}
             </td>
             <td style="padding: 10px 6px; text-align: center;">
-                <input type="text" class="p-input" value="${c.currency}" readonly style="width: 50px; height: 32px; font-size: 0.75rem; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.7); border-radius: 6px; padding: 0;">
+                <input type="text" class="p-input country-currency" id="cp-curr-${c.key}" value="${currencyVal}" maxlength="6" style="width: 52px; height: 32px; font-size: 0.75rem; text-align: center; background: rgba(255,255,255,0.08); border: 1px solid rgba(212,175,55,0.3); color: #ffd700; border-radius: 6px; padding: 0; font-weight: 600; text-transform: uppercase;">
             </td>
             <td style="padding: 10px 6px;">
                 <input type="number" step="0.01" class="p-input country-price" id="cp-price-${c.key}" value="${priceVal}" placeholder="0.00" style="width: 100%; max-width: 100px; height: 32px; font-size: 0.85rem; padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: #2ecc71; font-weight: 600;" oninput="window.calculateCountryDiscount('${c.key}')">
@@ -445,6 +526,11 @@ window.renderAdminCountryPricingRows = function(product) {
             </td>
             <td style="padding: 10px 6px; text-align: center;">
                 <input type="checkbox" id="cp-enabled-${c.key}" ${enabledVal ? 'checked' : ''} style="width: 16px; height: 16px; cursor: pointer; accent-color: #2ecc71;">
+            </td>
+            <td style="padding: 10px 6px; text-align: center;">
+                <button type="button" class="btn-icon" onclick="window.removeAdminCountryRow('${c.key}')" title="Remove ${c.name}" style="color: #ff4d4d; background: rgba(255, 77, 77, 0.12); border: 1px solid rgba(255, 77, 77, 0.3); border-radius: 6px; cursor: pointer; padding: 4px 8px; font-size: 0.8rem; transition: all 0.2s;">
+                    <i class="fas fa-trash-alt"></i>
+                </button>
             </td>
         `;
         tbody.appendChild(tr);
@@ -465,6 +551,183 @@ window.filterAdminCountryPricingRows = function() {
             row.style.display = 'none';
         }
     });
+};
+
+window.openAddCustomCountryModal = function() {
+    const modal = document.getElementById('modal-add-custom-country-pricing');
+    const select = document.getElementById('add-country-select');
+    if (!modal) return;
+
+    if (select) {
+        select.innerHTML = '<option value="">-- Choose from 35+ Countries --</option>';
+        if (typeof WORLD_CUSTOM_COUNTRIES !== 'undefined') {
+            [...WORLD_CUSTOM_COUNTRIES].sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
+                select.innerHTML += `<option value="${c.name}">${c.flag} ${c.name} (${c.currency})</option>`;
+            });
+        }
+        select.innerHTML += '<option value="__custom__">➕ Other / Custom Country...</option>';
+    }
+
+    const nameInput = document.getElementById('add-country-name-input');
+    const currInput = document.getElementById('add-country-curr-input');
+    const flagInput = document.getElementById('add-country-flag-input');
+    if (nameInput) nameInput.value = '';
+    if (currInput) currInput.value = '';
+    if (flagInput) flagInput.value = '';
+
+    modal.style.display = 'flex';
+    modal.classList.add('active');
+    modal.style.opacity = '1';
+};
+
+window.closeAddCustomCountryModal = function() {
+    const modal = document.getElementById('modal-add-custom-country-pricing');
+    if (modal) {
+        modal.classList.remove('active');
+        modal.style.display = 'none';
+        modal.style.opacity = '0';
+    }
+};
+
+window.onCustomCountrySelectChanged = function(val) {
+    const nameInput = document.getElementById('add-country-name-input');
+    const currInput = document.getElementById('add-country-curr-input');
+    const flagInput = document.getElementById('add-country-flag-input');
+    if (!nameInput || !currInput) return;
+
+    if (val === '__custom__') {
+        nameInput.value = '';
+        currInput.value = 'USD';
+        if (flagInput) flagInput.value = '🌐';
+        nameInput.focus();
+        return;
+    }
+
+    const matched = (typeof WORLD_CUSTOM_COUNTRIES !== 'undefined') ? WORLD_CUSTOM_COUNTRIES.find(c => c.name === val) : null;
+    if (matched) {
+        nameInput.value = matched.name;
+        currInput.value = matched.currency;
+        if (flagInput) flagInput.value = matched.flag;
+    }
+};
+
+window.confirmAddCustomCountry = function() {
+    const nameInput = document.getElementById('add-country-name-input');
+    const currInput = document.getElementById('add-country-curr-input');
+    const flagInput = document.getElementById('add-country-flag-input');
+    const tbody = document.getElementById('admin-country-pricing-tbody');
+
+    const name = nameInput ? nameInput.value.trim() : '';
+    const currency = currInput ? currInput.value.trim().toUpperCase() : 'USD';
+    const flag = (flagInput && flagInput.value.trim()) ? flagInput.value.trim() : '🌐';
+
+    if (!name) {
+        alert('Please enter or select a Country Name.');
+        return;
+    }
+
+    const key = name.replace(/[^a-zA-Z0-9]/g, '');
+    if (!key) {
+        alert('Invalid country name.');
+        return;
+    }
+
+    const matchedCustom = (typeof WORLD_CUSTOM_COUNTRIES !== 'undefined') 
+        ? WORLD_CUSTOM_COUNTRIES.find(c => c.name.toLowerCase() === name.toLowerCase()) 
+        : null;
+    const code = matchedCustom ? matchedCustom.code : '';
+
+    // Check if already in table
+    const existing = document.querySelector(`.admin-country-pricing-row[data-country-key="${key}"]`);
+    if (existing) {
+        existing.style.display = '';
+        existing.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        existing.style.transition = 'all 0.5s ease';
+        existing.style.backgroundColor = 'rgba(212, 175, 55, 0.3)';
+        setTimeout(() => { existing.style.backgroundColor = ''; }, 2000);
+        window.closeAddCustomCountryModal();
+        alert(`${name} is already in the table! Highlighted for you.`);
+        return;
+    }
+
+    const tr = document.createElement('tr');
+    tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
+    tr.className = 'admin-country-pricing-row';
+    tr.setAttribute('data-country-key', key);
+    tr.setAttribute('data-country-name', name);
+    tr.setAttribute('data-country-currency', currency);
+    tr.setAttribute('data-country-flag', flag);
+    tr.setAttribute('data-country-code', code);
+    tr.setAttribute('data-is-custom', 'true');
+    tr.style.backgroundColor = 'rgba(46, 204, 113, 0.2)';
+    tr.style.transition = 'background-color 1.5s ease';
+
+    tr.innerHTML = `
+        <td style="padding: 10px 8px; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.1rem;">${flag}</span>
+            <span style="font-weight: 600; font-size: 0.85rem; color: #ffd700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 130px;" title="${name}">${name}</span>
+            <span style="font-size: 0.62rem; background: rgba(46, 204, 113, 0.25); color: #2ecc71; padding: 2px 5px; border-radius: 4px; font-weight: 700; margin-left: auto;">NEW</span>
+        </td>
+        <td style="padding: 10px 6px; text-align: center;">
+            <input type="text" class="p-input country-currency" id="cp-curr-${key}" value="${currency}" maxlength="6" style="width: 52px; height: 32px; font-size: 0.75rem; text-align: center; background: rgba(255,255,255,0.08); border: 1px solid rgba(212,175,55,0.4); color: #ffd700; border-radius: 6px; padding: 0; font-weight: 600; text-transform: uppercase;">
+        </td>
+        <td style="padding: 10px 6px;">
+            <input type="number" step="0.01" class="p-input country-price" id="cp-price-${key}" value="" placeholder="0.00" style="width: 100%; max-width: 100px; height: 32px; font-size: 0.85rem; padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: #2ecc71; font-weight: 600;" oninput="window.calculateCountryDiscount('${key}')">
+        </td>
+        <td style="padding: 10px 6px;">
+            <input type="number" step="0.01" class="p-input country-mrp" id="cp-mrp-${key}" value="" placeholder="0.00" style="width: 100%; max-width: 100px; height: 32px; font-size: 0.85rem; padding: 5px 8px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.5); color: white;" oninput="window.calculateCountryDiscount('${key}')">
+        </td>
+        <td style="padding: 10px 6px; text-align: center;">
+            <div style="display: inline-flex; align-items: center; justify-content: center; background: rgba(212, 175, 55, 0.15); border: 1px solid rgba(212, 175, 55, 0.4); border-radius: 6px; padding: 0 4px; height: 32px; min-width: 65px;">
+                <input type="number" step="0.1" min="0" max="100" class="p-input country-gst" id="cp-gst-${key}" value="0" placeholder="0" style="width: 38px; height: 26px; font-size: 0.85rem; text-align: right; background: transparent; border: none; color: #ffd700; font-weight: 700; padding: 0; outline: none;">
+                <span style="color: #ffd700; font-size: 0.75rem; font-weight: 700; margin-left: 2px;">%</span>
+            </div>
+        </td>
+        <td style="padding: 10px 6px; text-align: center;">
+            <input type="text" class="p-input country-discount" id="cp-discount-${key}" readonly style="width: 50px; height: 32px; font-size: 0.75rem; text-align: center; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); border-radius: 6px; padding: 0;">
+        </td>
+        <td style="padding: 10px 6px; text-align: center;">
+            <input type="checkbox" id="cp-enabled-${key}" checked style="width: 16px; height: 16px; cursor: pointer; accent-color: #2ecc71;">
+        </td>
+        <td style="padding: 10px 6px; text-align: center;">
+            <button type="button" class="btn-icon" onclick="window.removeAdminCountryRow('${key}')" title="Remove ${name}" style="color: #ff4d4d; background: rgba(255, 77, 77, 0.12); border: 1px solid rgba(255, 77, 77, 0.3); border-radius: 6px; cursor: pointer; padding: 4px 8px; font-size: 0.8rem; transition: all 0.2s;">
+                <i class="fas fa-trash-alt"></i>
+            </button>
+        </td>
+    `;
+
+    if (tbody.firstChild) {
+        tbody.insertBefore(tr, tbody.firstChild);
+    } else {
+        tbody.appendChild(tr);
+    }
+
+    setTimeout(() => {
+        tr.style.backgroundColor = '';
+    }, 2500);
+
+    window.closeAddCustomCountryModal();
+
+    const priceInput = document.getElementById(`cp-price-${key}`);
+    if (priceInput) priceInput.focus();
+};
+
+window.removeAdminCountryRow = function(key) {
+    const row = document.querySelector(`.admin-country-pricing-row[data-country-key="${key}"]`);
+    if (!row) return;
+    const countryName = row.getAttribute('data-country-name') || key;
+    if (!confirm(`Are you sure you want to remove ${countryName} from country pricing?`)) return;
+    
+    row.remove();
+    
+    if (window._currentEditingProduct?.countryPricing) {
+        delete window._currentEditingProduct.countryPricing[key];
+        delete window._currentEditingProduct.countryPricing[countryName];
+    }
+    
+    if (typeof showToast === 'function') {
+        showToast(`${countryName} removed from pricing table`, 'info');
+    }
 };
 
 window.editProduct = async function (productId) {
@@ -5068,305 +5331,352 @@ window.updateOrderStatus = async function (id, status) {
 
 // --- MISSING DASHBOARD FUNCTIONS ---
 // Handle Product Form Submission
-const productForm = document.getElementById('admin-product-form');
-if (productForm) {
-    productForm.addEventListener('submit', async (e) => {
+window.handleProductFormSubmit = async function (e) {
+    if (e && typeof e.preventDefault === 'function') {
         e.preventDefault();
-        const btn = document.getElementById('admin-save-btn');
-        if (!btn) return console.error("Save button not found");
-        const originalText = btn.innerHTML;
+        e.stopPropagation();
+    }
+    const btn = document.getElementById('admin-save-btn');
+    const originalText = btn ? btn.innerHTML : '<i class="fas fa-save"></i> UPDATE PRODUCT';
+    if (btn) {
         btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Processing...';
         btn.disabled = true;
+    }
 
-        // START OF CHUNKED ENGINE
-        try {
-            const rawAuthUser = localStorage.getItem('efv_auth_user') || localStorage.getItem('efv_user');
-            const parsedAuthToken = rawAuthUser ? (JSON.parse(rawAuthUser).token || localStorage.getItem('authToken')) : localStorage.getItem('authToken');
-            const token = parsedAuthToken || '';
-            const cover = document.getElementById('admin-file-cover').files[0];
-            const ebook = document.getElementById('admin-file-ebook').files[0];
-            const galleryFiles = document.getElementById('admin-file-gallery')?.files;
-            const productType = document.getElementById('admin-prod-type').value;
+    try {
+        const rawAuthUser = localStorage.getItem('efv_auth_user');
+        const parsedToken = rawAuthUser ? (JSON.parse(rawAuthUser).token || '') : '';
+        const token = localStorage.getItem('authToken') || parsedToken || localStorage.getItem('efv_admin_token') || localStorage.getItem('efv_token') || '';
 
-            const allFiles = [];
-            if (cover) allFiles.push({ file: cover, fieldname: 'cover' });
-            if (ebook) allFiles.push({ file: ebook, fieldname: 'ebook' });
-            if (galleryFiles && galleryFiles.length > 0) {
-                Array.from(galleryFiles).forEach(f => allFiles.push({ file: f, fieldname: 'gallery' }));
-            }
-            if (productType === 'AUDIOBOOK') {
-                const audio = document.getElementById('admin-file-audio') ? document.getElementById('admin-file-audio').files[0] : null;
-                if (audio) allFiles.push({ file: audio, fieldname: 'audio' });
+        const cover = document.getElementById('admin-file-cover')?.files?.[0];
+        const ebook = document.getElementById('admin-file-ebook')?.files?.[0];
+        const galleryFiles = document.getElementById('admin-file-gallery')?.files;
+        const productType = document.getElementById('admin-prod-type')?.value || 'HARDCOVER';
 
-                const chapterCards = document.querySelectorAll('.chapter-card');
-                chapterCards.forEach(card => {
-                    const index = card.dataset.index;
-                    const fileInput = document.getElementById(`chapter-audio-${index}`);
-                    if (fileInput && fileInput.files[0]) {
-                        allFiles.push({ file: fileInput.files[0], fieldname: `chapter_${index}` });
+        const allFiles = [];
+        if (cover) allFiles.push({ file: cover, fieldname: 'cover' });
+        if (ebook) allFiles.push({ file: ebook, fieldname: 'ebook' });
+        if (galleryFiles && galleryFiles.length > 0) {
+            Array.from(galleryFiles).forEach(f => allFiles.push({ file: f, fieldname: 'gallery' }));
+        }
+        if (productType === 'AUDIOBOOK') {
+            const audio = document.getElementById('admin-file-audio') ? document.getElementById('admin-file-audio').files[0] : null;
+            if (audio) allFiles.push({ file: audio, fieldname: 'audio' });
+
+            const chapterCards = document.querySelectorAll('.chapter-card');
+            chapterCards.forEach(card => {
+                const index = card.dataset.index;
+                const fileInput = document.getElementById(`chapter-audio-${index}`);
+                if (fileInput && fileInput.files[0]) {
+                    allFiles.push({ file: fileInput.files[0], fieldname: `chapter_${index}` });
+                }
+            });
+        }
+
+        let uploadData = {};
+        let chapterPaths = {};
+        let galleryPaths = [];
+
+        if (allFiles.length > 0) {
+            for (let i = 0; i < allFiles.length; i++) {
+                const fileObj = allFiles[i];
+                const file = fileObj.file;
+                const fieldname = fileObj.fieldname;
+
+                const CHUNK_SIZE = 5 * 1024 * 1024; 
+                const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
+                const fileId = Date.now() + '_' + i;
+                
+                let finalPath = '';
+                for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
+                    const start = chunkIndex * CHUNK_SIZE;
+                    const end = Math.min(start + CHUNK_SIZE, file.size);
+                    const chunk = file.slice(start, end);
+
+                    const chunkFormData = new FormData();
+                    chunkFormData.append('chunk', chunk, file.name);
+                    chunkFormData.append('fileId', fileId);
+                    chunkFormData.append('chunkIndex', chunkIndex);
+                    chunkFormData.append('totalChunks', totalChunks);
+                    chunkFormData.append('fieldname', fieldname);
+                    chunkFormData.append('originalname', file.name);
+
+                    // --- ATOMIC RETRY LOOP (RESILIENCE) ---
+                    let chunkRes;
+                    for (let attempt = 1; attempt <= 3; attempt++) {
+                        try {
+                            chunkRes = await fetch(API_BASE + '/api/upload/chunked', {
+                                method: 'POST',
+                                headers: { 'Authorization': 'Bearer ' + token },
+                                body: chunkFormData
+                            });
+                            if (chunkRes.ok) break; // Success!
+                            if (attempt === 3) throw new Error('Permanent error after 3 retries');
+                            console.warn(`⚠️ Chunk upload failed (Attempt ${attempt}/3). Retrying in 2s...`);
+                            await new Promise(r => setTimeout(r, 2000));
+                        } catch (e) {
+                            if (attempt === 3) throw e;
+                            await new Promise(r => setTimeout(r, 2000));
+                        }
                     }
-                });
-            }
-
-            let uploadData = {};
-            let chapterPaths = {};
-            let galleryPaths = [];
-
-            if (allFiles.length > 0) {
-                for (let i = 0; i < allFiles.length; i++) {
-                    const fileObj = allFiles[i];
-                    const file = fileObj.file;
-                    const fieldname = fileObj.fieldname;
-
-                    const CHUNK_SIZE = 5 * 1024 * 1024; 
-                    const totalChunks = Math.ceil(file.size / CHUNK_SIZE);
-                    const fileId = Date.now() + '_' + i;
                     
-                    let finalPath = '';
-                    for (let chunkIndex = 0; chunkIndex < totalChunks; chunkIndex++) {
-                        const start = chunkIndex * CHUNK_SIZE;
-                        const end = Math.min(start + CHUNK_SIZE, file.size);
-                        const chunk = file.slice(start, end);
+                    const pct = Math.round(((chunkIndex + 1) / totalChunks) * 100);
+                    if (btn) btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading ${i+1}/${allFiles.length} (${pct}%)`;
 
-                        const chunkFormData = new FormData();
-                        chunkFormData.append('chunk', chunk, file.name);
-                        chunkFormData.append('fileId', fileId);
-                        chunkFormData.append('chunkIndex', chunkIndex);
-                        chunkFormData.append('totalChunks', totalChunks);
-                        chunkFormData.append('fieldname', fieldname);
-                        chunkFormData.append('originalname', file.name);
-
-                        // --- ATOMIC RETRY LOOP (RESILIENCE) ---
-                        let chunkRes;
-                        for (let attempt = 1; attempt <= 3; attempt++) {
-                            try {
-                                chunkRes = await fetch(API_BASE + '/api/upload/chunked', {
-                                    method: 'POST',
-                                    headers: { 'Authorization': 'Bearer ' + token },
-                                    body: chunkFormData
-                                });
-                                if (chunkRes.ok) break; // Success!
-                                if (attempt === 3) throw new Error('Permanent error after 3 retries');
-                                console.warn(`⚠️ Chunk upload failed (Attempt ${attempt}/3). Retrying in 2s...`);
-                                await new Promise(r => setTimeout(r, 2000));
-                            } catch (e) {
-                                if (attempt === 3) throw e;
-                                await new Promise(r => setTimeout(r, 2000));
-                            }
-                        }
-                        
-                        const pct = Math.round(((chunkIndex + 1) / totalChunks) * 100);
-                        btn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Uploading ${i+1}/${allFiles.length} (${pct}%)`;
-
-                        const chunkData = await chunkRes.json();
-                        if (chunkData.completed) {
-                            finalPath = chunkData.storagePath;
-                        }
+                    const chunkData = await chunkRes.json();
+                    if (chunkData.completed) {
+                        finalPath = chunkData.storagePath;
                     }
-                    if (fieldname === 'cover') uploadData.coverPath = finalPath;
-                    else if (fieldname === 'ebook') uploadData.ebookPath = finalPath;
-                    else if (fieldname === 'audio') uploadData.audioPath = finalPath;
-                    else if (fieldname === 'gallery') galleryPaths.push(finalPath);
-                    else if (fieldname.startsWith('chapter_')) {
-                        const idx = fieldname.split('_')[1];
-                        chapterPaths[idx] = finalPath;
-                    }
-
-                    // Small cooldown between files
-                    await new Promise(r => setTimeout(r, 500));
                 }
-                
-                if (galleryPaths.length > 0) uploadData.galleryPaths = galleryPaths;
-                if (Object.keys(chapterPaths).length > 0) uploadData.chapterPaths = chapterPaths;
+                if (fieldname === 'cover') uploadData.coverPath = finalPath;
+                else if (fieldname === 'ebook') uploadData.ebookPath = finalPath;
+                else if (fieldname === 'audio') uploadData.audioPath = finalPath;
+                else if (fieldname === 'gallery') galleryPaths.push(finalPath);
+                else if (fieldname.startsWith('chapter_')) {
+                    const idx = fieldname.split('_')[1];
+                    chapterPaths[idx] = finalPath;
+                }
+
+                // Small cooldown between files
+                await new Promise(r => setTimeout(r, 500));
             }
+            
+            if (galleryPaths.length > 0) uploadData.galleryPaths = galleryPaths;
+            if (Object.keys(chapterPaths).length > 0) uploadData.chapterPaths = chapterPaths;
+        }
 
-            const productId = document.getElementById('admin-prod-id').value;
-            const isEdit = !!productId;
+        const productId = document.getElementById('admin-prod-id')?.value?.trim();
+        const isEdit = !!productId;
 
-            const getVal = (id) => document.getElementById(id)?.value || '';
-            const getNum = (id) => Number(document.getElementById(id)?.value) || 0;
+        const getVal = (id) => document.getElementById(id)?.value?.trim() || '';
+        const getNum = (id) => {
+            const v = document.getElementById(id)?.value;
+            return (v !== '' && v !== null && !isNaN(Number(v))) ? Number(v) : 0;
+        };
 
-            // Parse additional specs
-            const additionalSpecs = {};
-            const specsLines = getVal('admin-prod-additional-specs').split('\n');
-            specsLines.forEach(line => {
-                const parts = line.split(':');
-                if (parts.length >= 2) {
-                    const key = parts[0].trim();
-                    const value = parts.slice(1).join(':').trim();
-                    if (key && value) {
-                        additionalSpecs[key] = value;
-                    }
+        const titleVal = getVal('admin-prod-title');
+        const priceVal = getNum('admin-prod-price');
+        const typeVal = getVal('admin-prod-type') || 'HARDCOVER';
+
+        if (!titleVal) {
+            alert('Please enter Book Title');
+            document.getElementById('admin-prod-title')?.focus();
+            if (btn) { btn.innerHTML = originalText; btn.disabled = false; }
+            return;
+        }
+
+        // Parse additional specs
+        const additionalSpecs = {};
+        const specsLines = getVal('admin-prod-additional-specs').split('\n');
+        specsLines.forEach(line => {
+            const parts = line.split(':');
+            if (parts.length >= 2) {
+                const key = parts[0].trim();
+                const value = parts.slice(1).join(':').trim();
+                if (key && value) {
+                    additionalSpecs[key] = value;
                 }
-            });
-
-            // Parse tags
-            const tags = getVal('admin-prod-tags').split(',').map(t => t.trim()).filter(Boolean);
-
-            const productData = {
-                title: getVal('admin-prod-title'),
-                author: getVal('admin-prod-author'),
-                type: getVal('admin-prod-type'),
-                language: getVal('admin-prod-lang') || 'Hindi',
-                volume: getVal('admin-prod-volume'),
-                price: getNum('admin-prod-price'),
-                originalPrice: getNum('admin-prod-original-price') || null,
-                discount: getNum('admin-prod-discount') || 0,
-                discountPrice: getNum('admin-prod-price'), // The selling price is the price paid
-                stock: getNum('admin-prod-stock'),
-                weight: getNum('admin-prod-weight'),
-                length: getNum('admin-prod-length'),
-                breadth: getNum('admin-prod-width'),
-                height: getNum('admin-prod-height'),
-                duration: getVal('admin-prod-duration'),
-                description: getVal('admin-prod-desc'),
-                category: (() => {
-                    const selType = getVal('admin-prod-type');
-                    const cat = window.adminCategories?.find(c => c.slug === selType);
-                    return (cat ? cat.isDigital : (selType === 'EBOOK' || selType === 'AUDIOBOOK')) ? 'Digital' : 'Physical';
-                })(),
-                subtitle: getVal('admin-prod-subtitle'),
-                edition: getVal('admin-prod-edition'),
-                isbn: getVal('admin-prod-isbn'),
-                dimensions: getVal('admin-prod-dimensions'),
-                availability: getVal('admin-prod-availability') || 'Available',
-                tags: tags,
-                rating: getNum('admin-prod-rating') !== undefined ? getNum('admin-prod-rating') : 5,
-                reviewCount: getNum('admin-prod-review-count') !== undefined ? getNum('admin-prod-review-count') : 2450,
-                additionalSpecs: additionalSpecs,
-                podPackageId: getVal('admin-prod-pod-package-id') || '0600X0900BWSTDPB060UW444MXX',
-                podHardcoverSku: getVal('admin-prod-pod-hardcover-sku'),
-                podPaperbackSku: getVal('admin-prod-pod-paperback-sku'),
-                luluCoverUrl: getVal('admin-prod-lulu-cover-url'),
-                luluInteriorUrl: getVal('admin-prod-lulu-interior-url'),
-                regionalPrices: {},
-                categories: (() => {
-                    const selected = [];
-                    document.querySelectorAll('.admin-marketing-cat-checkbox:checked').forEach(cb => {
-                        selected.push(cb.value);
-                    });
-                    return selected;
-                })()
-            };
-
-            // Collect country-wise prices
-            productData.countryPricing = Object.assign({}, window._currentEditingProduct?.countryPricing || {});
-            document.querySelectorAll('.admin-country-pricing-row').forEach(row => {
-                const cKey = row.getAttribute('data-country-key');
-                if (!cKey) return;
-                const priceEl = document.getElementById(`cp-price-${cKey}`);
-                const mrpEl = document.getElementById(`cp-mrp-${cKey}`);
-                const gstEl = document.getElementById(`cp-gst-${cKey}`);
-                const enabledEl = document.getElementById(`cp-enabled-${cKey}`);
-                
-                const priceVal = priceEl ? parseFloat(priceEl.value) : NaN;
-                const mrpVal = mrpEl ? parseFloat(mrpEl.value) : NaN;
-                const gstVal = gstEl ? parseFloat(gstEl.value) : 0;
-                const enabledVal = enabledEl ? enabledEl.checked : true;
-                
-                if (!isNaN(priceVal) && priceVal >= 0) {
-                    const existingCp = productData.countryPricing[cKey] || {};
-                    productData.countryPricing[cKey] = {
-                        ...existingCp,
-                        price: priceVal,
-                        mrp: !isNaN(mrpVal) ? mrpVal : priceVal,
-                        gstPercent: !isNaN(gstVal) ? gstVal : 0,
-                        taxRate: !isNaN(gstVal) ? gstVal : 0,
-                        enabled: enabledVal
-                    };
-                }
-            });
-
-            // Persistence Logic: If no new file uploaded, keep the old one
-            if (uploadData.coverPath) {
-                productData.thumbnail = uploadData.coverPath;
-            } else if (window._currentEditingProduct?.thumbnail) {
-                productData.thumbnail = window._currentEditingProduct.thumbnail;
             }
+        });
 
-            if (uploadData.galleryPaths && uploadData.galleryPaths.length > 0) {
-                productData.gallery = uploadData.galleryPaths;
-            } else if (window._currentEditingProduct?.gallery) {
-                productData.gallery = window._currentEditingProduct.gallery;
-            }
+        // Parse tags
+        const tags = getVal('admin-prod-tags').split(',').map(t => t.trim()).filter(Boolean);
 
-            if (productData.type === 'EBOOK') {
-                if (uploadData.ebookPath) {
-                    productData.filePath = uploadData.ebookPath;
-                } else if (window._currentEditingProduct?.filePath) {
-                    productData.filePath = window._currentEditingProduct.filePath;
-                }
-            } else if (productData.type === 'AUDIOBOOK') {
-                productData.totalChapters = Number(document.getElementById('admin-prod-total-chapters').value) || 0;
-
-                // Handle single audio file upload vs chapters
-                if (uploadData.audioPath) {
-                    productData.filePath = uploadData.audioPath;
-                } else if (window._currentEditingProduct?.filePath) {
-                    productData.filePath = window._currentEditingProduct.filePath;
-                }
-
-                // Collect chapter metadata
-                const chapterCards = document.querySelectorAll('.chapter-card');
-                const chapters = [];
-                chapterCards.forEach(card => {
-                    const index = card.dataset.index;
-                    const titleInput = document.getElementById(`chapter-title-${index}`);
-                    const title = titleInput?.value?.trim() || `Chapter ${Number(index) + 1}`;
-
-                    let filePath = '';
-                    if (uploadData.chapterPaths && uploadData.chapterPaths[index]) {
-                        filePath = uploadData.chapterPaths[index];
-                    } else if (window._currentEditingProduct?.chapters?.[index]) {
-                        filePath = window._currentEditingProduct.chapters[index].filePath;
-                    }
-
-                    chapters.push({
-                        chapterNumber: Number(index) + 1,
-                        title: title,
-                        filePath: filePath
-                    });
+        const productData = {
+            title: titleVal,
+            author: getVal('admin-prod-author') || 'EFV Authorized Member',
+            type: typeVal,
+            language: getVal('admin-prod-lang') || 'Hindi',
+            volume: getVal('admin-prod-volume'),
+            price: priceVal,
+            originalPrice: getNum('admin-prod-original-price') || priceVal,
+            discount: getNum('admin-prod-discount') || 0,
+            discountPrice: priceVal,
+            stock: getNum('admin-prod-stock'),
+            weight: getNum('admin-prod-weight'),
+            length: getNum('admin-prod-length'),
+            breadth: getNum('admin-prod-width'),
+            height: getNum('admin-prod-height'),
+            duration: getVal('admin-prod-duration'),
+            description: getVal('admin-prod-desc'),
+            category: (() => {
+                const selType = typeVal;
+                const cat = window.adminCategories?.find(c => c.slug === selType);
+                return (cat ? cat.isDigital : (selType === 'EBOOK' || selType === 'AUDIOBOOK')) ? 'Digital' : 'Physical';
+            })(),
+            subtitle: getVal('admin-prod-subtitle'),
+            edition: getVal('admin-prod-edition'),
+            isbn: getVal('admin-prod-isbn'),
+            dimensions: getVal('admin-prod-dimensions') || '6.0 x 9.0 inches',
+            availability: getVal('admin-prod-availability') || 'Available',
+            tags: tags,
+            rating: getNum('admin-prod-rating') || 5,
+            reviewCount: getNum('admin-prod-review-count') || 2450,
+            additionalSpecs: additionalSpecs,
+            podPackageId: getVal('admin-prod-pod-package-id') || '0600X0900BWSTDPB060UW444MXX',
+            podHardcoverSku: getVal('admin-prod-pod-hardcover-sku'),
+            podPaperbackSku: getVal('admin-prod-pod-paperback-sku'),
+            luluCoverUrl: getVal('admin-prod-lulu-cover-url'),
+            luluInteriorUrl: getVal('admin-prod-lulu-interior-url'),
+            regionalPrices: {},
+            categories: (() => {
+                const selected = [];
+                document.querySelectorAll('.admin-marketing-cat-checkbox:checked').forEach(cb => {
+                    selected.push(cb.value);
                 });
+                return selected;
+            })()
+        };
 
-                productData.chapters = chapters;
+        // Collect country-wise prices
+        const finalCountryPricing = {};
+        document.querySelectorAll('.admin-country-pricing-row').forEach(row => {
+            const cKey = row.getAttribute('data-country-key');
+            if (!cKey) return;
+            const cName = row.getAttribute('data-country-name') || cKey;
+            const cFlag = row.getAttribute('data-country-flag') || '🌐';
+            const cCode = row.getAttribute('data-country-code') || '';
+            const currEl = document.getElementById(`cp-curr-${cKey}`) || row.querySelector('.country-currency');
+            const cCurr = currEl ? currEl.value.trim().toUpperCase() : (row.getAttribute('data-country-currency') || 'USD');
+            
+            const priceEl = document.getElementById(`cp-price-${cKey}`);
+            const mrpEl = document.getElementById(`cp-mrp-${cKey}`);
+            const gstEl = document.getElementById(`cp-gst-${cKey}`);
+            const enabledEl = document.getElementById(`cp-enabled-${cKey}`);
+            
+            const priceRaw = priceEl ? priceEl.value.trim() : '';
+            const mrpRaw = mrpEl ? mrpEl.value.trim() : '';
+            const priceVal = priceRaw !== '' ? parseFloat(priceRaw) : NaN;
+            const mrpVal = mrpRaw !== '' ? parseFloat(mrpRaw) : NaN;
+            const gstVal = gstEl && gstEl.value !== '' ? parseFloat(gstEl.value) : 0;
+            const enabledVal = enabledEl ? enabledEl.checked : true;
+            const isCustom = row.getAttribute('data-is-custom') === 'true';
 
-                // If chapters exist, prefer the first chapter's path for single-track fallback
-                if (chapters.length > 0 && chapters[0].filePath) {
-                    productData.filePath = chapters[0].filePath;
-                }
+            if (!isNaN(priceVal) || isCustom) {
+                const finalPrice = !isNaN(priceVal) ? priceVal : 0;
+                const finalMrp = !isNaN(mrpVal) ? mrpVal : finalPrice;
+                finalCountryPricing[cKey] = {
+                    name: cName,
+                    currency: cCurr,
+                    flag: cFlag,
+                    code: cCode,
+                    price: finalPrice,
+                    mrp: finalMrp,
+                    gstPercent: !isNaN(gstVal) ? gstVal : 0,
+                    taxRate: !isNaN(gstVal) ? gstVal : 0,
+                    enabled: enabledVal
+                };
+            }
+        });
+        productData.countryPricing = finalCountryPricing;
+
+        // Persistence Logic: If no new file uploaded, keep the old one
+        if (uploadData.coverPath) {
+            productData.thumbnail = uploadData.coverPath;
+        } else if (window._currentEditingProduct?.thumbnail) {
+            productData.thumbnail = window._currentEditingProduct.thumbnail;
+        } else {
+            delete productData.thumbnail;
+        }
+
+        if (uploadData.galleryPaths && uploadData.galleryPaths.length > 0) {
+            productData.gallery = uploadData.galleryPaths;
+        } else if (window._currentEditingProduct?.gallery) {
+            productData.gallery = window._currentEditingProduct.gallery;
+        } else {
+            delete productData.gallery;
+        }
+
+        if (productData.type === 'EBOOK') {
+            if (uploadData.ebookPath) {
+                productData.filePath = uploadData.ebookPath;
+            } else if (window._currentEditingProduct?.filePath) {
+                productData.filePath = window._currentEditingProduct.filePath;
+            } else {
+                delete productData.filePath;
+            }
+        } else if (productData.type === 'AUDIOBOOK') {
+            productData.totalChapters = Number(document.getElementById('admin-prod-total-chapters')?.value) || 0;
+
+            if (uploadData.audioPath) {
+                productData.filePath = uploadData.audioPath;
+            } else if (window._currentEditingProduct?.filePath) {
+                productData.filePath = window._currentEditingProduct.filePath;
             }
 
-            const url = isEdit ? `${API_BASE}/api/products/${productId}` : `${API_BASE}/api/products`;
-            const method = isEdit ? 'PUT' : 'POST';
+            const chapterCards = document.querySelectorAll('.chapter-card');
+            const chapters = [];
+            chapterCards.forEach(card => {
+                const index = card.dataset.index;
+                const titleInput = document.getElementById(`chapter-title-${index}`);
+                const title = titleInput?.value?.trim() || `Chapter ${Number(index) + 1}`;
 
-            const res = await fetch(url, {
-                method: method,
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(productData)
+                let filePath = '';
+                if (uploadData.chapterPaths && uploadData.chapterPaths[index]) {
+                    filePath = uploadData.chapterPaths[index];
+                } else if (window._currentEditingProduct?.chapters?.[index]) {
+                    filePath = window._currentEditingProduct.chapters[index].filePath;
+                }
+
+                chapters.push({
+                    chapterNumber: Number(index) + 1,
+                    title: title,
+                    filePath: filePath
+                });
             });
 
-            if (res.ok) {
-                closeProductModal();
-                loadAdminProductsFull();
-                if (typeof window.syncLibraryWithBackend === 'function') window.syncLibraryWithBackend();
-                else if (typeof renderLibraryTab === 'function') renderLibraryTab();
-                updateAdminStats();
-                showToast(isEdit ? 'Product updated' : 'Product added', 'success');
-            } else {
-                const err = await res.json();
-                alert(err.message || 'Error saving product');
+            productData.chapters = chapters;
+            if (chapters.length > 0 && chapters[0].filePath) {
+                productData.filePath = chapters[0].filePath;
             }
-        } catch (e) {
-            console.error(e);
-            alert('Error: ' + e.message);
-        } finally {
+        }
+
+        const url = isEdit ? `${API_BASE}/api/products/${productId}` : `${API_BASE}/api/products`;
+        const method = isEdit ? 'PUT' : 'POST';
+
+        console.log(`📤 Sending ${method} product request to ${url}:`, productData);
+
+        const res = await fetch(url, {
+            method: method,
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify(productData)
+        });
+
+        if (res.ok) {
+            const savedProd = await res.json();
+            console.log('✅ Product saved successfully:', savedProd);
+            window.closeProductModal();
+            if (typeof window.loadAdminProductsFull === 'function') window.loadAdminProductsFull();
+            if (typeof window.syncLibraryWithBackend === 'function') window.syncLibraryWithBackend();
+            else if (typeof renderLibraryTab === 'function') renderLibraryTab();
+            if (typeof window.updateAdminStats === 'function') window.updateAdminStats();
+            showToast(isEdit ? 'Product updated successfully' : 'Product added successfully', 'success');
+        } else {
+            const err = await res.json().catch(() => ({}));
+            console.error('❌ Failed saving product:', err);
+            alert(err.message || 'Error saving product');
+        }
+    } catch (e) {
+        console.error('❌ Exception in handleProductFormSubmit:', e);
+        alert('Error: ' + e.message);
+    } finally {
+        if (btn) {
             btn.innerHTML = originalText;
             btn.disabled = false;
         }
-    });
+    }
+};
+
+const productForm = document.getElementById('admin-product-form');
+if (productForm) {
+    productForm.addEventListener('submit', window.handleProductFormSubmit);
+}
+const adminSaveBtn = document.getElementById('admin-save-btn');
+if (adminSaveBtn) {
+    adminSaveBtn.addEventListener('click', window.handleProductFormSubmit);
 }
 
 window.viewAdminOrderDetail = async function (id) {

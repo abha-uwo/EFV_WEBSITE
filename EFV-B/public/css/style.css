@@ -234,40 +234,6 @@ ul {
     list-style: none;
 }
 
-/* EFV Announcement Bar — Top Sticky Header Extension */
-.efv-announcement-bar {
-    width: 100%;
-    background: rgba(3, 5, 9, 0.98);
-    border-bottom: 1px solid rgba(255, 211, 105, 0.18);
-    padding: 7px 16px;
-    text-align: center;
-    position: relative;
-    z-index: 1000;
-    box-sizing: border-box;
-    transition: all 0.3s ease;
-}
-
-.efv-announcement-bar .announcement-container {
-    max-width: 1300px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 10px;
-}
-
-.efv-announcement-bar .announcement-text {
-    font-family: 'Cinzel', serif, 'Montserrat', -apple-system, BlinkMacSystemFont, sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    letter-spacing: 0.4px;
-    color: #f7ebd2;
-    line-height: 1.4;
-    text-shadow: 0 0 12px rgba(255, 211, 105, 0.22);
-    display: inline-block;
-    transition: color 0.3s ease;
-}
-
 /* Navbar */
 nav {
     position: fixed;
@@ -276,29 +242,16 @@ nav {
     width: 100%;
     z-index: 999999 !important;
     /* Ultra-high priority to stop any overlap */
-    padding: 0 !important;
+    padding: 12px 0;
+    /* Reduced from 20px for a more compact height */
     transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-    background: rgba(3, 5, 9, 0.88);
+    background: rgba(3, 5, 9, 0.85);
     /* Solidified background for better occlusion */
     backdrop-filter: blur(25px);
     -webkit-backdrop-filter: blur(25px);
     border-bottom: 2px solid rgba(255, 211, 105, 0.2);
     transform: translateZ(0);
     will-change: transform, background;
-}
-
-nav .nav-main-container,
-nav > .container:not(.announcement-container) {
-    padding: 10px 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-}
-
-nav.scrolled .nav-main-container,
-nav.scrolled > .container:not(.announcement-container) {
-    padding: 6px 0;
 }
 
 .nav-actions {

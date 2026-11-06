@@ -611,14 +611,15 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const rulesRes = await fetch(`${API_BASE}/api/categories`);
             const rules = await rulesRes.json();
-            activeDiscountRules = rules.filter(c => c.isActive !== false);
+            activeDiscountRules = Array.isArray(rules) ? rules.filter(c => c.isActive !== false) : [];
 
             const offersRes = await fetch(`${API_BASE}/api/offers`);
             const offers = await offersRes.json();
-            activeOffers = offers.filter(o => o.isActive !== false);
+            activeOffers = Array.isArray(offers) ? offers.filter(o => o.isActive !== false) : [];
 
             const prodRes = await fetch(`${API_BASE}/api/products`);
-            allDbProducts = await prodRes.json();
+            const prodData = await prodRes.json();
+            allDbProducts = Array.isArray(prodData) ? prodData : [];
 
             const token = localStorage.getItem('authToken');
             if (token) {
