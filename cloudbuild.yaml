@@ -27,6 +27,8 @@ steps:
       - 'asia-south1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/efvwebsite:$COMMIT_SHA'
       - '--region'
       - 'asia-south1'
+      - '--project'
+      - '$PROJECT_ID'
       - '--platform'
       - 'managed'
       - '--allow-unauthenticated'
@@ -38,6 +40,7 @@ steps:
       - '1'
       - '--timeout'
       - '1800'
+      - '--quiet'
 
 images:
   - 'asia-south1-docker.pkg.dev/$PROJECT_ID/cloud-run-source-deploy/efvwebsite:$COMMIT_SHA'
