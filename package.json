@@ -1,6 +1,6 @@
 {
   "name": "efv-monorepo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "EFV Unified Monorepo - Frontend (Next.js) & Backend (Express) in a Single Service",
   "private": true,
   "scripts": {
