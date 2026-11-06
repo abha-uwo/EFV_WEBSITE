@@ -1,46 +1,44 @@
 # ==============================================================================
 # EFV UNIFIED SERVICE DOCKERFILE (Frontend + Backend in One Service)
-# Optimized for Google Cloud Run, Docker, and Container Deployments
+# Optimized for Google Cloud Run, Debian Slim (Rock-Solid glibc & Next.js 15)
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
 # Stage 1: Build Next.js Frontend
 # ------------------------------------------------------------------------------
-FROM node:20-alpine AS frontend-builder
-RUN apk add --no-cache libc6-compat
+FROM node:20-slim AS frontend-builder
 WORKDIR /app/frontend
 
+# Copy frontend package manifests first for caching
 COPY EFV-F/package*.json ./
-RUN npm ci
+RUN npm install
 
+# Copy frontend source code
 COPY EFV-F ./
 
-ARG VITE_GOOGLE_CLIENT_ID
-ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
-ARG NEXT_PUBLIC_API_URL
-ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
 
+# Build Next.js standalone application
 RUN npm run build
 
 # ------------------------------------------------------------------------------
 # Stage 2: Install Backend Production Dependencies
 # ------------------------------------------------------------------------------
-FROM node:20-alpine AS backend-deps
+FROM node:20-slim AS backend-deps
 WORKDIR /app/backend
 
 COPY EFV-B/package*.json ./
-RUN npm ci --only=production
+RUN npm install --omit=dev
 
 # ------------------------------------------------------------------------------
 # Stage 3: Production Runner Image
 # ------------------------------------------------------------------------------
-FROM node:20-alpine AS runner
-RUN apk add --no-cache libc6-compat
+FROM node:20-slim AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 ENV PORT=8080
 ENV FRONTEND_PORT=3000
 ENV FRONTEND_INTERNAL_URL=http://127.0.0.1:3000
