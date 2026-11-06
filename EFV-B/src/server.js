@@ -483,9 +483,9 @@ seedSettings();
 notificationWorker.start(60); // Check every 60 seconds
 
 const PORT = process.env.PORT || 8080;
-// Removing '0.0.0.0' to let Node decide the best interface (usually binds all, which is required by Cloud Run)
-const server = app.listen(PORT, () => {
-    console.log(`✅ Server running on port ${PORT} (Standalone API)`);
+// Cloud Run requires explicitly binding to 0.0.0.0
+const server = app.listen(PORT, '0.0.0.0', () => {
+    console.log(`✅ Server running on 0.0.0.0:${PORT} (Cloud Run Gateway + API)`);
 });
 
 // INCREASE TIMEOUT for huge Audiobook Uploads!

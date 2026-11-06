@@ -1,5 +1,4 @@
 #!/bin/sh
-set -e
 
 # Default ports (Cloud Run injects PORT, default 8080)
 export FRONTEND_PORT=${FRONTEND_PORT:-3000}
@@ -12,30 +11,21 @@ echo "   Public Gateway & Backend API: Port ${PORT}"
 echo "   Internal Frontend Service:   Port ${FRONTEND_PORT}"
 echo "=========================================================="
 
-# 1. Launch Next.js Standalone Frontend in the background
-echo "▶️ Launching Next.js Frontend on internal port ${FRONTEND_PORT}..."
-(cd /app/frontend && PORT=${FRONTEND_PORT} HOSTNAME="127.0.0.1" node server.js) &
-FRONTEND_PID=$!
-
-# 2. Launch Express Backend Gateway
-echo "▶️ Launching Express Backend & Gateway on port ${PORT}..."
-(cd /app/backend && node src/server.js) &
-BACKEND_PID=$!
-
-# Graceful cleanup on shutdown
-cleanup() {
-    echo "🛑 Received termination signal. Shutting down EFV services..."
-    kill -TERM "$FRONTEND_PID" "$BACKEND_PID" 2>/dev/null || true
-    wait "$FRONTEND_PID" "$BACKEND_PID" 2>/dev/null || true
-    exit 0
+# 1. Launch Next.js Standalone Frontend in the background with auto-supervisor
+start_frontend() {
+    while true; do
+        if [ -f /app/frontend/server.js ]; then
+            echo "▶️ Launching Next.js Frontend on 127.0.0.1:${FRONTEND_PORT}..."
+            (cd /app/frontend && PORT=${FRONTEND_PORT} HOSTNAME="127.0.0.1" node server.js)
+        fi
+        echo "⚠️ Next.js stopped. Restarting in 2 seconds..."
+        sleep 2
+    done
 }
 
-trap cleanup SIGTERM SIGINT
+start_frontend &
 
-# Monitor both processes: if either process exits, shutdown the container cleanly
-while kill -0 "$FRONTEND_PID" 2>/dev/null && kill -0 "$BACKEND_PID" 2>/dev/null; do
-    sleep 2
-done
-
-echo "⚠️ A critical service process stopped unexpectedly. Shutting down container..."
-cleanup
+# 2. Launch Express Backend & Gateway directly as the main process (binds 0.0.0.0:PORT)
+echo "▶️ Launching Express Backend & Gateway on 0.0.0.0:${PORT}..."
+cd /app/backend
+exec node src/server.js
