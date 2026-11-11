@@ -403,7 +403,7 @@ async function createReverseShipment(returnReq, order, address) {
             order_number: `RET-${returnReq.orderId}-${Date.now().toString().slice(-4)}`,
             consignee: {
                 name: "Gurumukh P Ahuja",
-                email: "support@efv.com",
+                email: "efv@uwo24.com",
                 phone: "8871190020",
                 address: "4th floor, SG Square Building, near PNB Bank, Jabalpur, Madhya Pradesh 482008",
                 city: "Jabalpur",

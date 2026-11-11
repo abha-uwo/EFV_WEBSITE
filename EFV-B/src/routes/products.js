@@ -286,15 +286,25 @@ function isDigitalProduct(product, categories = []) {
     const rawType = (product.type || '').toString().trim().toUpperCase();
     const cleanType = rawType.replace(/[^A-Z]/g, '');
 
-    if (['EBOOK', 'AUDIOBOOK', 'DIGITAL', 'AUDIO'].includes(cleanType)) return true;
-    if (rawType.includes('E-BOOK') || rawType.includes('AUDIOBOOK') || rawType.includes('AUDIO') || rawType.includes('DIGITAL')) return true;
+    // 1. Explicitly check if it's a physical book - PHYSICAL BOOKS ARE NEVER DIGITAL
+    const physicalSlugs = ['HARDCOVER', 'PAPERBACK', 'PHYSICAL', 'BOOK', 'PRINT'];
+    if (physicalSlugs.includes(cleanType) || physicalSlugs.some(p => rawType.includes(p))) {
+        return false;
+    }
+
+    // 2. Explicitly check if it's a digital format
+    const digitalSlugs = ['EBOOK', 'AUDIOBOOK', 'DIGITAL', 'AUDIO'];
+    if (digitalSlugs.includes(cleanType)) return true;
+    if (rawType.includes('E-BOOK') || rawType.includes('EBOOK') || rawType.includes('AUDIOBOOK') || rawType.includes('AUDIO') || rawType.includes('DIGITAL')) return true;
 
     const cat = (product.category || '').toString().trim().toUpperCase();
-    if (['DIGITAL', 'EBOOK', 'AUDIOBOOK', 'AUDIO', 'E-BOOK'].includes(cat)) return true;
+    if (['DIGITAL', 'EBOOK', 'AUDIOBOOK', 'AUDIO', 'E-BOOK'].includes(cat)) {
+        if (!physicalSlugs.some(p => rawType.includes(p))) return true;
+    }
 
     if (Array.isArray(product.categories)) {
         if (product.categories.some(c => ['DIGITAL', 'EBOOK', 'AUDIOBOOK', 'AUDIO', 'E-BOOK'].includes(String(c).trim().toUpperCase()))) {
-            return true;
+            if (!physicalSlugs.some(p => rawType.includes(p))) return true;
         }
     }
 
@@ -304,7 +314,6 @@ function isDigitalProduct(product, categories = []) {
     }
 
     if (product.chapters && Array.isArray(product.chapters) && product.chapters.length > 0) return true;
-    if (product.filePath && typeof product.filePath === 'string' && product.filePath.length > 0) return true;
 
     return false;
 }
@@ -345,59 +354,6 @@ router.post('/', adminAuth, async (req, res) => {
         const product = await Product.create(req.body);
 
         console.log('📝 Created Product to DB:', product._id);
-
-        // Automatically add to admin's library if it's a digital product
-        const { Category } = require('../models');
-        const categories = await Category.find();
-
-        if (isDigitalProduct(product, categories)) {
-            try {
-                // Ensure product goes to admin@uwo24.com and current user
-                const adminUser = await User.findOne({ email: /admin@uwo24\.com/i });
-                const targets = [req.user._id];
-                if (adminUser && adminUser._id.toString() !== req.user._id.toString()) {
-                    targets.push(adminUser._id);
-                }
-
-                for (let userId of targets) {
-                    let library = await DigitalLibrary.findOne({
-                        $or: [{ userId: userId }, { userId: userId.toString() }]
-                    });
-                    if (!library) {
-                        library = new DigitalLibrary({ userId: userId, items: [], removedItems: [] });
-                    }
-
-                    if (!library.items) library.items = [];
-                    if (!library.removedItems) library.removedItems = [];
-
-                    const pidStr = product._id.toString();
-
-                    // Remove from removedItems
-                    library.removedItems = library.removedItems.filter(id => id.toString() !== pidStr);
-
-                    // Check if already in library
-                    const exists = library.items.some(item => (item.productId || item.id || '').toString() === pidStr);
-                    if (!exists) {
-                        library.items.push({
-                            productId: product._id,
-                            title: product.title,
-                            type: getDigitalType(product),
-                            thumbnail: product.thumbnail,
-                            filePath: product.filePath,
-                            purchasedAt: new Date(),
-                            accessStatus: 'active'
-                        });
-                    }
-
-                    library.markModified('items');
-                    library.markModified('removedItems');
-                    await library.save();
-                    console.log(`✅ Auto-added digital product to library for user: ${userId}`);
-                }
-            } catch (libErr) {
-                console.error('Error adding to admin library:', libErr);
-            }
-        }
 
         // 🔔 Broadcast Notification to ALL users about the new book
         try {

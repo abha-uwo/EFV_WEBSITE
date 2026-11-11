@@ -433,6 +433,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     initializeAdminSettings();
                 } else {
                     initializeSettingsTabs();
+                    if (typeof populateSettingsProfileFields === 'function') populateSettingsProfileFields();
                 }
             }
 
@@ -509,9 +510,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     const legacyUser = JSON.parse(localStorage.getItem('efv_user')) || {};
                     const updatedUser = {
                         ...legacyUser,
-                        name: data.name // the name user just typed
+                        name: (resData.user && resData.user.name) || data.name,
+                        phone: (resData.user && resData.user.phone !== undefined) ? resData.user.phone : data.phone
                     };
                     localStorage.setItem('efv_user', JSON.stringify(updatedUser));
+                    try {
+                        const authUser = JSON.parse(localStorage.getItem('efv_auth_user'));
+                        if (authUser) {
+                            localStorage.setItem('efv_auth_user', JSON.stringify({
+                                ...authUser,
+                                name: updatedUser.name,
+                                phone: updatedUser.phone
+                            }));
+                        }
+                    } catch (e) {}
+
+                    if (window.currentUserProfile) {
+                        window.currentUserProfile.name = updatedUser.name;
+                        window.currentUserProfile.phone = updatedUser.phone;
+                    }
                     
                     // Explicitly update navbar name immediately
                     if (typeof updateAuthNavbar === 'function') updateAuthNavbar();
@@ -588,7 +605,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const urlParams = new URLSearchParams(window.location.search);
     const tabParam = urlParams.get('tab');
     if (tabParam) {
-        switchTab(tabParam);
+        if (typeof window.switchTab === 'function') {
+            window.switchTab(tabParam);
+        } else {
+            setTimeout(() => {
+                if (typeof window.switchTab === 'function') window.switchTab(tabParam);
+            }, 100);
+        }
     }
 
     // User Support Form Submission
@@ -639,6 +662,119 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+const escapeQueryHtml = (str) => String(str || '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+
+function renderInquiriesList(messages, searchTerm = '') {
+    const container = document.getElementById('user-support-history');
+    if (!container) return;
+
+    if (!messages || messages.length === 0) {
+        if (searchTerm) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; opacity: 0.75;">
+                    <div style="width: 50px; height: 50px; margin: 0 auto 15px; border-radius: 50%; background: rgba(255, 211, 105, 0.08); border: 1px solid rgba(255, 211, 105, 0.2); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-search gold-text" style="font-size: 1.3rem;"></i>
+                    </div>
+                    <p style="margin: 0 0 6px; font-size: 1rem; color: #fff; font-weight: 600;">No matching queries found</p>
+                    <p style="margin: 0; font-size: 0.85rem; color: rgba(255, 255, 255, 0.5);">No results found for "${escapeQueryHtml(searchTerm)}". Try another search term.</p>
+                </div>`;
+        } else {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; opacity: 0.6;">
+                    <div style="width: 50px; height: 50px; margin: 0 auto 15px; border-radius: 50%; background: rgba(255, 211, 105, 0.08); border: 1px solid rgba(255, 211, 105, 0.2); display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-comment-slash gold-text" style="font-size: 1.4rem;"></i>
+                    </div>
+                    <p style="margin: 0; font-size: 0.95rem; color: rgba(255, 255, 255, 0.7);">No previous queries found.</p>
+                </div>`;
+        }
+        return;
+    }
+
+    container.innerHTML = messages.map(msg => `
+        <div class="glass-panel inquiry-item" style="padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; transition: transform 0.3s ease;">
+            <!-- Glowing background accent -->
+            <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--gold-text); opacity: 0.05; filter: blur(40px); border-radius: 50%;"></div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; gap: 12px; flex-wrap: wrap;">
+                <div>
+                    <h4 style="margin: 0; color: var(--gold-text); font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 1px; display: flex; align-items: center; gap: 8px;">
+                        <i class="fas fa-comment-dots gold-text" style="font-size: 0.95rem; flex-shrink: 0; margin-right: 4px;"></i>
+                        <span>${escapeQueryHtml(msg.subject || 'Support Query')}</span>
+                    </h4>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px;">
+                        <i class="far fa-calendar-alt" style="font-size: 0.75rem; opacity: 0.6; flex-shrink: 0;"></i>
+                        <span style="font-size: 0.75rem; opacity: 0.6;">${new Date(msg.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                    </div>
+                </div>
+                <span class="status-badge ${(msg.status || 'Pending').toLowerCase().replace(' ', '-')}">${msg.status || 'Pending'}</span>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9; margin: 0; color: #fff; word-break: break-word;">${escapeQueryHtml(msg.message || '')}</p>
+            </div>
+            
+            ${msg.reply ? `
+                <div class="admin-reply-box" style="margin-top: 20px; padding: 18px; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; position: relative;">
+                    <div style="position: absolute; top: 10px; left: -8px; width: 4px; height: calc(100% - 20px); background: var(--gold-text); border-radius: 10px;"></div>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                        <div style="width: 30px; height: 30px; background: var(--gold-text); display: flex; align-items: center; justify-content: center; border-radius: 50%; flex-shrink: 0;">
+                            <i class="fas fa-user-shield" style="color: #000; font-size: 0.8rem;"></i>
+                        </div>
+                        <span style="font-weight: 700; font-size: 0.85rem; color: var(--gold-text); text-transform: uppercase; letter-spacing: 1px;">Official Response</span>
+                        <span style="font-size: 0.7rem; opacity: 0.5; margin-left: auto;">${msg.repliedAt ? new Date(msg.repliedAt).toLocaleDateString() : ''}</span>
+                    </div>
+                    <p style="font-size: 0.9rem; line-height: 1.6; color: #f0f0f0; margin: 0; font-style: normal; word-break: break-word;">${escapeQueryHtml(msg.reply)}</p>
+                </div>
+            ` : `
+                <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px; opacity: 0.6; font-size: 0.85rem;">
+                    <i class="fas fa-clock gold-text" style="flex-shrink: 0;"></i>
+                    <span>Waiting for response from our executive team...</span>
+                </div>
+            `}
+        </div>
+    `).join('');
+}
+
+function initializeUserSupportSearch() {
+    const searchInput = document.getElementById('support-query-search');
+    const clearBtn = document.getElementById('support-query-search-clear');
+    if (!searchInput) return;
+
+    if (searchInput.dataset.initialized === 'true') return;
+    searchInput.dataset.initialized = 'true';
+
+    const handleSearch = () => {
+        const term = searchInput.value.trim().toLowerCase();
+        if (clearBtn) {
+            clearBtn.style.display = term ? 'block' : 'none';
+        }
+        const allMessages = window.currentUserSupportMessages || [];
+        if (!term) {
+            renderInquiriesList(allMessages);
+            return;
+        }
+        const filtered = allMessages.filter(msg => {
+            const subj = (msg.subject || '').toLowerCase();
+            const body = (msg.message || '').toLowerCase();
+            const reply = (msg.reply || '').toLowerCase();
+            const status = (msg.status || '').toLowerCase();
+            return subj.includes(term) || body.includes(term) || reply.includes(term) || status.includes(term);
+        });
+        renderInquiriesList(filtered, searchInput.value.trim());
+    };
+
+    searchInput.addEventListener('input', handleSearch);
+
+    if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+            searchInput.value = '';
+            clearBtn.style.display = 'none';
+            searchInput.focus();
+            renderInquiriesList(window.currentUserSupportMessages || []);
+        });
+    }
+}
+
 async function loadUserSupportHistory() {
     const container = document.getElementById('user-support-history');
     if (!container) return;
@@ -652,58 +788,29 @@ async function loadUserSupportHistory() {
 
         if (!res.ok) throw new Error(messages.message || 'Failed to fetch');
 
-        if (messages.length === 0) {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px; opacity: 0.5;">
-                    <i class="fas fa-comment-slash" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                    <p>No previous inquiries found.</p>
-                </div>`;
-            return;
+        if (Array.isArray(messages)) {
+            messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            window.currentUserSupportMessages = messages;
+        } else {
+            window.currentUserSupportMessages = [];
         }
 
-        // Sort by newest first
-        messages.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        initializeUserSupportSearch();
 
-        container.innerHTML = messages.map(msg => `
-            <div class="glass-panel inquiry-item" style="padding: 20px; margin-bottom: 20px; position: relative; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); border-radius: 15px; transition: transform 0.3s ease;">
-                <!-- Glowing background accent -->
-                <div style="position: absolute; top: -50px; right: -50px; width: 100px; height: 100px; background: var(--gold-text); opacity: 0.05; filter: blur(40px); border-radius: 50%;"></div>
-                
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
-                    <div>
-                        <h4 style="margin: 0; color: var(--gold-text); font-family: 'Cinzel', serif; font-size: 1.1rem; letter-spacing: 1px;">${msg.subject}</h4>
-                        <div style="display: flex; align-items: center; gap: 8px; margin-top: 4px;">
-                            <i class="far fa-calendar-alt" style="font-size: 0.75rem; opacity: 0.5;"></i>
-                            <span style="font-size: 0.75rem; opacity: 0.5;">${new Date(msg.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                        </div>
-                    </div>
-                    <span class="status-badge ${msg.status.toLowerCase().replace(' ', '-')}">${msg.status}</span>
-                </div>
-                
-                <div style="margin-bottom: 15px;">
-                    <p style="font-size: 0.95rem; line-height: 1.6; opacity: 0.9; margin: 0; color: #fff;">${msg.message}</p>
-                </div>
-                
-                ${msg.reply ? `
-                    <div class="admin-reply-box" style="margin-top: 20px; padding: 18px; background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 12px; position: relative;">
-                        <div style="position: absolute; top: 10px; left: -8px; width: 4px; height: calc(100% - 20px); background: var(--gold-text); border-radius: 10px;"></div>
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <div style="width: 30px; height: 30px; background: var(--gold-text); display: flex; align-items: center; justify-content: center; border-radius: 50%;">
-                                <i class="fas fa-user-shield" style="color: #000; font-size: 0.8rem;"></i>
-                            </div>
-                            <span style="font-weight: 700; font-size: 0.85rem; color: var(--gold-text); text-transform: uppercase; letter-spacing: 1px;">Official Response</span>
-                            <span style="font-size: 0.7rem; opacity: 0.5; margin-left: auto;">${msg.repliedAt ? new Date(msg.repliedAt).toLocaleDateString() : ''}</span>
-                        </div>
-                        <p style="font-size: 0.9rem; line-height: 1.6; color: #f0f0f0; margin: 0; font-style: normal;">${msg.reply}</p>
-                    </div>
-                ` : `
-                    <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px; opacity: 0.4; font-size: 0.8rem;">
-                        <i class="fas fa-clock"></i>
-                        <span>Waiting for response from our executive team...</span>
-                    </div>
-                `}
-            </div>
-        `).join('');
+        const searchInput = document.getElementById('support-query-search');
+        const currentTerm = searchInput ? searchInput.value.trim().toLowerCase() : '';
+        if (currentTerm) {
+            const filtered = (window.currentUserSupportMessages || []).filter(msg => {
+                const subj = (msg.subject || '').toLowerCase();
+                const body = (msg.message || '').toLowerCase();
+                const reply = (msg.reply || '').toLowerCase();
+                const status = (msg.status || '').toLowerCase();
+                return subj.includes(currentTerm) || body.includes(currentTerm) || reply.includes(currentTerm) || status.includes(currentTerm);
+            });
+            renderInquiriesList(filtered, searchInput.value.trim());
+        } else {
+            renderInquiriesList(window.currentUserSupportMessages || []);
+        }
     } catch (e) {
         console.error(e);
         container.innerHTML = '<p style="color: var(--error);">Failed to load history.</p>';
@@ -744,6 +851,11 @@ window.switchTab = function (tabId, subTab = null) {
         // Manual triggers if click() wasn't enough
         if (effectiveTabId === 'admin-settings') initializeAdminSettings();
         if (effectiveTabId === 'support') loadUserSupportHistory();
+        if (effectiveTabId === 'settings' && typeof populateSettingsProfileFields === 'function') populateSettingsProfileFields();
+    }
+
+    if (tabId === 'settings' && typeof populateSettingsProfileFields === 'function') {
+        populateSettingsProfileFields();
     }
 
     if (effectiveTabId === 'admin-settings' && subTab) {
@@ -778,8 +890,10 @@ async function initializeDashboard(user) {
     // Settings Profile Fields
     const setV2Name = document.getElementById('settings-name-v2');
     const setV2Email = document.getElementById('settings-email-v2');
-    if (setV2Name) setV2Name.value = user.name;
-    if (setV2Email) setV2Email.value = user.email;
+    const setV2Phone = document.getElementById('settings-phone-v2');
+    if (setV2Name) setV2Name.value = user.name || '';
+    if (setV2Email) setV2Email.value = user.email || '';
+    if (setV2Phone) setV2Phone.value = user.phone || '';
 
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const dateDisp = document.getElementById('current-date');
@@ -851,7 +965,7 @@ async function initializeDashboard(user) {
 
     // Load initial data
     await fetchProfileData();
-    syncLibraryWithBackend();
+    if (typeof syncLibraryWithBackend === 'function') await syncLibraryWithBackend();
     updateDashboardOverview();
     loadRecommendations();
     loadRecentlyViewed();
@@ -876,6 +990,7 @@ window.fetchProfileData = async function () {
                 ...legacyUser,
                 name: profile.name,
                 email: profile.email,
+                phone: profile.phone || legacyUser.phone || '',
                 role: profile.role || legacyUser.role,
                 _id: profile._id || legacyUser._id
             };
@@ -886,6 +1001,9 @@ window.fetchProfileData = async function () {
             renderSavedAddresses();
             updateDashboardOverview();
             updateStats();
+            if (typeof populateSettingsProfileFields === 'function') {
+                populateSettingsProfileFields();
+            }
         }
     } catch (e) {
         console.error("Profile fetch error:", e);
@@ -923,12 +1041,13 @@ function updateDashboardOverview() {
     if (sidebarName) sidebarName.textContent = profile.name;
 
     // Fill form fields
+    const legacyUser = JSON.parse(localStorage.getItem('efv_user')) || {};
     const nameInput = document.getElementById('settings-name-v2');
-    if (nameInput) nameInput.value = profile.name || '';
+    if (nameInput) nameInput.value = profile.name || legacyUser.name || '';
     const phoneInput = document.getElementById('settings-phone-v2');
-    if (phoneInput) phoneInput.value = profile.phone || '';
+    if (phoneInput) phoneInput.value = profile.phone || legacyUser.phone || '';
     const emailInput = document.getElementById('settings-email-v2');
-    if (emailInput) emailInput.value = profile.email || '';
+    if (emailInput) emailInput.value = profile.email || legacyUser.email || '';
 }
 
 async function renderLastOrderOverview(container) {
@@ -1055,6 +1174,7 @@ window.syncLibraryWithBackend = async function () {
                 if (typeof renderLibraryTab === 'function') renderLibraryTab(localLibrary);
             }
             if (typeof updateStats === 'function') updateStats();
+            if (typeof updateReadingProgressShortcuts === 'function') updateReadingProgressShortcuts();
         } else {
             console.warn('Library sync failed:', data.message);
             if (typeof showToast === 'function') {
@@ -1386,18 +1506,17 @@ async function renderOrdersTab(filter = 'all') {
         };
         const getOrderCurrencySymbol = (order) => {
             // PRIORITY 1: Use the payment currency stored directly on the order
-            if (order?.paymentCurrency && CURRENCY_SYMBOLS[order.paymentCurrency]) {
-                return CURRENCY_SYMBOLS[order.paymentCurrency];
-            }
-            if (order?.currency && CURRENCY_SYMBOLS[order.currency]) {
-                return CURRENCY_SYMBOLS[order.currency];
+            const pCurr = (order?.paymentCurrency || order?.currency || '').toUpperCase().trim();
+            if (pCurr && CURRENCY_SYMBOLS[pCurr]) {
+                return CURRENCY_SYMBOLS[pCurr];
             }
             // PRIORITY 2: Fallback to country-based lookup
             const country = order?.customer?.address?.country   // ← nested address object
                          || order?.customer?.country             // ← flat field fallback
                          || order?.address?.country
                          || 'India';
-            const currency = COUNTRY_CURRENCY_MAP[country] || COUNTRY_CURRENCY_MAP[(country || '').trim()] || 'INR';
+            const countryClean = (country || '').trim();
+            const currency = COUNTRY_CURRENCY_MAP[countryClean] || 'INR';
             return CURRENCY_SYMBOLS[currency] || '₹';
         };
 
@@ -1442,16 +1561,38 @@ async function renderOrdersTab(filter = 'all') {
                 }
             }
 
-            // Format items as a professional list
-            const itemsHtml = (order.items || []).map(item => `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding: 10px 0; border_bottom: 1px solid rgba(255,255,255,0.03);">
-                    <div style="display:flex; flex-direction:column;">
-                        <span style="font-size: 0.9rem; font-weight: 600; color: #fff;">${item.title}</span>
-                        <span style="font-size: 0.72rem; opacity: 0.5; text-transform: uppercase; letter-spacing: 0.5px;">${item.type} • Qty: ${item.quantity}</span>
+            // Format items as a professional list with robust amount formatting & visibility
+            const curSym = getOrderCurrencySymbol(order);
+            const itemsHtml = (order.items || []).map(item => {
+                const qty = Number(item.quantity) || 1;
+                let unitPrice = Number(item.price);
+                if (isNaN(unitPrice) || unitPrice <= 0) {
+                    unitPrice = (Number(item.totalPrice) / qty) || Number(item.unitPrice) || 0;
+                }
+                if (unitPrice <= 0 && order.totalAmount > 0 && (order.items || []).length === 1) {
+                    unitPrice = Number(order.totalAmount) / qty;
+                }
+                const lineTotal = unitPrice * qty;
+                const formattedTotal = isNaN(lineTotal) ? '0' : lineTotal.toLocaleString('en-IN');
+                const formattedUnit = isNaN(unitPrice) ? '0' : unitPrice.toLocaleString('en-IN');
+
+                return `
+                <div style="display:flex; justify-content:space-between; align-items:center; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.08);">
+                    <div style="display:flex; flex-direction:column; min-width: 0; flex: 1;">
+                        <span style="font-size: 0.92rem; font-weight: 600; color: #ffffff; word-break: break-word; line-height: 1.4;">${item.title || 'Product'}</span>
+                        <span style="font-size: 0.74rem; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px;">
+                            ${item.type || 'Standard'} &bull; Qty: <strong style="color: #ffffff;">${qty}</strong>
+                        </span>
                     </div>
-                    <span style="font-size: 0.85rem; font-weight: 700; color: var(--gold-text);">${getOrderCurrencySymbol(order)}${(item.price * item.quantity).toLocaleString()}</span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end; flex-shrink: 0; white-space: nowrap;">
+                        <span class="gold-text" style="font-size: 0.98rem; font-weight: 800; color: #FFD369 !important; letter-spacing: 0.3px; display: inline-block;">
+                            ${curSym}${formattedTotal}
+                        </span>
+                        ${qty > 1 ? `<span style="font-size: 0.7rem; color: rgba(255,255,255,0.5); margin-top: 2px;">(${curSym}${formattedUnit} each)</span>` : ''}
+                    </div>
                 </div>
-            `).join('');
+                `;
+            }).join('');
 
             // --- Detect Digital Order ---
             const digitalTypes = ['ebook', 'e-book', 'audiobook', 'audio book', 'digital'];
@@ -1532,9 +1673,9 @@ async function renderOrdersTab(filter = 'all') {
                             ` : ''}
                             ${returnStatusHtml}
                         </div>
-                        <div style="text-align: right; padding-top: 15px;">
-                            <span style="font-size: 0.7rem; opacity: 0.4; display:block; margin-bottom: 4px;">TOTAL AMOUNT</span>
-                            <h2 style="margin: 0; color: #fff; font-weight: 800;">${getOrderCurrencySymbol(order)}${order.totalAmount.toLocaleString()}</h2>
+                        <div style="text-align: right; padding-top: 15px; flex-shrink: 0; white-space: nowrap;">
+                            <span style="font-size: 0.7rem; opacity: 0.6; display:block; margin-bottom: 4px; letter-spacing: 1px; font-weight: 600;">TOTAL AMOUNT</span>
+                            <h2 style="margin: 0; color: #fff; font-weight: 800; font-size: 1.4rem;">${curSym}${Number(order.totalAmount || 0).toLocaleString('en-IN')}</h2>
                         </div>
                     </div>
                     
@@ -2951,7 +3092,17 @@ window.openEbookReader = async function (product) {
         } else if (errStr.includes('401')) {
             errorMsg = "Your session has expired. Please log in again.";
         } else if (errStr.includes('403')) {
-            errorMsg = "Access Denied: You do not have permission to view this content.";
+            errorMsg = "Access Denied: You have not purchased this content. Please purchase it from the store to read.";
+            // Immediately purge unauthorized item from local storage cache
+            try {
+                const libKey = getUserKey('efv_digital_library');
+                let lib = JSON.parse(localStorage.getItem(libKey)) || [];
+                lib = lib.filter(i => (i.productId || i.id || i._id) !== effectiveId);
+                localStorage.setItem(libKey, JSON.stringify(lib));
+                if (typeof renderLibraryTab === 'function') renderLibraryTab(lib);
+                if (typeof updateStats === 'function') updateStats();
+                if (typeof updateReadingProgressShortcuts === 'function') updateReadingProgressShortcuts();
+            } catch (e) {}
         }
         alert(errorMsg);
         const modal = document.getElementById(readerId);
@@ -4686,17 +4837,32 @@ window.viewOrderDetail = async function (id, mode = 'details') {
 
         // Items
         const itemsContainer = document.getElementById('modal-order-items');
-        itemsContainer.innerHTML = order.items.map(item => `
-            <div style="display:flex; gap:15px; align-items:center; background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
-                <div style="flex:1;">
-                    <h4 style="margin:0; font-size:0.95rem; color:white;">${item.title}</h4>
-                    <p style="margin:5px 0 0; font-size:0.8rem; opacity:0.6;">${item.type} • Qty: ${item.quantity}</p>
+        itemsContainer.innerHTML = (order.items || []).map(item => {
+            const qty = Number(item.quantity) || 1;
+            let unitPrice = Number(item.price);
+            if (isNaN(unitPrice) || unitPrice <= 0) {
+                unitPrice = (Number(item.totalPrice) / qty) || Number(item.unitPrice) || 0;
+            }
+            if (unitPrice <= 0 && order.totalAmount > 0 && (order.items || []).length === 1) {
+                unitPrice = Number(order.totalAmount) / qty;
+            }
+            const lineTotal = unitPrice * qty;
+            const formattedTotal = isNaN(lineTotal) ? '0' : lineTotal.toLocaleString('en-IN');
+            const formattedUnit = isNaN(unitPrice) ? '0' : unitPrice.toLocaleString('en-IN');
+
+            return `
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:16px; background:rgba(255,255,255,0.03); padding:14px 18px; border-radius:12px; border:1px solid rgba(255,255,255,0.08);">
+                <div style="flex:1; min-width:0;">
+                    <h4 style="margin:0; font-size:0.95rem; color:#ffffff; word-break:break-word; line-height:1.4;">${item.title || 'Product'}</h4>
+                    <p style="margin:4px 0 0; font-size:0.75rem; color:rgba(255,255,255,0.6); text-transform:uppercase;">${item.type || 'Standard'} &bull; Qty: <strong style="color:#fff;">${qty}</strong></p>
                 </div>
-                <div style="text-align:right;">
-                    <span class="gold-text" style="font-weight:700;">${curSymbol}${item.price}</span>
+                <div style="text-align:right; flex-shrink:0; white-space:nowrap;">
+                    <span class="gold-text" style="font-size:1rem; font-weight:800; color:#FFD369 !important;">${curSymbol}${formattedTotal}</span>
+                    ${qty > 1 ? `<span style="font-size:0.7rem; color:rgba(255,255,255,0.5); display:block; margin-top:2px;">(${curSymbol}${formattedUnit} each)</span>` : ''}
                 </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         // Address Helper
         const getDisplayAddress = (a) => {
@@ -5209,28 +5375,7 @@ if (document.getElementById('security-settings-form')) {
     // This is optional if user added it in HTML. Let's add it to Account Settings tab.
 }
 
-// Profile Save
-if (document.getElementById('profile-form-v2')) {
-    document.getElementById('profile-form-v2').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const token = localStorage.getItem('authToken');
-        const data = {
-            name: document.getElementById('settings-name-v2').value,
-            phone: document.getElementById('settings-phone-v2').value
-        };
-        const res = await fetch(`${API_BASE}/api/users/profile`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-            body: JSON.stringify(data)
-        });
-        if (res.ok) {
-            showToast("Profile updated successfully", "success");
-            fetchProfileData();
-        } else {
-            showToast("Update failed", "error");
-        }
-    });
-}
+
 
 // --- ACTIVITY CENTER HELPERS (NEW) ---
 window.loadRecommendations = async function () {
@@ -5500,7 +5645,60 @@ function getStatusClass(status) {
 }
 
 // 3.1 Settings Internals (NEW)
+function populateSettingsProfileFields() {
+    const profile = window.currentUserProfile || {};
+    let user = {};
+    try {
+        user = JSON.parse(localStorage.getItem('efv_user')) || JSON.parse(localStorage.getItem('efv_auth_user')) || {};
+    } catch (e) {
+        user = {};
+    }
+    const nameVal = profile.name || user.name || '';
+    const emailVal = profile.email || user.email || '';
+    let phoneVal = profile.phone || user.phone || '';
+
+    // Smart fallback if phone is still empty: check saved addresses
+    if (!phoneVal) {
+        if (profile.savedAddresses && Array.isArray(profile.savedAddresses) && profile.savedAddresses.length > 0) {
+            const defA = profile.savedAddresses.find(a => a.isDefault && a.phone && a.phone.trim());
+            const anyA = profile.savedAddresses.find(a => a.phone && a.phone.trim());
+            phoneVal = (defA && defA.phone) || (anyA && anyA.phone) || '';
+        }
+    }
+    if (!phoneVal) {
+        try {
+            const getSaved = (k) => JSON.parse(localStorage.getItem(k));
+            const addrs = (typeof getUserKey === 'function' && getSaved(getUserKey('efv_saved_addresses'))) || getSaved('efv_saved_addresses') || [];
+            if (Array.isArray(addrs) && addrs.length > 0) {
+                const defA = addrs.find(a => a.isDefault && a.phone && a.phone.trim());
+                const anyA = addrs.find(a => a.phone && a.phone.trim());
+                phoneVal = (defA && defA.phone) || (anyA && anyA.phone) || '';
+            }
+        } catch (e) {}
+    }
+
+    // Auto-update user in localStorage if we recovered a phone number
+    if (phoneVal && !user.phone) {
+        try {
+            const legacyUser = JSON.parse(localStorage.getItem('efv_user')) || {};
+            legacyUser.phone = phoneVal;
+            localStorage.setItem('efv_user', JSON.stringify(legacyUser));
+        } catch (e) {}
+    }
+
+    const nameInput = document.getElementById('settings-name-v2');
+    if (nameInput && nameVal) nameInput.value = nameVal;
+
+    const emailInput = document.getElementById('settings-email-v2');
+    if (emailInput && emailVal) emailInput.value = emailVal;
+
+    const phoneInput = document.getElementById('settings-phone-v2');
+    if (phoneInput && phoneVal) phoneInput.value = phoneVal;
+}
+window.populateSettingsProfileFields = populateSettingsProfileFields;
+
 function initializeSettingsTabs() {
+    populateSettingsProfileFields();
     const sTabs = document.querySelectorAll('.settings-tab-btn[data-settings-tab]'); // Targeted to customer tabs
     const sPanes = document.querySelectorAll('#settings .settings-pane');
     sTabs.forEach(t => {
@@ -5513,6 +5711,7 @@ function initializeSettingsTabs() {
             const targetPane = document.getElementById(target);
             if (targetPane) targetPane.style.display = 'block';
 
+            if (target === 'profile-tab') populateSettingsProfileFields();
             if (target === 'addresses-tab') renderSavedAddresses();
             if (target === 'payments-tab') loadBillingHistory();
         });

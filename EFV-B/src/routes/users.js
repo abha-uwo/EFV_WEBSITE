@@ -30,8 +30,48 @@ router.get('/profile', protect, async (req, res) => {
             }
         }
 
+        // Ensure phone number exists & auto-recover from saved addresses/partner/orders if blank
+        if (!user.phone || !user.phone.trim()) {
+            let recoveredPhone = '';
+            if (user.savedAddresses && user.savedAddresses.length > 0) {
+                const defAddr = user.savedAddresses.find(a => a.isDefault && a.phone && a.phone.trim());
+                const anyAddr = user.savedAddresses.find(a => a.phone && a.phone.trim());
+                recoveredPhone = (defAddr && defAddr.phone) || (anyAddr && anyAddr.phone) || '';
+            }
+            if (!recoveredPhone && user.email) {
+                try {
+                    const { Partner } = require('../models');
+                    const partner = await Partner.findOne({ email: user.email.toLowerCase().trim() });
+                    if (partner && partner.phone && partner.phone.trim()) {
+                        recoveredPhone = partner.phone.trim();
+                    }
+                } catch (e) {}
+            }
+            if (!recoveredPhone) {
+                try {
+                    const { Order } = require('../models');
+                    const lastOrder = await Order.findOne({
+                        $or: [{ user: user._id }, { 'customer.email': user.email.toLowerCase().trim() }]
+                    }).sort({ createdAt: -1 });
+                    const oPhone = lastOrder?.customer?.phone || lastOrder?.shippingAddress?.phone;
+                    if (oPhone && oPhone.trim()) {
+                        recoveredPhone = oPhone.trim();
+                    }
+                } catch (e) {}
+            }
+
+            if (recoveredPhone) {
+                user.phone = recoveredPhone;
+                user.markModified('phone');
+                try {
+                    await user.save();
+                } catch (saveErr) {}
+            }
+        }
+
         const userObj = user.toObject ? user.toObject() : JSON.parse(JSON.stringify(user));
         if (userObj.password) delete userObj.password;
+        userObj.phone = user.phone || '';
 
         // Ensure notifications exist
         if (!userObj.notifications) userObj.notifications = [];

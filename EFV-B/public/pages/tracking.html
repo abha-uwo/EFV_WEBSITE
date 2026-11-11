@@ -71,22 +71,74 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 16px 40px;
-            background: rgba(7, 11, 20, 0.85);
+            padding: 8px 30px;
+            height: 52px;
+            background: rgba(7, 11, 20, 0.92);
             backdrop-filter: blur(20px);
             border-bottom: 1px solid var(--border);
         }
 
-        .track-nav .logo img { height: 32px; }
+        .track-nav .logo {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            gap: 8px !important;
+            text-decoration: none !important;
+            padding: 0 !important;
+            line-height: 1 !important;
+        }
 
-        .track-nav .nav-links { display: flex; gap: 24px; list-style: none; }
-        .track-nav .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
-        .track-nav .nav-links a:hover { color: var(--gold); }
+        .track-nav .logo img {
+            height: 28px !important;
+            max-height: 28px !important;
+            width: auto !important;
+            filter: brightness(1.1) drop-shadow(0 0 6px rgba(255, 215, 0, 0.5)) !important;
+        }
+
+        .track-nav .logo span {
+            font-family: 'Cinzel', serif !important;
+            font-size: 1rem !important;
+            font-weight: 700 !important;
+            letter-spacing: 1.2px !important;
+            margin-top: 0 !important;
+            background: linear-gradient(135deg, var(--gold), var(--gold-light)) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+
+        .track-nav .logo sup {
+            font-size: 0.55em !important;
+            top: -0.6em !important;
+        }
+
+        .track-nav .nav-links {
+            display: flex;
+            gap: 18px;
+            list-style: none;
+            align-items: center;
+        }
+
+        .track-nav .nav-links a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: 0.3s;
+            padding: 4px 10px;
+            border-radius: 6px;
+        }
+
+        .track-nav .nav-links a:hover {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.08);
+        }
 
         .page-wrapper {
             position: relative;
             z-index: 1;
-            padding: 110px 20px 60px;
+            padding: 78px 20px 50px;
             max-width: 900px;
             margin: 0 auto;
         }
@@ -109,17 +161,25 @@
 
         .live-status-ribbon {
             display: none;
-            background: var(--gold-dim);
-            border: 1px solid var(--border);
+            background: rgba(212, 175, 55, 0.12);
+            border: 1px solid rgba(212, 175, 55, 0.35);
             border-radius: 50px;
-            padding: 8px 20px;
-            font-size: 0.85rem;
-            color: var(--gold-light);
+            padding: 10px 24px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #FFD369;
             margin: 0 auto 24px;
             width: fit-content;
+            max-width: 90%;
+            min-width: 220px;
+            white-space: nowrap;
             align-items: center;
+            justify-content: center;
             gap: 10px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.4);
             animation: fadeInDown 0.6s ease;
+            box-sizing: border-box;
+            flex-shrink: 0;
         }
 
         .live-status-ribbon .dot {
@@ -183,14 +243,51 @@
             padding: 24px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: stretch;
             flex-wrap: wrap;
             gap: 20px;
+            box-sizing: border-box;
         }
 
-        .meta-group { display: flex; flex-direction: column; gap: 4px; }
-        .meta-group small { color: var(--text-dim); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; }
-        .meta-group span { font-weight: 600; color: #fff; font-size: 1.1rem; }
+        .meta-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 140px;
+            flex: 1 1 150px;
+            box-sizing: border-box;
+        }
+        .meta-group small {
+            color: var(--text-dim);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        .meta-group span {
+            font-weight: 700;
+            color: #fff;
+            font-size: 1.1rem;
+            word-break: break-word;
+        }
+        .meta-group.status-group {
+            min-width: 170px;
+            flex: 1 1 180px;
+        }
+        .meta-group.status-group span {
+            color: var(--gold);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .meta-group.order-group {
+            min-width: 195px;
+            flex: 1 1 200px;
+        }
+        .meta-group.order-group span, #display-order-id {
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
 
         /* ── PROGRESS TRACKER ── */
         .progress-card {
@@ -239,6 +336,8 @@
             gap: 12px;
             flex: 1;
             text-align: center;
+            position: relative;
+            min-width: 60px;
         }
 
         .step-dot {
@@ -362,9 +461,23 @@
 
         @media (max-width: 600px) {
             .step-label { display: none; }
-            .step.active .step-label { display: block; position: absolute; top: 60px; width: 100px; }
-            .summary-card { flex-direction: column; align-items: flex-start; }
-            .track-nav { padding: 16px 20px; }
+            .step.active .step-label {
+                display: block;
+                position: absolute;
+                top: 60px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 110px;
+                text-align: center;
+                white-space: nowrap;
+                color: var(--gold);
+                font-weight: 700;
+            }
+            .summary-card { flex-direction: column; align-items: stretch; }
+            .meta-group { width: 100%; min-width: 0; }
+            .track-nav { padding: 6px 16px; height: 48px; }
+            .track-nav .logo img { height: 24px !important; max-height: 24px !important; }
+            .track-nav .logo span { font-size: 0.9rem !important; }
             .track-nav .nav-links { display: none; }
         }
     </style>
@@ -409,9 +522,9 @@
 
 <body>
     <nav class="track-nav">
-        <a href="../index.html" class="logo" style="display: flex; align-items: center; gap: 10px; text-decoration: none;">
-            <img src="../assets/images/AISA.svg" alt="EFV™ Logo" style="height: 32px;">
-            <span style="font-family: 'Cinzel', serif; color: var(--gold); font-weight: 700; font-size: 1.2rem; letter-spacing: 1px;">EFV<sup style="font-size: 0.6rem;">TM</sup></span>
+        <a href="../index.html" class="logo" style="display: flex !important; flex-direction: row !important; align-items: center !important; gap: 8px !important; text-decoration: none;">
+            <img src="../assets/images/AISA.svg" alt="EFV™ Logo" style="height: 28px !important; max-height: 28px !important; width: auto !important;">
+            <span style="font-family: 'Cinzel', serif; color: var(--gold); font-weight: 700; font-size: 1rem; letter-spacing: 1.2px; margin-top: 0 !important;">EFV<sup style="font-size: 0.55rem; top: -0.6em;">TM</sup></span>
         </a>
         <ul class="nav-links">
             <li><a href="../index.html">Home</a></li>
@@ -444,9 +557,9 @@
         <div id="tracking-result">
             <!-- Order Meta -->
             <div class="summary-card">
-                <div class="meta-group">
+                <div class="meta-group status-group">
                     <small>Current Status</small>
-                    <span id="display-status" style="color: var(--gold);">—</span>
+                    <span id="display-status" style="color: var(--gold); font-weight: 700;">—</span>
                 </div>
                 <div class="meta-group">
                     <small>Est. Delivery</small>
@@ -456,7 +569,7 @@
                     <small>Last Location</small>
                     <span id="display-location">Checking...</span>
                 </div>
-                <div class="meta-group">
+                <div class="meta-group order-group">
                     <small>Order ID</small>
                     <span id="display-order-id">—</span>
                 </div>
@@ -588,8 +701,14 @@
             document.getElementById('display-status').textContent = LABELS[mIdx] || data.status;
 
             // Update Ribbon
-            document.getElementById('status-ribbon').style.display = 'flex';
-            document.getElementById('ribbon-text').textContent = `Status: ${LABELS[mIdx] || data.status}`;
+            const statusRibbon = document.getElementById('status-ribbon');
+            if (statusRibbon) {
+                statusRibbon.style.display = 'inline-flex';
+            }
+            const ribbonText = document.getElementById('ribbon-text');
+            if (ribbonText) {
+                ribbonText.textContent = `Status: ${LABELS[mIdx] || data.status}`;
+            }
 
             // Render Progress
             updateProgress(mIdx);

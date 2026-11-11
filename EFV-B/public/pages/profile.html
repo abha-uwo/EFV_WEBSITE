@@ -9,7 +9,7 @@
 
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/animations.css">
-    <link rel="stylesheet" href="../css/dashboard.css">
+    <link rel="stylesheet" href="../css/dashboard.css?v=24.0">
     <link rel="stylesheet" href="../css/dashboard-v2.css">
     <link rel="stylesheet" href="../css/admin-modal.css">
     <link rel="stylesheet" href="../css/reader.css">
@@ -193,14 +193,14 @@
                         <div class="icon-box green"><i class="fas fa-coins"></i></div>
                         <div class="stat-info">
                             <h3 data-i18n="profile_page.total_spent">Total Spent</h3>
-                            <span id="stat-total-spent" class="stat-value">?0</span>
+                            <span id="stat-total-spent" class="stat-value">₹0</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="dashboard-grid-1" style="max-width: 900px; margin: 0 auto;">
                     <div class="glass-panel" style="padding: 30px;">
-                        <h3 style="margin: 0 0 20px;"><i class="fas fa-book-reader gold-text"></i> <span data-i18n="profile_page.continue_reading">Continue Reading</span></h3>
+                        <h3 style="margin: 0 0 20px; display: flex; align-items: center; justify-content: center; gap: 10px;"><i class="fas fa-book-reader gold-text" style="margin-right: 6px;"></i> <span data-i18n="profile_page.continue_reading">Continue Reading</span></h3>
                         <div id="continue-reading-content-v2">
                             <p class="fade-text" data-i18n="profile_page.start_reading_desc">Start your reading journey by browsing the store.</p>
                         </div>
@@ -466,7 +466,7 @@
                 </header>
                 <div class="settings-grid">
                     <div class="settings-card glass-panel">
-                        <h3 data-i18n="profile_page.send_message">Send a Message</h3>
+                        <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;"><i class="fas fa-paper-plane gold-text" style="font-size: 1rem; flex-shrink: 0; margin-right: 6px;"></i> <span data-i18n="profile_page.send_message">Send a Message</span></h3>
                         <form id="user-support-form" style="display: flex; flex-direction: column; gap: 15px;">
                             <input type="text" id="support-subject" placeholder="Subject" required class="glass-input" data-i18n-placeholder="profile_page.subject_placeholder">
                             <textarea id="support-message" placeholder="Message" required class="glass-input"
@@ -476,16 +476,30 @@
                         </form>
                     </div>
                     <div class="settings-card glass-panel">
-                        <h3 data-i18n="profile_page.direct_support">Direct Support</h3>
+                        <h3 style="display: flex; align-items: center; gap: 10px; margin-bottom: 18px;"><i class="fas fa-envelope-open-text gold-text" style="font-size: 1rem; flex-shrink: 0; margin-right: 6px;"></i> <span data-i18n="profile_page.direct_support">Direct Support</span></h3>
                         <button class="btn btn-outline full-width"
-                            onclick="location.href='mailto:support@efv.com'" data-i18n="profile_page.email_us">Email Us</button>
+                            onclick="location.href='mailto:efv@uwo24.com'" data-i18n="profile_page.email_us">Email Us</button>
                     </div>
                 </div>
 
                 <div class="glass-panel" style="margin-top: 30px; padding: 25px;">
-                    <h3 style="margin-bottom: 20px;"><i class="fas fa-history gold-text"></i> <span data-i18n="profile_page.my_inquiries">My Inquiries</span></h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px; margin-bottom: 22px;">
+                        <h3 style="margin: 0; display: flex; align-items: center; gap: 12px; font-size: 1.25rem;">
+                            <span style="width: 36px; height: 36px; border-radius: 10px; background: rgba(255, 211, 105, 0.12); border: 1px solid rgba(255, 211, 105, 0.25); display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                                <i class="fas fa-comments gold-text" style="font-size: 1.05rem;"></i>
+                            </span>
+                            <span data-i18n="profile_page.my_inquiries">My Queries</span>
+                        </h3>
+                        <div class="support-search-box" style="position: relative; min-width: 250px; max-width: 380px; flex: 1;">
+                            <i class="fas fa-search" style="position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: rgba(255, 211, 105, 0.7); font-size: 0.85rem; pointer-events: none; z-index: 3;"></i>
+                            <input type="text" id="support-query-search" placeholder="Search queries by subject or message..." class="glass-input support-search-input" style="padding-left: 44px !important; padding-right: 38px !important; width: 100%; border-radius: 10px; font-size: 0.85rem; height: 40px; background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 211, 105, 0.2); color: #fff; outline: none; box-sizing: border-box;" data-i18n-placeholder="profile_page.search_queries_placeholder">
+                            <button id="support-query-search-clear" type="button" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: rgba(255, 255, 255, 0.4); cursor: pointer; display: none; font-size: 0.85rem; padding: 4px; z-index: 3;" title="Clear search">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
                     <div id="user-support-history">
-                        <p class="fade-text" data-i18n="profile_page.no_inquiries">No previous inquiries found.</p>
+                        <p class="fade-text" data-i18n="profile_page.no_inquiries">No previous queries found.</p>
                     </div>
                 </div>
             </section>
@@ -541,7 +555,7 @@
                         </div>
                         <div style="display:flex; flex-direction:column; gap:8px; font-size:0.8rem;">
                             <div style="display:flex; justify-content:space-between; opacity:0.6;">
-                                <span data-i18n="profile_page.subtotal">Subtotal</span> <span id="modal-subtotal">?0</span>
+                                <span data-i18n="profile_page.subtotal">Subtotal</span> <span id="modal-subtotal">₹0</span>
                             </div>
                             <div style="display:flex; justify-content:space-between; opacity:0.6;">
                                 <span data-i18n="profile_page.shipping">Shipping</span> <span style="color:#4CAF50; font-weight:600;">FREE</span>
@@ -551,7 +565,7 @@
                             </div>
                             <div style="height:1px; background:rgba(255,255,255,0.07); margin:4px 0;"></div>
                             <div style="display:flex; justify-content:space-between; font-weight:800; color:var(--gold-text);">
-                                <span data-i18n="profile_page.total">Total</span> <span id="modal-total">?0</span>
+                                <span data-i18n="profile_page.total">Total</span> <span id="modal-total">₹0</span>
                             </div>
                         </div>
                     </div>

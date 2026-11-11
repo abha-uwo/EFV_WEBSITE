@@ -7,20 +7,24 @@ const { protect } = require('../middleware/auth');
 const DEFAULT_CONFIG = {
     globalName: "EFV™ Official Store",
     hotline: "+91 98765 43210",
-    email: "support@efv.com",
+    email: "efv@uwo24.com",
     currency: "INR",
     taxRate: 18,
     invoicePrefix: "EFV-2026-"
 };
 
-// GET /api/settings/store (Public - for website footer, checkout, contact, etc.)
-router.get('/store', async (req, res) => {
+// GET /api/settings/store & GET /api/settings (Public - for website footer, checkout, contact, etc.)
+const handleGetStoreSettings = async (req, res) => {
     try {
         const record = await SystemSettings.findOne({ key: 'store_configuration' });
         if (record && record.value) {
+            const config = { ...DEFAULT_CONFIG, ...record.value };
+            if (!config.email || config.email === 'support@efv.com') {
+                config.email = 'efv@uwo24.com';
+            }
             return res.json({
                 success: true,
-                config: { ...DEFAULT_CONFIG, ...record.value }
+                config
             });
         }
         res.json({
@@ -31,7 +35,10 @@ router.get('/store', async (req, res) => {
         console.error('Error fetching store settings:', error);
         res.json({ success: true, config: DEFAULT_CONFIG });
     }
-});
+};
+
+router.get('/', handleGetStoreSettings);
+router.get('/store', handleGetStoreSettings);
 
 // PUT /api/settings/store (Admin Protected - sync & save to MongoDB Atlas)
 router.put('/store', protect, async (req, res) => {

@@ -68,8 +68,8 @@ const syncVolumes = async () => {
     }
 };
 
-// GET /pricing/volumes - List all volumes
-router.get('/volumes', adminAuth, async (req, res) => {
+// GET /pricing or /pricing/volumes - List all volumes
+const handleGetVolumes = async (req, res) => {
     try {
         await syncVolumes();
         const volumes = await Volume.find();
@@ -81,7 +81,10 @@ router.get('/volumes', adminAuth, async (req, res) => {
         console.error('Error fetching volumes:', error);
         res.status(500).json({ error: 'Failed to fetch volumes' });
     }
-});
+};
+
+router.get('/', adminAuth, handleGetVolumes);
+router.get('/volumes', adminAuth, handleGetVolumes);
 
 // GET /pricing/volume/:id - Get volume details & books
 router.get('/volume/:id', adminAuth, async (req, res) => {

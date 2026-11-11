@@ -1418,6 +1418,17 @@ body.modal-open {
         margin: 0 !important;
     }
 
+    .dashboard-grid-1 .glass-panel h3 {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    .dashboard-grid-1 .glass-panel h3 i {
+        margin-right: 8px;
+    }
+
     /* Ensure Footer stays contained */
     footer {
         padding: 40px 0 !important;
@@ -2525,4 +2536,77 @@ body.modal-open {
 .dashboard-body .main-content {
     min-height: 100vh;
     padding-bottom: 50px; /* Safe space at bottom */
-}
+}
+
+/* User Help & Support - My Queries Section Styling */
+#support .glass-panel h3 {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+}
+
+#support .glass-panel h3 i,
+#support h3 i {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    font-size: 1.1rem !important;
+}
+
+#support .inquiry-item {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+#support .inquiry-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+#support .inquiry-item i {
+    flex-shrink: 0 !important;
+}
+
+/* Support Queries Search Box */
+.support-search-box {
+    position: relative;
+}
+
+.support-search-box input.glass-input,
+.support-search-box input,
+.support-search-input {
+    padding-left: 44px !important;
+    padding-right: 38px !important;
+    height: 40px !important;
+    line-height: 40px !important;
+}
+
+.support-search-box i.fa-search {
+    position: absolute !important;
+    left: 14px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    color: rgba(255, 211, 105, 0.7) !important;
+    font-size: 0.9rem !important;
+    pointer-events: none !important;
+    z-index: 3 !important;
+}
+
+.support-search-box input:focus {
+    border-color: var(--gold-text) !important;
+    background: rgba(255, 211, 105, 0.06) !important;
+    box-shadow: 0 0 15px rgba(255, 211, 105, 0.15) !important;
+}
+
+.support-search-box input::placeholder {
+    color: rgba(255, 255, 255, 0.45);
+}
+
+@media (max-width: 600px) {
+    .support-search-box {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin-top: 10px;
+    }
+}
+

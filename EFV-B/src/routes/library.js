@@ -26,15 +26,26 @@ function isDigitalProduct(product, categories = []) {
     const rawType = (product.type || '').toString().trim().toUpperCase();
     const cleanType = rawType.replace(/[^A-Z]/g, '');
 
-    if (['EBOOK', 'AUDIOBOOK', 'DIGITAL', 'AUDIO'].includes(cleanType)) return true;
-    if (rawType.includes('E-BOOK') || rawType.includes('AUDIOBOOK') || rawType.includes('AUDIO') || rawType.includes('DIGITAL')) return true;
+    // 1. Explicitly check if it's a physical book - PHYSICAL BOOKS ARE NEVER DIGITAL
+    const physicalSlugs = ['HARDCOVER', 'PAPERBACK', 'PHYSICAL', 'BOOK', 'PRINT'];
+    if (physicalSlugs.includes(cleanType) || physicalSlugs.some(p => rawType.includes(p))) {
+        return false;
+    }
+
+    // 2. Explicitly check if it's a digital format
+    const digitalSlugs = ['EBOOK', 'AUDIOBOOK', 'DIGITAL', 'AUDIO'];
+    if (digitalSlugs.includes(cleanType)) return true;
+    if (rawType.includes('E-BOOK') || rawType.includes('EBOOK') || rawType.includes('AUDIOBOOK') || rawType.includes('AUDIO') || rawType.includes('DIGITAL')) return true;
 
     const cat = (product.category || '').toString().trim().toUpperCase();
-    if (['DIGITAL', 'EBOOK', 'AUDIOBOOK', 'AUDIO', 'E-BOOK'].includes(cat)) return true;
+    if (['DIGITAL', 'EBOOK', 'AUDIOBOOK', 'AUDIO', 'E-BOOK'].includes(cat)) {
+        // Double check not physical
+        if (!physicalSlugs.some(p => rawType.includes(p))) return true;
+    }
 
     if (Array.isArray(product.categories)) {
         if (product.categories.some(c => ['DIGITAL', 'EBOOK', 'AUDIOBOOK', 'AUDIO', 'E-BOOK'].includes(String(c).trim().toUpperCase()))) {
-            return true;
+            if (!physicalSlugs.some(p => rawType.includes(p))) return true;
         }
     }
 
@@ -44,8 +55,8 @@ function isDigitalProduct(product, categories = []) {
     }
 
     if (product.chapters && Array.isArray(product.chapters) && product.chapters.length > 0) return true;
-    if (product.filePath && typeof product.filePath === 'string' && product.filePath.length > 0) return true;
 
+    // Note: Do NOT check product.filePath alone, as physical book records often contain filePath references to PDFs.
     return false;
 }
 
@@ -69,33 +80,71 @@ router.get('/my-library', protect, async (req, res) => {
 
         console.log(`🔍 [LIBRARY GET] Syncing for: ${userEmail} (ID: ${userObjId})`);
 
-        const { Category } = require('../models');
+        const { Category, Order, Purchase, Product, DigitalLibrary } = require('../models');
         const categories = await Category.find();
 
-        // 1. Order History Check for Unlocked Digital Items
+        // 1. Order History Check for Unlocked Digital Items:
+        // Must be a PAID order and NOT cancelled / failed / returned
+        const userQueries = [
+            { userId: userObjId },
+            { userId: userObjId ? userObjId.toString() : null },
+            { "customer.email": userEmail }
+        ].filter(q => Object.values(q)[0] != null);
+
         let orders = await Order.find({
-            $or: [{ userId: userObjId }, { userId: userObjId.toString() }, { "customer.email": userEmail }],
-            status: { $in: ['Paid', 'Completed', 'Completed (Digital)'] }
+            $and: [
+                { $or: userQueries },
+                { status: { $nin: ['Cancelled', 'Failed', 'Returned'] } },
+                {
+                    $or: [
+                        { paymentStatus: { $regex: /^paid$/i } },
+                        { status: { $in: ['Paid', 'Completed', 'Completed (Digital)'] } }
+                    ]
+                }
+            ]
+        });
+
+        // 2. Direct Purchases check
+        const directPurchases = await Purchase.find({
+            $or: userQueries
+        });
+
+        // 3. User document purchasedProducts array
+        const userPurchasedList = Array.isArray(req.user.purchasedProducts)
+            ? req.user.purchasedProducts.map(p => p.toString())
+            : [];
+
+        // Build verified product set & extract digital items from orders
+        const verifiedProductIds = new Set(userPurchasedList);
+        directPurchases.forEach(dp => {
+            if (dp.productId) verifiedProductIds.add(dp.productId.toString());
         });
 
         const digitalFromOrders = [];
         orders.forEach(order => {
             (order.items || []).forEach(item => {
                 if (isDigitalProduct(item, categories)) {
-                    digitalFromOrders.push({
-                        productId: item.productId,
-                        title: item.title,
-                        type: getDigitalType(item),
-                        purchasedAt: order.createdAt || new Date(),
-                        orderId: order.orderId
-                    });
+                    const pid = (item.productId || item._id || '').toString();
+                    if (pid) {
+                        verifiedProductIds.add(pid);
+                        digitalFromOrders.push({
+                            productId: pid,
+                            title: item.title,
+                            type: getDigitalType(item),
+                            purchasedAt: order.createdAt || new Date(),
+                            orderId: order.orderId
+                        });
+                    }
                 }
             });
         });
 
-        // 2. Fetch current library data
+        // 4. Fetch current library data
         let libraryData = await DigitalLibrary.findOne({
-            $or: [{ userId: userObjId }, { userId: userObjId.toString() }]
+            $or: [
+                { userId: userObjId },
+                { userId: userObjId ? userObjId.toString() : null }
+            ].filter(q => Object.values(q)[0] != null)
         });
 
         if (!libraryData) {
@@ -108,7 +157,7 @@ router.get('/my-library', protect, async (req, res) => {
 
         const removedSet = new Set((libraryData.removedItems || []).map(id => id.toString()));
 
-        // 3. Automated Fulfillment Merge
+        // 5. Automated Fulfillment Merge (only verified purchases)
         let newlyUnlockedCount = 0;
         digitalFromOrders.forEach(di => {
             const pidStr = (di.productId || '').toString();
@@ -125,13 +174,21 @@ router.get('/my-library', protect, async (req, res) => {
             }
         });
 
-        if (newlyUnlockedCount > 0) {
-            console.log(`🛡️ [LIBRARY GET] Auto-Unlocked ${newlyUnlockedCount} contents for ${userEmail}`);
+        // 6. STRICT PRUNING:
+        // Any item in DigitalLibrary that is NOT in verifiedProductIds must be pruned!
+        const initialCount = libraryData.items.length;
+        libraryData.items = libraryData.items.filter(item => {
+            const pid = (item.productId || item.id || item._id || '').toString();
+            return pid && verifiedProductIds.has(pid) && !removedSet.has(pid);
+        });
+
+        if (libraryData.items.length !== initialCount || newlyUnlockedCount > 0) {
+            console.log(`🛡️ [LIBRARY GET] Pruned unpurchased items or added ${newlyUnlockedCount} verified items for ${userEmail}`);
             libraryData.markModified('items');
             await libraryData.save();
         }
 
-        // 4. Fast Bulk Sync with Marketplace
+        // 7. Fast Bulk Sync with Marketplace
         const allProducts = await Product.find({});
         const productByIdMap = new Map();
         const productByTitleMap = new Map();
@@ -146,7 +203,7 @@ router.get('/my-library', protect, async (req, res) => {
 
         let rawItems = (libraryData.items || []).filter(item => {
             const pid = (item.productId || item.id || item._id || '').toString();
-            return !!pid;
+            return !!pid && verifiedProductIds.has(pid);
         });
 
         const syncItemWithProduct = (item) => {
@@ -188,30 +245,6 @@ router.get('/my-library', protect, async (req, res) => {
         };
 
         const results = rawItems.map(syncItemWithProduct).filter(Boolean);
-
-        // --- ADMIN AUTO-UNLOCK ALL DIGITAL PRODUCTS ---
-        const isAdmin = req.user.role === 'admin' || userEmail === 'admin@uwo24.com' || userEmail === 'efv@uwo24.com';
-        if (isAdmin) {
-            allProducts
-                .filter(p => isDigitalProduct(p, categories))
-                .forEach(prod => {
-                    const pidStr = prod._id.toString();
-                    if (!removedSet.has(pidStr)) {
-                        results.push({
-                            _id: prod._id.toString(),
-                            productId: prod._id.toString(),
-                            title: prod.title,
-                            type: getDigitalType(prod),
-                            thumbnail: prod.thumbnail,
-                            filePath: prod.filePath,
-                            purchasedAt: prod.createdAt || new Date(),
-                            progress: 0,
-                            language: prod.language || 'English',
-                            isSynced: true
-                        });
-                    }
-                });
-        }
 
         // Deduplication & Sorting
         const libraryMap = new Map();
@@ -268,8 +301,8 @@ router.get('/progress/:productId', protect, async (req, res) => {
     }
 });
 
-// Add product to user's library (Manual/Instant Fulfillment)
-router.post('/add', protect, async (req, res) => {
+// Add product to user's library (Manual/Instant Fulfillment - Admin Only)
+router.post('/add', protect, adminAuth, async (req, res) => {
     try {
         const { productId } = req.body;
         const userObjId = getUserObjId(req.user);
@@ -346,6 +379,21 @@ router.post('/add', protect, async (req, res) => {
         library.markModified('items');
         library.markModified('removedItems');
         await library.save();
+
+        // Also record in User purchasedProducts for verified consistency
+        try {
+            const mongoUser = await User.findById(req.user._id);
+            if (mongoUser) {
+                if (!mongoUser.purchasedProducts) mongoUser.purchasedProducts = [];
+                if (!mongoUser.purchasedProducts.some(id => id.toString() === pidStr)) {
+                    mongoUser.purchasedProducts.push(pidStr);
+                    mongoUser.markModified('purchasedProducts');
+                    await mongoUser.save();
+                }
+            }
+        } catch (e) {
+            console.warn('Could not update user purchasedProducts:', e.message);
+        }
 
         console.log(`✅ [LIBRARY ADD] Successfully saved product: ${product.title} (${pidStr}) for user: ${userEmail}`);
         res.status(201).json({ success: true, message: 'Product added to library successfully!' });
@@ -537,6 +585,18 @@ router.post('/admin/assign', protect, adminAuth, async (req, res) => {
         library.markModified('items');
         library.markModified('removedItems');
         await library.save();
+
+        // Also record in User purchasedProducts for verified consistency
+        try {
+            if (!user.purchasedProducts) user.purchasedProducts = [];
+            if (!user.purchasedProducts.some(id => id.toString() === pidStr)) {
+                user.purchasedProducts.push(pidStr);
+                user.markModified('purchasedProducts');
+                await user.save();
+            }
+        } catch (e) {
+            console.warn('Could not update user purchasedProducts:', e.message);
+        }
 
         console.log(`✅ [ADMIN ASSIGN] Added/Updated ${product.title} to library of user: ${user.email}`);
         return res.json({ success: true, message: 'Book assigned successfully!' });

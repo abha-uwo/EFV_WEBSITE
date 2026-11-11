@@ -10,6 +10,7 @@ const { createPrintJob, formatLuluLineItems, resolveLuluCountryCode, formatLuluA
 const { validatePostalCode } = require('../utils/postalValidator');
 const { processPartnerSale } = require('../utils/partnerUtils');
 const path = require('path');
+const fs = require('fs');
 
 // Helper to get all digital slugs from dynamic categories
 async function getDigitalSlugs() {
@@ -485,6 +486,7 @@ async function generateInvoiceBuffer(order) {
         try {
             const PDFDocument = require('pdfkit');
             const path = require('path');
+const fs = require('fs');
             const doc = new PDFDocument({ margin: 50, autoFirstPage: true });
             
             // Register Unicode fonts
@@ -995,7 +997,9 @@ router.get('/sync-all', protect, async (req, res) => {
 // Get single order (Admin or Owner)
 router.get('/:id', protect, async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id);
+        const idParam = String(req.params.id || '').trim();
+        const isHexId = /^[0-9a-fA-F]{24}$/.test(idParam);
+        const order = (isHexId ? await Order.findById(idParam) : null) || await Order.findOne({ orderId: idParam });
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
@@ -2234,20 +2238,7 @@ router.post('/cod', protect, async (req, res) => {
             }
         }
 
-        // 🚛 Phase 1: Digital Items fulfillment
-        const digitalItems = processedItems.filter(i => digitalSlugs.has((i.type || '').toUpperCase()));
-        for (const item of digitalItems) {
-            await DigitalLibrary.findOneAndUpdate(
-                { userId: user._id, productId: item.productId },
-                {
-                    userId: user._id,
-                    productId: item.productId,
-                    purchaseDate: new Date(),
-                    accessStatus: 'Active'
-                },
-                { upsert: true }
-            );
-        }
+        // 🚛 Phase 1: Digital Items for COD orders are fulfilled only after payment is verified (Paid/Delivered status)
 
         // 🚛 Phase 2: Create Nimbus Shipment for Physical Items
         const physicalItems = processedItems.filter(i => !digitalSlugs.has((i.type || '').toUpperCase()));
@@ -2502,7 +2493,9 @@ router.put('/:id/status', adminAuth, async (req, res) => {
     try {
         const { status, note } = req.body;
         const digitalSlugs = await getDigitalSlugs();
-        const order = await Order.findById(req.params.id);
+        const idParam = String(req.params.id || '').trim();
+        const isHexId = /^[0-9a-fA-F]{24}$/.test(idParam);
+        const order = (isHexId ? await Order.findById(idParam) : null) || await Order.findOne({ orderId: idParam });
 
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
@@ -2570,55 +2563,122 @@ router.put('/:id/status', adminAuth, async (req, res) => {
         // 🔔 Notification for Status Change
         if (status !== oldStatus) {
             try {
-                const userId = order.userId || (await User.findOne({ email: order.customer.email }))?._id;
-                if (userId) {
-                    const user = await User.findById(userId);
-                    if (user) {
-                        if (!user.notifications) user.notifications = [];
-
-                        let notification = null;
-                        const orderIdDisplay = order.orderId || order._id;
-
-                        switch (status) {
-                            case 'Cancelled':
-                                notification = {
-                                    _id: 'status-cancel-' + Date.now(),
-                                    title: 'Order Cancelled ❌',
-                                    message: `Your order ${orderIdDisplay} has been cancelled.`,
-                                    type: 'Order',
-                                    link: 'profile.html?tab=orders',
-                                    createdAt: new Date().toISOString()
-                                };
-                                break;
-                            case 'Shipped':
-                                notification = {
-                                    _id: 'status-shipped-' + Date.now(),
-                                    title: 'Order Shipped! 🚚',
-                                    message: `Your order ${orderIdDisplay} is out for delivery.`,
-                                    type: 'Order',
-                                    link: 'profile.html?tab=orders',
-                                    createdAt: new Date().toISOString()
-                                };
-                                break;
-                            case 'Delivered':
-                                notification = {
-                                    _id: 'status-delivered-' + Date.now(),
-                                    title: 'Order Delivered! 🎉',
-                                    message: `Your order ${orderIdDisplay} has been delivered successfully.`,
-                                    type: 'Order',
-                                    link: 'profile.html?tab=orders',
-                                    createdAt: new Date().toISOString()
-                                };
-                                break;
-                        }
-
-                        if (notification) {
-                            user.notifications.unshift(notification);
-                            await user.save();
-                            console.log(`🔔 Status notification (${status}) sent to ${user.email}`);
+                let targetCustomer = null;
+                if (order.userId) {
+                    try {
+                        targetCustomer = await User.findById(order.userId);
+                    } catch (e) {
+                        targetCustomer = null;
+                    }
+                    if (!targetCustomer) {
+                        try {
+                            targetCustomer = await User.findOne({ _id: order.userId.toString() }).catch(() => null);
+                        } catch (e) {
+                            targetCustomer = null;
                         }
                     }
                 }
+                const customerEmail = order.customer?.email || order.customerEmail || order.email;
+                if (!targetCustomer && customerEmail) {
+                    try {
+                        targetCustomer = await User.findOne({ email: { $regex: new RegExp(`^${customerEmail.trim()}$`, 'i') } });
+                    } catch (e) {
+                        targetCustomer = null;
+                    }
+                }
+
+                if (targetCustomer) {
+                    if (!targetCustomer.notifications) targetCustomer.notifications = [];
+
+                    let notification = null;
+                    const orderIdDisplay = order.orderId || order._id;
+
+                    switch (status) {
+                        case 'Cancelled':
+                            notification = {
+                                _id: 'status-cancel-' + Date.now(),
+                                title: 'Order Cancelled by Admin ⚠️',
+                                message: `Your order #${orderIdDisplay} has been cancelled by store administration.${note ? ' Note: ' + note : ''}`,
+                                type: 'Order',
+                                link: 'profile.html?tab=orders',
+                                isRead: false,
+                                createdAt: new Date().toISOString()
+                            };
+                            break;
+                        case 'Shipped':
+                            notification = {
+                                _id: 'status-shipped-' + Date.now(),
+                                title: 'Order Shipped! 🚚',
+                                message: `Your order #${orderIdDisplay} is out for delivery.`,
+                                type: 'Order',
+                                link: 'profile.html?tab=orders',
+                                isRead: false,
+                                createdAt: new Date().toISOString()
+                            };
+                            break;
+                        case 'Delivered':
+                            notification = {
+                                _id: 'status-delivered-' + Date.now(),
+                                title: 'Order Delivered! 🎉',
+                                message: `Your order #${orderIdDisplay} has been delivered successfully.`,
+                                type: 'Order',
+                                link: 'profile.html?tab=orders',
+                                isRead: false,
+                                createdAt: new Date().toISOString()
+                            };
+                            break;
+                    }
+
+                    if (notification) {
+                        targetCustomer.notifications.unshift(notification);
+                        targetCustomer.markModified('notifications');
+                        await targetCustomer.save();
+                        console.log(`🔔 Status notification (${status}) sent to customer ${targetCustomer.email}`);
+                    }
+                }
+
+                // If status is Cancelled, also dispatch customer email
+                if (status === 'Cancelled') {
+                    const recipientEmail = (targetCustomer && targetCustomer.email) || customerEmail;
+                    if (recipientEmail) {
+                        const customerName = (targetCustomer && targetCustomer.name) || order.customer?.name || order.customerName || 'Valued Customer';
+                        const orderIdDisplay = order.orderId || order._id;
+                        const orderAmount = order.totalAmount ? `₹${order.totalAmount}` : '';
+                        sendEmail({
+                            email: recipientEmail,
+                            subject: `Order #${orderIdDisplay} Cancelled by Admin - EFV™`,
+                            html: `
+                                <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 26px; background: #0c1017; color: #ffffff; border: 1px solid rgba(255, 211, 105, 0.35); border-radius: 14px;">
+                                    <div style="text-align: center; margin-bottom: 22px;">
+                                        <h2 style="color: #FFD369; margin: 0; font-family: serif; letter-spacing: 2px;">EFV™ ORDER UPDATE</h2>
+                                        <p style="color: rgba(255, 255, 255, 0.45); font-size: 0.8rem; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;">Energy • Frequency • Vibration</p>
+                                    </div>
+                                    <p style="font-size: 1rem; color: #fff;">Hello <strong>${customerName}</strong>,</p>
+                                    <div style="background: rgba(239, 68, 68, 0.12); border-left: 4px solid #ef4444; border-radius: 8px; padding: 14px 18px; margin: 18px 0;">
+                                        <div style="font-weight: 700; color: #fca5a5; font-size: 0.95rem; margin-bottom: 4px;">
+                                            ⚠️ Order Cancelled by Store Admin
+                                        </div>
+                                        <div style="color: rgba(255, 255, 255, 0.85); font-size: 0.88rem; line-height: 1.5;">
+                                            Your order <strong>#${orderIdDisplay}</strong>${orderAmount ? ` (Total: ${orderAmount})` : ''} has been marked as <strong>Cancelled</strong> by store administration.${note ? `<br><strong>Note:</strong> ${note}` : ''}
+                                        </div>
+                                    </div>
+                                    <p style="line-height: 1.6; color: rgba(255, 255, 255, 0.78); font-size: 0.9rem;">
+                                        If eligible, any refund will be processed back to your original payment method in accordance with standard billing timelines.
+                                    </p>
+                                    <div style="margin: 22px 0; text-align: center;">
+                                        <a href="https://efvwebsite-246449377479.asia-south1.run.app/pages/contact.html" style="background: linear-gradient(135deg, #FFD369 0%, #e8b84b 100%); color: #0a0d14; padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 0.88rem; text-decoration: none; display: inline-block;">
+                                            Contact Support
+                                        </a>
+                                    </div>
+                                    <div style="margin-top: 28px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); text-align: center;">
+                                        EFV™ Store Administration &bull; Automated System Notice
+                                    </div>
+                                </div>
+                            `
+                        }).catch(e => console.error("Email send on status cancel failed:", e.message));
+                    }
+                }
+
                 // 📱 WhatsApp Status Notifications
                 try {
                     if (status === 'Shipped') {
@@ -2647,7 +2707,9 @@ router.put('/:id/status', adminAuth, async (req, res) => {
 // Track Order (Public/User)
 router.get('/track/:id', async (req, res) => {
     try {
-        const order = await Order.findOne({ orderId: req.params.id }) || await Order.findById(req.params.id);
+        const idParam = String(req.params.id || '').trim();
+        const isHexId = /^[0-9a-fA-F]{24}$/.test(idParam);
+        const order = await Order.findOne({ orderId: idParam }) || (isHexId ? await Order.findById(idParam) : null);
         if (!order) {
             return res.status(404).json({ message: 'Order not found' });
         }
@@ -3042,7 +3104,7 @@ router.post('/cancel/:orderId', protect, async (req, res) => {
         order.status = 'Cancelled';
         order.timeline.push({
             status: 'Cancelled',
-            note: reason || 'Cancelled by user',
+            note: reason || (isAdmin ? 'Cancelled by admin' : 'Cancelled by user'),
             timestamp: new Date()
         });
         await order.save();
@@ -3051,20 +3113,106 @@ router.post('/cancel/:orderId', protect, async (req, res) => {
         await OrderCancellation.create({
             orderId: order.orderId,
             userId: req.user._id,
-            reason: reason || 'User requested cancellation',
+            reason: reason || (isAdmin ? 'Admin cancelled order' : 'User requested cancellation'),
             cancelledAt: new Date()
         });
 
-        // Step 4: Send notification to user
-        const user = await User.findById(req.user._id);
-        if (user) {
-            user.notifications.push({
-                title: 'Order Cancelled',
-                message: `Your order #${order.orderId} has been cancelled. Refund (if applicable) will be processed within 5–7 business days.`,
+        // Step 4: Send notification to the CUSTOMER who owns the order
+        let targetCustomer = null;
+        if (order.userId) {
+            try {
+                targetCustomer = await User.findById(order.userId);
+            } catch (e) {
+                targetCustomer = null;
+            }
+            if (!targetCustomer) {
+                try {
+                    targetCustomer = await User.findOne({ _id: order.userId.toString() }).catch(() => null);
+                } catch (e) {
+                    targetCustomer = null;
+                }
+            }
+        }
+        const customerEmail = order.customer?.email || order.customerEmail || order.email;
+        if (!targetCustomer && customerEmail) {
+            try {
+                targetCustomer = await User.findOne({ email: { $regex: new RegExp(`^${customerEmail.trim()}$`, 'i') } });
+            } catch (e) {
+                targetCustomer = null;
+            }
+        }
+
+        // 🔒 Revoke any digital access associated with this cancelled order
+        if (order && order.orderId) {
+            try {
+                await DigitalLibrary.updateMany(
+                    { 'items.orderId': order.orderId },
+                    { $pull: { items: { orderId: order.orderId } } }
+                );
+            } catch (e) {
+                console.warn('Could not revoke digital library items on cancel:', e.message);
+            }
+        }
+
+        const cancelledByAdmin = isAdmin && (!isOwner || req.user.role === 'admin');
+        const notifTitle = cancelledByAdmin ? 'Order Cancelled by Admin ⚠️' : 'Order Cancelled';
+        const notifMsg = cancelledByAdmin
+            ? `Your order #${order.orderId} was cancelled by store administration.${reason ? ' Reason: ' + reason : ''}. If eligible, refund will be processed within 5–7 business days.`
+            : `Your order #${order.orderId} has been cancelled. Refund (if applicable) will be processed within 5–7 business days.`;
+
+        if (targetCustomer) {
+            if (!targetCustomer.notifications) targetCustomer.notifications = [];
+            targetCustomer.notifications.unshift({
+                _id: 'cancel-' + Date.now(),
+                title: notifTitle,
+                message: notifMsg,
                 type: 'Order',
-                isRead: false
+                link: 'profile.html?tab=orders',
+                isRead: false,
+                createdAt: new Date().toISOString()
             });
-            await user.save();
+            targetCustomer.markModified('notifications');
+            await targetCustomer.save();
+            console.log(`🔔 Cancellation notification sent to customer ${targetCustomer.email}`);
+        }
+
+        // Also send transactional email to customer
+        const recipientEmail = (targetCustomer && targetCustomer.email) || customerEmail;
+        if (recipientEmail) {
+            const customerName = (targetCustomer && targetCustomer.name) || order.customer?.name || order.customerName || 'Valued Customer';
+            const orderAmount = order.totalAmount ? `₹${order.totalAmount}` : '';
+            sendEmail({
+                email: recipientEmail,
+                subject: `Order #${order.orderId} Cancelled${cancelledByAdmin ? ' by Admin' : ''} - EFV™`,
+                html: `
+                    <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 26px; background: #0c1017; color: #ffffff; border: 1px solid rgba(255, 211, 105, 0.35); border-radius: 14px;">
+                        <div style="text-align: center; margin-bottom: 22px;">
+                            <h2 style="color: #FFD369; margin: 0; font-family: serif; letter-spacing: 2px;">EFV™ ORDER UPDATE</h2>
+                            <p style="color: rgba(255, 255, 255, 0.45); font-size: 0.8rem; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;">Energy • Frequency • Vibration</p>
+                        </div>
+                        <p style="font-size: 1rem; color: #fff;">Hello <strong>${customerName}</strong>,</p>
+                        <div style="background: rgba(239, 68, 68, 0.12); border-left: 4px solid #ef4444; border-radius: 8px; padding: 14px 18px; margin: 18px 0;">
+                            <div style="font-weight: 700; color: #fca5a5; font-size: 0.95rem; margin-bottom: 4px;">
+                                ⚠️ Order Cancelled${cancelledByAdmin ? ' by Store Admin' : ''}
+                            </div>
+                            <div style="color: rgba(255, 255, 255, 0.85); font-size: 0.88rem; line-height: 1.5;">
+                                Your order <strong>#${order.orderId}</strong>${orderAmount ? ` (Total: ${orderAmount})` : ''} has been cancelled${cancelledByAdmin ? ' by store administration' : ''}.${reason ? `<br><strong>Reason:</strong> ${reason}` : ''}
+                            </div>
+                        </div>
+                        <p style="line-height: 1.6; color: rgba(255, 255, 255, 0.78); font-size: 0.9rem;">
+                            If your order was paid online, any eligible refund will be credited back to your original payment method in accordance with standard billing timelines (5–7 business days).
+                        </p>
+                        <div style="margin: 22px 0; text-align: center;">
+                            <a href="https://efvwebsite-246449377479.asia-south1.run.app/pages/contact.html" style="background: linear-gradient(135deg, #FFD369 0%, #e8b84b 100%); color: #0a0d14; padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 0.88rem; text-decoration: none; display: inline-block;">
+                                Contact Support
+                            </a>
+                        </div>
+                        <div style="margin-top: 28px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); text-align: center;">
+                            EFV™ Store Administration &bull; Automated System Notice
+                        </div>
+                    </div>
+                `
+            }).catch(e => console.error("Email send on cancellation failed:", e.message));
         }
 
         // 📱 WhatsApp Cancellation Notify
@@ -3103,6 +3251,107 @@ router.delete('/:id', protect, async (req, res) => {
         const deletableStatuses = ['Cancelled', 'Failed', 'Pending', 'Payment Failed'];
         if (!deletableStatuses.includes(order.status) && !isAdmin) {
              return res.status(400).json({ message: 'Active orders cannot be deleted. Cancel them first.' });
+        }
+
+        const orderIdDisplay = order.orderId || order._id;
+        const customerEmail = order.customer?.email || order.customerEmail || order.email;
+        const customerName = order.customer?.name || order.customerName || order.name || 'Valued Customer';
+        const orderAmount = order.totalAmount ? `₹${order.totalAmount}` : '';
+
+        // 🔔 If deleted by Admin, send Notification to the user (In-App Inbox + Email)
+        if (isAdmin) {
+            try {
+                let targetUser = null;
+                if (order.userId) {
+                    try {
+                        targetUser = await User.findById(order.userId);
+                    } catch (e) {
+                        targetUser = null;
+                    }
+                    if (!targetUser) {
+                        try {
+                            targetUser = await User.findOne({ _id: order.userId.toString() }).catch(() => null);
+                        } catch (e) {
+                            targetUser = null;
+                        }
+                    }
+                }
+                if (!targetUser && customerEmail) {
+                    try {
+                        targetUser = await User.findOne({ email: { $regex: new RegExp(`^${customerEmail.trim()}$`, 'i') } });
+                    } catch (e) {
+                        targetUser = null;
+                    }
+                }
+
+                // 1. In-App Notification in user's profile
+                if (targetUser) {
+                    if (!targetUser.notifications) targetUser.notifications = [];
+                    targetUser.notifications.unshift({
+                        _id: 'order-del-' + Date.now(),
+                        title: 'Order Deleted by Admin ⚠️',
+                        message: `Your order #${orderIdDisplay}${orderAmount ? ' (' + orderAmount + ')' : ''} has been cancelled and removed by store administration. Contact support if you need assistance.`,
+                        type: 'Order',
+                        link: 'profile.html?tab=orders',
+                        isRead: false,
+                        createdAt: new Date().toISOString()
+                    });
+                    targetUser.markModified('notifications');
+                    await targetUser.save();
+                    console.log(`🔔 In-App notification sent to user ${targetUser.email} for deleted order #${orderIdDisplay}`);
+                }
+
+                // 2. Email Notification to Customer
+                const recipientEmail = (targetUser && targetUser.email) || customerEmail;
+                if (recipientEmail) {
+                    sendEmail({
+                        email: recipientEmail,
+                        subject: `Important Update: Order #${orderIdDisplay} Removed - EFV™`,
+                        html: `
+                            <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 26px; background: #0c1017; color: #ffffff; border: 1px solid rgba(255, 211, 105, 0.35); border-radius: 14px;">
+                                <div style="text-align: center; margin-bottom: 22px;">
+                                    <h2 style="color: #FFD369; margin: 0; font-family: serif; letter-spacing: 2px;">EFV™ ORDER UPDATE</h2>
+                                    <p style="color: rgba(255, 255, 255, 0.45); font-size: 0.8rem; margin-top: 4px; text-transform: uppercase; letter-spacing: 1px;">Energy • Frequency • Vibration</p>
+                                </div>
+                                <p style="font-size: 1rem; color: #fff;">Hello <strong>${customerName}</strong>,</p>
+                                <div style="background: rgba(239, 68, 68, 0.12); border-left: 4px solid #ef4444; border-radius: 8px; padding: 14px 18px; margin: 18px 0;">
+                                    <div style="font-weight: 700; color: #fca5a5; font-size: 0.95rem; margin-bottom: 4px;">
+                                        ⚠️ Order Cancelled & Removed
+                                    </div>
+                                    <div style="color: rgba(255, 255, 255, 0.85); font-size: 0.88rem; line-height: 1.5;">
+                                        Your order <strong>#${orderIdDisplay}</strong>${orderAmount ? ` (Total: ${orderAmount})` : ''} has been cancelled and deleted from our records by store administration.
+                                    </div>
+                                </div>
+                                <p style="line-height: 1.6; color: rgba(255, 255, 255, 0.78); font-size: 0.9rem;">
+                                    If this order was paid online, any eligible refund will be credited in accordance with standard billing timelines. If you have questions or believe this was done in error, please reach out to our support team.
+                                </p>
+                                <div style="margin: 22px 0; text-align: center;">
+                                    <a href="https://efvwebsite-246449377479.asia-south1.run.app/pages/contact.html" style="background: linear-gradient(135deg, #FFD369 0%, #e8b84b 100%); color: #0a0d14; padding: 12px 24px; border-radius: 999px; font-weight: 700; font-size: 0.88rem; text-decoration: none; display: inline-block;">
+                                        Contact Support
+                                    </a>
+                                </div>
+                                <div style="margin-top: 28px; padding-top: 14px; border-top: 1px solid rgba(255, 255, 255, 0.1); font-size: 0.75rem; color: rgba(255, 255, 255, 0.4); text-align: center;">
+                                    © 2026 EFV™ System • Unified Web Options
+                                </div>
+                            </div>
+                        `
+                    }).catch(emailErr => console.error('Failed to send order deletion email:', emailErr.message));
+                }
+            } catch (notifyErr) {
+                console.error('Order deletion notification error:', notifyErr);
+            }
+        }
+
+        // 🔒 Revoke any digital access associated with this deleted order
+        if (order && order.orderId) {
+            try {
+                await DigitalLibrary.updateMany(
+                    { 'items.orderId': order.orderId },
+                    { $pull: { items: { orderId: order.orderId } } }
+                );
+            } catch (e) {
+                console.warn('Could not revoke digital library items on delete:', e.message);
+            }
         }
 
         await Order.findByIdAndDelete(req.params.id);
@@ -3710,7 +3959,9 @@ router.post('/verify-razorpay', protect, async (req, res) => {
  */
 router.get('/:id/invoice', protect, async (req, res) => {
     try {
-        const order = await Order.findById(req.params.id);
+        const idParam = String(req.params.id || '').trim();
+        const isHexId = /^[0-9a-fA-F]{24}$/.test(idParam);
+        const order = (isHexId ? await Order.findById(idParam) : null) || await Order.findOne({ orderId: idParam });
         if (!order) return res.status(404).json({ message: 'Order not found' });
 
         // Security check: Only admin or owner
@@ -3723,6 +3974,24 @@ router.get('/:id/invoice', protect, async (req, res) => {
 
         const PDFDocument = require('pdfkit');
         const doc = new PDFDocument({ margin: 50, autoFirstPage: true });
+
+        // Register custom TrueType fonts with full Unicode currency (₹) support
+        const fontRegular = path.join(__dirname, '../../assets/fonts/Roboto-Regular.ttf');
+        const fontBold = path.join(__dirname, '../../assets/fonts/Roboto-Bold.ttf');
+        const fontItalic = path.join(__dirname, '../../assets/fonts/Roboto-Italic.ttf');
+
+        const hasCustomFonts = fs.existsSync(fontRegular) && fs.existsSync(fontBold);
+        if (hasCustomFonts) {
+            doc.registerFont('AppRegular', fontRegular);
+            doc.registerFont('AppBold', fontBold);
+            if (fs.existsSync(fontItalic)) {
+                doc.registerFont('AppItalic', fontItalic);
+            }
+        }
+
+        const FONT_REGULAR = hasCustomFonts ? 'AppRegular' : 'Helvetica';
+        const FONT_BOLD = hasCustomFonts ? 'AppBold' : 'Helvetica-Bold';
+        const FONT_ITALIC = hasCustomFonts ? (fs.existsSync(fontItalic) ? 'AppItalic' : 'AppRegular') : 'Helvetica-Oblique';
 
         // Stream PDF to Response
         const filename = `EFV_Invoice_${order.orderId}.pdf`;
@@ -3738,70 +4007,82 @@ router.get('/:id/invoice', protect, async (req, res) => {
         doc.rect(0, 0, doc.page.width, 100).fill(DARK);
         
         // Brand Logo
-        doc.fillColor(EFV_GOLD).font('Helvetica-Bold').fontSize(32).text('EFV', 50, 30);
-        doc.fontSize(12).font('Helvetica').text('OFFICIAL TAX INVOICE', 50, 65);
+        doc.fillColor(EFV_GOLD).font(FONT_BOLD).fontSize(32).text('EFV', 50, 28);
+        doc.fontSize(11).font(FONT_BOLD).text('OFFICIAL TAX INVOICE', 50, 65);
         
         // Order Info (Right Aligned)
         // --- DYNAMIC CURRENCY & LOCALE ---
-        const invoiceCurrency = order.paymentCurrency || order.currency || 'INR';
-        const invoiceLocale = order.locale || 'en-IN';
+        const invoiceCurrency = (order.paymentCurrency || order.currency || 'INR').toUpperCase();
+        const invoiceLocale = order.locale || (invoiceCurrency === 'INR' ? 'en-IN' : 'en-US');
         const invoiceFormatter = new Intl.NumberFormat(invoiceLocale, { style: 'currency', currency: invoiceCurrency });
-        const fmtAmt = (val) => invoiceFormatter.format(Number(val || 0));
+        const fmtAmt = (val) => {
+            const num = Number(val || 0);
+            try {
+                const formatted = invoiceFormatter.format(num);
+                // Fallback for standard PDF fonts if TrueType font is unavailable
+                if (!hasCustomFonts && invoiceCurrency === 'INR') {
+                    return formatted.replace(/₹/g, 'Rs. ');
+                }
+                return formatted;
+            } catch (err) {
+                return `${invoiceCurrency} ${num.toFixed(2)}`;
+            }
+        };
         const invoiceTaxLabel = invoiceCurrency === 'INR' ? 'GST (0%) - Books Exempt:' : (invoiceCurrency === 'EUR' ? 'VAT (0%) - Books Exempt:' : 'Sales Tax (0%) - Books Exempt:');
 
         const dateStr = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-GB') : new Date().toLocaleDateString('en-GB');
-        doc.fillColor('#FFFFFF').fontSize(9);
-        doc.text(`Invoice No: INV-${(order.orderId || '').split('-').pop()}`, 400, 30, { align: 'right' });
-        doc.text(`Order ID: #${order.orderId || 'N/A'}`, 400, 45, { align: 'right' });
-        doc.text(`Date: ${dateStr}`, 400, 60, { align: 'right' });
-        doc.text(`Invoice Currency: ${invoiceCurrency}`, 400, 75, { align: 'right' });
+        doc.fillColor('#FFFFFF').font(FONT_REGULAR).fontSize(9);
+        doc.text(`Invoice No: INV-${(order.orderId || '').split('-').pop()}`, 350, 30, { align: 'right', width: 200 });
+        doc.text(`Order ID: #${order.orderId || 'N/A'}`, 350, 45, { align: 'right', width: 200 });
+        doc.text(`Date: ${dateStr}`, 350, 60, { align: 'right', width: 200 });
+        doc.text(`Invoice Currency: ${invoiceCurrency}`, 350, 75, { align: 'right', width: 200 });
         
         // Customers Safety
         const customer = order.customer || {};
         const items = order.items || [];
 
         // --- MERCHANT & CUSTOMER DETAILS ---
-        doc.fillColor('#000000').fontSize(10).font('Helvetica-Bold').text('SOLD BY:', 50, 120);
-        doc.font('Helvetica').fontSize(9)
+        doc.fillColor('#000000').fontSize(10).font(FONT_BOLD).text('SOLD BY:', 50, 120);
+        doc.font(FONT_REGULAR).fontSize(9)
            .text('EFV - Energy, Frequency and Vibration', 50, 135)
            .text('Madhya Pradesh, India', 50, 150)
            .text('GSTIN: 23EFVPA0000Z1Z1', 50, 165)
            .text('Support: efv@uwo24.com', 50, 180);
 
-        doc.font('Helvetica-Bold').text('BILL TO:', 350, 120);
-        doc.font('Helvetica').fontSize(9)
+        doc.font(FONT_BOLD).text('BILL TO:', 350, 120);
+        doc.font(FONT_REGULAR).fontSize(9)
            .text(String(customer.name || 'Valued Customer'), 350, 135)
            .text(String(customer.city || 'N/A'), 350, 150)
            .text(String(customer.zip || ''), 350, 165)
            .text(`Contact: ${customer.phone || 'N/A'}`, 350, 180);
 
         // --- ITEMS TABLE ---
-        const tableTop = 230;
-        doc.rect(50, tableTop, 500, 20).fill('#F5F5F5');
-        doc.fillColor('#000000').font('Helvetica-Bold').fontSize(8)
-           .text('ITEM', 60, tableTop + 6)
-           .text('QTY', 280, tableTop + 6)
-           .text('PRICE', 350, tableTop + 6)
-           .text('TAX', 420, tableTop + 6)
-           .text('TOTAL', 490, tableTop + 6);
+        const tableTop = 225;
+        doc.rect(50, tableTop, 500, 22).fill('#F5F5F5');
+        doc.fillColor('#000000').font(FONT_BOLD).fontSize(8)
+           .text('ITEM', 60, tableTop + 7)
+           .text('QTY', 270, tableTop + 7, { width: 30, align: 'center' })
+           .text('PRICE', 325, tableTop + 7, { width: 65, align: 'right' })
+           .text('TAX', 410, tableTop + 7, { width: 35, align: 'center' })
+           .text('TOTAL', 465, tableTop + 7, { width: 75, align: 'right' });
 
-        let rowY = tableTop + 30;
+        let rowY = tableTop + 32;
         items.forEach(item => {
             const title = String(item.title || 'Product').substring(0, 40);
             const qty = Number(item.quantity || 0);
             const price = Number(item.price || 0);
-            doc.font('Helvetica').fillColor('#333333').fontSize(8)
-               .text(title, 60, rowY, { width: 210 })
-               .text(qty.toString(), 280, rowY)
-               .text(fmtAmt(price), 350, rowY)
-               .text('0%', 420, rowY)
-               .text(fmtAmt(price * qty), 490, rowY);
-            rowY += 25;
+            doc.font(FONT_REGULAR).fillColor('#333333').fontSize(8)
+               .text(title, 60, rowY, { width: 200 })
+               .text(qty.toString(), 270, rowY, { width: 30, align: 'center' })
+               .text(fmtAmt(price), 325, rowY, { width: 65, align: 'right' })
+               .text('0%', 410, rowY, { width: 35, align: 'center' })
+               .text(fmtAmt(price * qty), 465, rowY, { width: 75, align: 'right' });
+            rowY += 26;
         });
 
         // --- TOTALS SECTION ---
-        rowY += 20;
-        doc.moveTo(350, rowY).lineTo(550, rowY).stroke('#EEEEEE');
+        rowY += 15;
+        doc.moveTo(330, rowY).lineTo(550, rowY).stroke('#EEEEEE');
         rowY += 15;
 
         const codCharges = Number(order.codCharges || 0);
@@ -3814,15 +4095,15 @@ router.get('/:id/invoice', protect, async (req, res) => {
 
         const renderRow = (label, value, isBold = false, isGlow = false) => {
             if (isGlow) {
-                doc.rect(340, rowY - 5, 210, 20).fill(DARK);
+                doc.rect(330, rowY - 5, 220, 24).fill(DARK);
                 doc.fillColor(EFV_GOLD);
             } else {
                 doc.fillColor('#666666');
             }
-            doc.font(isBold ? 'Helvetica-Bold' : 'Helvetica').fontSize(isBold ? 11 : 9);
-            doc.text(label, 350, rowY);
-            doc.text(`${fmtAmt(Number(value || 0))}`, 490, rowY, { align: 'right', width: 60 });
-            rowY += 20;
+            doc.font(isBold ? FONT_BOLD : FONT_REGULAR).fontSize(isBold ? 11 : 9);
+            doc.text(label, 340, rowY);
+            doc.text(`${fmtAmt(Number(value || 0))}`, 440, rowY, { align: 'right', width: 100 });
+            rowY += isGlow ? 28 : 20;
         };
 
         renderRow('Book Price:', subtotal);
@@ -3835,13 +4116,13 @@ router.get('/:id/invoice', protect, async (req, res) => {
         }
         
         renderRow(invoiceTaxLabel, tax);
-        rowY += 10;
+        rowY += 6;
         renderRow('GRAND TOTAL:', total, true, true);
 
         // Footer
-        doc.fillColor('#999999').fontSize(8).font('Helvetica-Oblique')
+        doc.fillColor('#999999').fontSize(8).font(FONT_ITALIC)
            .text('Terms: This is a system-generated tax invoice. Digital products are non-refundable.', 50, 700, { align: 'center' });
-        doc.fillColor(EFV_GOLD).font('Helvetica-Bold').fontSize(10)
+        doc.fillColor(EFV_GOLD).font(FONT_BOLD).fontSize(10)
            .text('THANK YOU FOR SHOPPING AT EFV', 50, 720, { align: 'center' });
 
         doc.end();
@@ -3853,8 +4134,6 @@ router.get('/:id/invoice', protect, async (req, res) => {
         }
     }
 });
-
-module.exports = router;
 
 module.exports = router;
 

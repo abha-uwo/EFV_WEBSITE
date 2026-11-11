@@ -122,6 +122,7 @@ router.post('/register', async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            phone: user.phone || phone || '',
             token: generateToken(user._id)
         });
 
@@ -136,6 +137,16 @@ router.post('/signup', (req, res) => {
     res.redirect(307, '/api/auth/register');
 });
 
+// Rate-limiting / Failed login lockout store (3 failed attempts -> 3 min lockout)
+const failedLoginAttempts = new Map(); // key: email_ip -> { count: number, lockedUntil: number }
+const MAX_LOGIN_ATTEMPTS = 3;
+const LOCKOUT_DURATION_MS = 3 * 60 * 1000; // 3 minutes
+
+const getLoginAttemptKey = (email, req) => {
+    const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '127.0.0.1').split(',')[0].trim();
+    return `${(email || '').trim().toLowerCase()}_${ip}`;
+};
+
 // --- USER LOGIN ---
 router.post('/login', async (req, res) => {
     try {
@@ -143,6 +154,24 @@ router.post('/login', async (req, res) => {
 
         if (!email || !password) {
             return res.status(400).json({ message: 'Email and password are required' });
+        }
+
+        // Check if current user/IP is locked out
+        const attemptKey = getLoginAttemptKey(email, req);
+        const attempt = failedLoginAttempts.get(attemptKey);
+
+        if (attempt && attempt.lockedUntil) {
+            if (Date.now() < attempt.lockedUntil) {
+                const remainingSec = Math.ceil((attempt.lockedUntil - Date.now()) / 1000);
+                const remainingMin = Math.ceil(remainingSec / 60);
+                return res.status(429).json({
+                    message: `Too many failed login attempts. Login temporarily locked for ${remainingMin} minute${remainingMin > 1 ? 's' : ''}.`,
+                    locked: true,
+                    remainingSeconds: remainingSec
+                });
+            } else {
+                failedLoginAttempts.delete(attemptKey);
+            }
         }
 
         // Find user
@@ -158,8 +187,27 @@ router.post('/login', async (req, res) => {
 
         const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Incorrect password' });
+            const currentCount = ((attempt && attempt.count) || 0) + 1;
+            if (currentCount >= MAX_LOGIN_ATTEMPTS) {
+                const lockedUntil = Date.now() + LOCKOUT_DURATION_MS;
+                failedLoginAttempts.set(attemptKey, { count: currentCount, lockedUntil });
+                return res.status(429).json({
+                    message: 'Too many failed login attempts. Your login is locked for 3 minutes.',
+                    locked: true,
+                    remainingSeconds: 180
+                });
+            } else {
+                failedLoginAttempts.set(attemptKey, { count: currentCount, lockedUntil: null });
+                const remaining = MAX_LOGIN_ATTEMPTS - currentCount;
+                return res.status(401).json({
+                    message: `Incorrect password. ${remaining} attempt${remaining > 1 ? 's' : ''} remaining before 3-minute lock.`,
+                    remainingAttempts: remaining
+                });
+            }
         }
+
+        // Clear failed login attempts on successful login
+        failedLoginAttempts.delete(attemptKey);
 
         // Ensure Welcome notification exists (for existing users)
         if (!user.notifications) user.notifications = [];
@@ -181,12 +229,52 @@ router.post('/login', async (req, res) => {
             }
         }
 
+        // Ensure phone number exists & auto-recover from saved addresses/partner/orders if blank
+        if (!user.phone || !user.phone.trim()) {
+            let recoveredPhone = '';
+            if (user.savedAddresses && user.savedAddresses.length > 0) {
+                const defAddr = user.savedAddresses.find(a => a.isDefault && a.phone && a.phone.trim());
+                const anyAddr = user.savedAddresses.find(a => a.phone && a.phone.trim());
+                recoveredPhone = (defAddr && defAddr.phone) || (anyAddr && anyAddr.phone) || '';
+            }
+            if (!recoveredPhone && user.email) {
+                try {
+                    const { Partner } = require('../models');
+                    const partner = await Partner.findOne({ email: user.email.toLowerCase().trim() });
+                    if (partner && partner.phone && partner.phone.trim()) {
+                        recoveredPhone = partner.phone.trim();
+                    }
+                } catch (e) {}
+            }
+            if (!recoveredPhone) {
+                try {
+                    const { Order } = require('../models');
+                    const lastOrder = await Order.findOne({
+                        $or: [{ user: user._id }, { 'customer.email': user.email.toLowerCase().trim() }]
+                    }).sort({ createdAt: -1 });
+                    const oPhone = lastOrder?.customer?.phone || lastOrder?.shippingAddress?.phone;
+                    if (oPhone && oPhone.trim()) {
+                        recoveredPhone = oPhone.trim();
+                    }
+                } catch (e) {}
+            }
+
+            if (recoveredPhone) {
+                user.phone = recoveredPhone;
+                user.markModified('phone');
+                try {
+                    await user.save();
+                } catch (saveErr) {}
+            }
+        }
+
         const sessionId = await registerAdminSession(user, req);
 
         res.json({
             _id: user._id,
             name: user.name,
             email: user.email,
+            phone: user.phone || '',
             role: user.role,
             twoFactorEnabled: user.twoFactorEnabled || false,
             token: generateToken(user._id, { sessionId, email: user.email, role: user.role })
@@ -256,6 +344,45 @@ router.post('/uwo-login', async (req, res) => {
                     createdAt: new Date().toISOString()
                 }]
             });
+        }
+
+        // Ensure phone number exists & auto-recover from saved addresses/partner/orders if blank
+        if (!user.phone || !user.phone.trim()) {
+            let recoveredPhone = '';
+            if (user.savedAddresses && user.savedAddresses.length > 0) {
+                const defAddr = user.savedAddresses.find(a => a.isDefault && a.phone && a.phone.trim());
+                const anyAddr = user.savedAddresses.find(a => a.phone && a.phone.trim());
+                recoveredPhone = (defAddr && defAddr.phone) || (anyAddr && anyAddr.phone) || '';
+            }
+            if (!recoveredPhone && user.email) {
+                try {
+                    const { Partner } = require('../models');
+                    const partner = await Partner.findOne({ email: user.email.toLowerCase().trim() });
+                    if (partner && partner.phone && partner.phone.trim()) {
+                        recoveredPhone = partner.phone.trim();
+                    }
+                } catch (e) {}
+            }
+            if (!recoveredPhone) {
+                try {
+                    const { Order } = require('../models');
+                    const lastOrder = await Order.findOne({
+                        $or: [{ user: user._id }, { 'customer.email': user.email.toLowerCase().trim() }]
+                    }).sort({ createdAt: -1 });
+                    const oPhone = lastOrder?.customer?.phone || lastOrder?.shippingAddress?.phone;
+                    if (oPhone && oPhone.trim()) {
+                        recoveredPhone = oPhone.trim();
+                    }
+                } catch (e) {}
+            }
+
+            if (recoveredPhone) {
+                user.phone = recoveredPhone;
+                user.markModified('phone');
+                try {
+                    await user.save();
+                } catch (saveErr) {}
+            }
         }
 
         const sessionId = await registerAdminSession(user, req);
@@ -691,6 +818,7 @@ router.post('/google', async (req, res) => {
             _id: user._id,
             name: user.name,
             email: user.email,
+            phone: user.phone || '',
             role: user.role,
             avatar: user.avatar,
             token: generateToken(user._id)
@@ -748,8 +876,13 @@ router.post('/forgot-password', async (req, res) => {
         const { email } = req.body;
         if (!email) return res.status(400).json({ message: 'Email is required' });
 
-        const searchEmail = email.trim().toLowerCase();
-        const user = await User.findOne({ email: searchEmail });
+        const searchEmail = email.trim();
+        let user = null;
+        try {
+            user = await User.findOne({ email: { $regex: new RegExp(`^${searchEmail}$`, 'i') } }) || await User.findOne({ email: searchEmail.toLowerCase() });
+        } catch (e) {
+            user = await User.findOne({ email: searchEmail.toLowerCase() });
+        }
 
         // Security: Always return success even if user not found
         const successResponse = { message: 'If your email is registered, a reset code has been sent.' };
@@ -768,6 +901,8 @@ router.post('/forgot-password', async (req, res) => {
         user.resetAttempts = 0;
         await user.save();
 
+        console.log(`🔑 [PASSWORD RESET OTP] For ${user.email}: ${otp}`);
+
         // Send Email
         try {
             await sendEmail({
@@ -785,7 +920,7 @@ router.post('/forgot-password', async (req, res) => {
                     </div>
                 `
             });
-            res.json(successResponse);
+            return res.json(successResponse);
         } catch (emailError) {
             console.error('CRITICAL: Email Send Error Details:', {
                 message: emailError.message,
@@ -793,7 +928,7 @@ router.post('/forgot-password', async (req, res) => {
                 command: emailError.command,
                 response: emailError.response
             });
-            res.status(500).json({ message: 'Error sending reset email', details: emailError.message });
+            return res.status(500).json({ message: 'Error sending reset email', details: emailError.message });
         }
 
     } catch (error) {
@@ -801,7 +936,7 @@ router.post('/forgot-password', async (req, res) => {
         try {
             require('fs').appendFileSync(require('path').join(__dirname, '../data/auth_debug.log'), `[${new Date().toISOString()}] Forgot Pass Error: ${error.message}\n${error.stack}\n`);
         } catch (e) {}
-        res.status(500).json({ message: 'Internal server error', details: error.message });
+        return res.status(500).json({ message: 'Internal server error', details: error.message });
     }
 });
 
@@ -885,6 +1020,16 @@ router.post('/reset-password', async (req, res) => {
         user.resetAttempts = null;
 
         await user.save();
+
+        // Clear failed login lockout for this user
+        if (user.email) {
+            const userEmail = user.email.toLowerCase();
+            for (const key of failedLoginAttempts.keys()) {
+                if (key.startsWith(userEmail)) {
+                    failedLoginAttempts.delete(key);
+                }
+            }
+        }
 
         res.json({ message: 'Password reset successful' });
 

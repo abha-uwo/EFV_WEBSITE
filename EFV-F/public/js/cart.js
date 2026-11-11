@@ -1,7 +1,7 @@
 /**
  * EFV Cart JS - Shopping Logic
  */
-console.log("EFV Cart JS Loaded - Version: 22.5 - Profile Fix");
+console.log("EFV Cart JS Loaded - Version: 24.0 - UI & Email Fix");
 
 document.addEventListener('DOMContentLoaded', () => {
     // Inject Premium Auth CSS
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const link = document.createElement('link');
         link.id = 'auth-premium-style';
         link.rel = 'stylesheet';
-        link.href = CONFIG.BASE_PATH + 'css/auth-premium.css';
+        link.href = CONFIG.BASE_PATH + 'css/auth-premium.css?v=24.0';
         document.head.appendChild(link);
     }
 
@@ -165,7 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     <label class="auth-label">Verify Password</label>
                     <div class="input-wrapper">
                         <input type="password" id="signup-confirm-password" class="auth-input" placeholder="••••••••" required>
-                        <i class="fas fa-check-circle input-icon"></i>
+                        <i class="fas fa-lock input-icon"></i>
+                        <i class="fas fa-eye password-toggle"></i>
                     </div>
                     <div class="error-message" id="signup-match-error">Passwords do not match</div>
                 </div>
@@ -178,35 +179,37 @@ document.addEventListener('DOMContentLoaded', () => {
                 </button>
             </form>
 
-            <div class="auth-separator">
-                <span>OR</span>
-            </div>
+            <div id="auth-sso-section">
+                <div class="auth-separator">
+                    <span>OR</span>
+                </div>
 
-            <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 320px; margin: 10px auto 0;">
-                <button type="button" id="uwo-sso-login-btn" style="
-                    width: 100%;
-                    background: linear-gradient(135deg, rgba(255, 211, 105, 0.1) 0%, rgba(18, 24, 34, 0.95) 100%);
-                    color: #ffffff;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 10px;
-                    border: 1.5px solid rgba(255, 211, 105, 0.38);
-                    border-radius: 9999px;
-                    font-size: 0.88rem;
-                    font-weight: 700;
-                    letter-spacing: 0.5px;
-                    height: 44px;
-                    cursor: pointer;
-                    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 211, 105, 0.2);
-                    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-                ">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFD369" style="filter: drop-shadow(0 0 5px rgba(255, 211, 105, 0.5));">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                    <span>Sign in with UWO Account</span>
-                </button>
-                <div id="google-login-container" style="display: flex; justify-content: center;"></div>
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 340px; margin: 12px auto 0;">
+                    <button type="button" id="uwo-sso-login-btn" style="
+                        width: 100%;
+                        background: linear-gradient(135deg, rgba(255, 211, 105, 0.1) 0%, rgba(18, 24, 34, 0.95) 100%);
+                        color: #ffffff;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 10px;
+                        border: 1.5px solid rgba(255, 211, 105, 0.38);
+                        border-radius: 14px;
+                        font-size: 0.88rem;
+                        font-weight: 700;
+                        letter-spacing: 0.5px;
+                        height: 46px;
+                        cursor: pointer;
+                        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 211, 105, 0.2);
+                        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                    ">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="#FFD369" style="filter: drop-shadow(0 0 5px rgba(255, 211, 105, 0.5));">
+                            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                        </svg>
+                        <span>Sign in with UWO Account</span>
+                    </button>
+                    <div id="google-login-container" style="display: flex; justify-content: center;"></div>
+                </div>
             </div>
 
             <!-- Standalone UWO SSO Modal Inside Auth -->
@@ -284,13 +287,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <!-- Forgot Password Flow -->
             <div id="forgot-password-flow" style="display: none;">
-                <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                    <div class="auth-premium-back" id="back-to-login">
-                        <i class="fas fa-arrow-left"></i> Back
-                    </div>
-                    <div style="flex: 1; text-align: center; font-size: 1rem; font-weight: 600; color: #fff; font-family: 'Cinzel', serif;" id="forgot-flow-title">Forgot Password</div>
-                    <div style="width: 50px;"></div>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px;">
+                    <button type="button" class="auth-premium-back" id="back-to-login">
+                        <i class="fas fa-arrow-left"></i> Back to Login
+                    </button>
+                    <span style="font-size: 0.7rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-energy); background: rgba(255, 211, 105, 0.1); border: 1px solid rgba(255, 211, 105, 0.25); padding: 3px 9px; border-radius: 999px;">Recovery</span>
                 </div>
+
+                <div style="text-align: center; margin-bottom: 18px;">
+                    <h3 id="forgot-flow-title" style="font-size: 1.35rem; font-weight: 700; letter-spacing: 1.5px; font-family: 'Cinzel', serif; margin: 8px 0 6px; background: linear-gradient(180deg, #ffffff 0%, #FFD369 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Forgot Password</h3>
+                    <p id="forgot-flow-desc" style="color: rgba(255, 255, 255, 0.65); font-size: 0.88rem; line-height: 1.5; margin: 0; padding: 0 6px;">Enter your email to receive a 6-digit verification code.</p>
+                </div>
+
                 <!-- Step Indicator -->
                 <div class="fp-step-indicator">
                     <div class="fp-step-dot active" id="fp-dot-1"></div>
@@ -300,7 +308,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Step 1: Send OTP -->
                 <form id="forgot-email-form" class="auth-premium-form active">
-                    <p style="text-align: center; margin-bottom: 20px; opacity: 0.8; font-size: 0.9rem;">Enter your email to receive a 6-digit verification code.</p>
                     <div class="input-group">
                         <label class="auth-label">Email Address</label>
                         <div class="input-wrapper">
@@ -308,7 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <i class="fas fa-envelope input-icon"></i>
                         </div>
                     </div>
-                    <div id="forgot-email-error" class="error-message" style="margin-bottom: 20px; text-align: center;"></div>
+                    <div id="forgot-email-error" class="error-message" style="margin-bottom: 14px; text-align: center;"></div>
                     <button type="submit" class="auth-btn">
                         <span>Send Code</span>
                         <div class="loader"></div>
@@ -317,27 +324,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- Step 2: Verify OTP -->
                 <form id="forgot-otp-form" class="auth-premium-form">
-                    <p style="text-align: center; margin-bottom: 20px; opacity: 0.8; font-size: 0.9rem;">Enter the 6-digit code sent to your email.</p>
                     <div class="input-group">
                         <label class="auth-label">Verification Code</label>
                         <div class="input-wrapper">
-                            <input type="text" id="forgot-otp" class="auth-input" placeholder="123456" maxlength="6" required style="letter-spacing: 5px; text-align: center; font-size: 1.5rem;">
+                            <input type="text" id="forgot-otp" class="auth-input" placeholder="••••••" maxlength="6" required>
                             <i class="fas fa-shield-alt input-icon"></i>
                         </div>
                     </div>
-                    <div id="forgot-otp-error" class="error-message" style="margin-bottom: 20px; text-align: center;"></div>
+                    <div id="forgot-otp-error" class="error-message" style="margin-bottom: 14px; text-align: center;"></div>
                     <button type="submit" class="auth-btn">
                         <span>Verify Code</span>
                         <div class="loader"></div>
                     </button>
-                    <p style="text-align: center; margin-top: 15px; font-size: 0.85rem;">
-                        Didn't get it? <a href="#" id="resend-otp-btn" style="color: var(--gold-energy); text-decoration: none;">Resend</a>
+                    <p style="text-align: center; margin-top: 18px; font-size: 0.88rem; color: rgba(255, 255, 255, 0.5);">
+                        Didn't receive code? <a href="#" id="resend-otp-btn" style="color: var(--gold-energy); text-decoration: none; font-weight: 600;">Resend</a>
                     </p>
                 </form>
 
                 <!-- Step 3: New Password -->
                 <form id="forgot-reset-form" class="auth-premium-form">
-                    <p style="text-align: center; margin-bottom: 20px; opacity: 0.8; font-size: 0.9rem;">Create a new secure password.</p>
                     <div class="input-group">
                         <label class="auth-label">New Password</label>
                         <div class="input-wrapper">
@@ -350,10 +355,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         <label class="auth-label">Confirm New Password</label>
                         <div class="input-wrapper">
                             <input type="password" id="forgot-confirm-password" class="auth-input" placeholder="••••••••" required>
-                            <i class="fas fa-check-circle input-icon"></i>
+                            <i class="fas fa-lock input-icon"></i>
+                            <i class="fas fa-eye password-toggle"></i>
                         </div>
                     </div>
-                    <div id="forgot-reset-error" class="error-message" style="margin-bottom: 20px; text-align: center;"></div>
+                    <div id="forgot-reset-error" class="error-message" style="margin-bottom: 14px; text-align: center;"></div>
                     <button type="submit" class="auth-btn">
                         <span>Reset Password</span>
                         <div class="loader"></div>
@@ -361,12 +367,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 </form>
                 
                 <!-- Success Message -->
-                <div id="forgot-success-view" style="display: none; text-align: center; padding: 20px 0;">
-                    <div style="font-size: 4rem; color: #10b981; margin-bottom: 20px;">
+                <div id="forgot-success-view" style="display: none; text-align: center; padding: 24px 0;">
+                    <div style="font-size: 3.5rem; color: #10b981; margin-bottom: 16px; filter: drop-shadow(0 0 16px rgba(16, 185, 129, 0.35));">
                         <i class="fas fa-check-circle"></i>
                     </div>
-                    <h3 style="color: #fff; margin-bottom: 15px; font-family: 'Cinzel', serif;">Password Reset!</h3>
-                    <p style="opacity: 0.8; margin-bottom: 25px;">Your password has been updated successfully.</p>
+                    <h3 style="color: #fff; font-size: 1.35rem; margin-bottom: 10px; font-family: 'Cinzel', serif;">Password Reset!</h3>
+                    <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.92rem; margin-bottom: 24px;">Your password has been updated successfully.</p>
                     <button class="auth-btn" id="finish-reset-btn">Login Now</button>
                 </div>
             </div>
@@ -1401,6 +1407,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Terms & Conditions Logic ---
     window.showTermsAndConditions = function showTermsAndConditions(onAccept) {
         let tcOverlay = document.getElementById('tc-modal');
+        if (tcOverlay) {
+            const tcBody = tcOverlay.querySelector('.tc-content');
+            if (tcBody && (tcBody.innerHTML.includes('support@efv.com') || tcBody.innerHTML.includes('admin@uwo24.com'))) {
+                tcBody.innerHTML = tcBody.innerHTML.replace(/support@efv\.com/g, 'efv@uwo24.com').replace(/admin@uwo24\.com/g, 'efv@uwo24.com');
+            }
+        }
         if (!tcOverlay) {
             const tcHTML = `
             <div class="tc-modal-overlay" id="tc-modal">
@@ -1435,7 +1447,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                         <strong>8. Contact Information</strong>
                         <p>For support or queries:<br>
-                        Email: ${(typeof localStorage !== 'undefined' && JSON.parse(localStorage.getItem('efv_store_config'))?.email) || 'efv@uwo24.com'}<br>
+                        Email: efv@uwo24.com<br>
                         Company Name: Unified Web Options and Services Private Limited<br>
                         Project: EFV- Energy Frequency Vibration</p>
                     </div>
@@ -1671,6 +1683,21 @@ document.addEventListener('DOMContentLoaded', () => {
     window.openAuthModal = openAuthModal;
 
     function switchTab(mode) {
+        // Reset forgot password state when switching tabs
+        const modal = document.getElementById('auth-modal');
+        if (modal) modal.classList.remove('mode-forgot');
+        const forgotFlow = document.getElementById('forgot-password-flow');
+        if (forgotFlow) forgotFlow.style.display = 'none';
+        const ssoSection = document.getElementById('auth-sso-section');
+        if (ssoSection) ssoSection.style.display = 'block';
+        document.querySelectorAll('#auth-sso-section, .auth-separator, #uwo-sso-login-btn, #google-login-container').forEach(el => {
+            if (el) el.style.display = '';
+        });
+        const mainTitle = document.querySelector('.auth-premium-title');
+        if (mainTitle) mainTitle.style.display = 'block';
+        const authTabs = document.querySelector('.auth-premium-tabs');
+        if (authTabs) authTabs.style.display = 'flex';
+
         // Update tab styling
         document.querySelectorAll('.auth-tab-item').forEach(t => {
             t.classList.toggle('active', t.dataset.authTab === mode);
@@ -1686,6 +1713,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (activeForm) {
             activeForm.classList.add('active');
             activeForm.style.display = 'flex';
+        }
+
+        if (mode === 'login' && typeof checkAndApplyLoginLockout === 'function') {
+            checkAndApplyLoginLockout();
         }
     }
     window.switchTab = switchTab;
@@ -2602,10 +2633,22 @@ document.addEventListener('DOMContentLoaded', () => {
         const modal = document.getElementById('auth-modal');
         if (modal) {
             modal.classList.remove('active');
+            modal.classList.remove('mode-forgot');
             const cartPanel = document.getElementById('cart-panel');
             if (!cartPanel || !cartPanel.classList.contains('active')) {
                 document.body.classList.remove('modal-open');
             }
+            const forgotFlow = document.getElementById('forgot-password-flow');
+            if (forgotFlow) forgotFlow.style.display = 'none';
+            const ssoSection = document.getElementById('auth-sso-section');
+            if (ssoSection) ssoSection.style.display = 'block';
+            document.querySelectorAll('#auth-sso-section, .auth-separator, #uwo-sso-login-btn, #google-login-container').forEach(el => {
+                if (el) el.style.display = '';
+            });
+            const mainTitle = document.querySelector('.auth-premium-title');
+            if (mainTitle) mainTitle.style.display = 'block';
+            const authTabs = document.querySelector('.auth-premium-tabs');
+            if (authTabs) authTabs.style.display = 'flex';
         }
     };
 
@@ -2710,10 +2753,157 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // --- 3-MINUTE LOGIN LOCKOUT ON 3 FAILED ATTEMPTS ---
+    const LOGIN_MAX_ATTEMPTS = 3;
+    const LOGIN_LOCKOUT_MS = 3 * 60 * 1000; // 3 minutes
+    let loginLockTimerInterval = null;
+
+    function getLoginLockoutData() {
+        try {
+            const raw = localStorage.getItem('efv_login_lockout');
+            if (!raw) return null;
+            const data = JSON.parse(raw);
+            if (data.lockedUntil) {
+                if (Date.now() < data.lockedUntil) {
+                    return data;
+                } else {
+                    localStorage.removeItem('efv_login_lockout');
+                    return null;
+                }
+            }
+            return data;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    function recordFailedLoginAttempt() {
+        try {
+            let data = getLoginLockoutData() || { count: 0 };
+            data.count = (data.count || 0) + 1;
+            if (data.count >= LOGIN_MAX_ATTEMPTS) {
+                data.lockedUntil = Date.now() + LOGIN_LOCKOUT_MS;
+                localStorage.setItem('efv_login_lockout', JSON.stringify(data));
+                return { locked: true, remainingMs: LOGIN_LOCKOUT_MS };
+            } else {
+                localStorage.setItem('efv_login_lockout', JSON.stringify(data));
+                return { locked: false, remainingAttempts: LOGIN_MAX_ATTEMPTS - data.count };
+            }
+        } catch (e) {
+            return { locked: false, remainingAttempts: 1 };
+        }
+    }
+
+    function clearLoginLockout() {
+        try {
+            localStorage.removeItem('efv_login_lockout');
+            if (loginLockTimerInterval) {
+                clearInterval(loginLockTimerInterval);
+                loginLockTimerInterval = null;
+            }
+        } catch (e) {}
+    }
+    window.clearLoginLockout = clearLoginLockout;
+
+    function checkAndApplyLoginLockout() {
+        const lockout = getLoginLockoutData();
+        const submitBtn = loginForm ? loginForm.querySelector('button[type="submit"]') : null;
+        const genError = document.getElementById('login-general-error');
+
+        if (!lockout || !lockout.lockedUntil) {
+            if (loginLockTimerInterval) {
+                clearInterval(loginLockTimerInterval);
+                loginLockTimerInterval = null;
+            }
+            if (submitBtn) submitBtn.disabled = false;
+            return false;
+        }
+
+        const remainingMs = lockout.lockedUntil - Date.now();
+        if (remainingMs <= 0) {
+            clearLoginLockout();
+            if (submitBtn) submitBtn.disabled = false;
+            if (genError) {
+                genError.innerHTML = '<span style="color: #10b981;"><i class="fas fa-unlock"></i> Lockout expired. You can now try logging in again.</span>';
+                genError.style.display = 'block';
+            }
+            return false;
+        }
+
+        // Lockout is ACTIVE
+        if (submitBtn) submitBtn.disabled = true;
+
+        const updateTimerDisplay = () => {
+            const current = getLoginLockoutData();
+            if (!current || !current.lockedUntil) {
+                if (loginLockTimerInterval) clearInterval(loginLockTimerInterval);
+                if (submitBtn) submitBtn.disabled = false;
+                if (genError) {
+                    genError.innerHTML = '<span style="color: #10b981;"><i class="fas fa-unlock"></i> Lockout expired. You can now try logging in again.</span>';
+                }
+                return;
+            }
+
+            const diff = current.lockedUntil - Date.now();
+            if (diff <= 0) {
+                clearLoginLockout();
+                if (submitBtn) submitBtn.disabled = false;
+                if (genError) {
+                    genError.innerHTML = '<span style="color: #10b981;"><i class="fas fa-unlock"></i> Lockout expired. You can now try logging in again.</span>';
+                }
+                return;
+            }
+
+            const totalSec = Math.ceil(diff / 1000);
+            const m = Math.floor(totalSec / 60);
+            const s = totalSec % 60;
+            const timeStr = `${m}:${s < 10 ? '0' : ''}${s}`;
+
+            if (genError) {
+                genError.innerHTML = `
+                    <div style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 12px; padding: 14px; text-align: center; color: #fca5a5; font-size: 0.88rem; line-height: 1.45;">
+                        <div style="font-weight: 700; margin-bottom: 4px; color: #ef4444; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                            <i class="fas fa-shield-alt"></i> Login Temporarily Locked
+                        </div>
+                        <div>Too many failed attempts (3/3). Try again in:</div>
+                        <div style="font-size: 1.4rem; font-weight: 800; font-family: monospace; color: #FFD369; margin: 8px 0; letter-spacing: 2px;">${timeStr}</div>
+                        <div style="font-size: 0.8rem; opacity: 0.85; margin-top: 4px;">
+                            Forgot your password? <a href="#" id="lockout-reset-link" style="color: #FFD369; text-decoration: underline; font-weight: 600;">Reset Password</a>
+                        </div>
+                    </div>
+                `;
+                genError.style.display = 'block';
+
+                const resetLnk = document.getElementById('lockout-reset-link');
+                if (resetLnk) {
+                    resetLnk.onclick = (e) => {
+                        e.preventDefault();
+                        const forgotLnk = document.querySelector('.forgot-link');
+                        if (forgotLnk) forgotLnk.click();
+                    };
+                }
+            }
+        };
+
+        updateTimerDisplay();
+
+        if (loginLockTimerInterval) clearInterval(loginLockTimerInterval);
+        loginLockTimerInterval = setInterval(updateTimerDisplay, 1000);
+
+        return true;
+    }
+    window.checkAndApplyLoginLockout = checkAndApplyLoginLockout;
+
     // Simulate Form Submission
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
+
+            // Guard against locked out state
+            if (checkAndApplyLoginLockout()) {
+                return;
+            }
+
             const emailEl = document.getElementById('login-email');
             const passwordEl = document.getElementById('login-password');
             if (!emailEl || !passwordEl) return;
@@ -2742,14 +2932,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await response.json();
 
                 if (!response.ok) {
+                    if (response.status === 429 || data.locked) {
+                        const lockedUntil = Date.now() + ((data.remainingSeconds || 180) * 1000);
+                        localStorage.setItem('efv_login_lockout', JSON.stringify({ count: LOGIN_MAX_ATTEMPTS, lockedUntil }));
+                        checkAndApplyLoginLockout();
+                        return;
+                    }
                     throw new Error(data.message || 'Login failed');
                 }
+
+                // Successful login: CLEAR LOCKOUT
+                clearLoginLockout();
 
                 // Success
                 localStorage.setItem('authToken', data.token);
                 const userObj = {
                     name: data.name,
                     email: data.email,
+                    phone: data.phone || '',
                     role: data.role,
                     _id: data._id,
                     token: data.token
@@ -2804,6 +3004,35 @@ document.addEventListener('DOMContentLoaded', () => {
             } catch (error) {
                 console.error('Login Error:', error);
                 const genError = document.getElementById('login-general-error');
+                const errMsg = error.message || '';
+                const isCredError = errMsg.toLowerCase().includes('password') ||
+                                    errMsg.toLowerCase().includes('incorrect') ||
+                                    errMsg.toLowerCase().includes('invalid') ||
+                                    errMsg.toLowerCase().includes('credential') ||
+                                    errMsg.toLowerCase().includes('failed') ||
+                                    errMsg.toLowerCase().includes('no account');
+
+                if (isCredError) {
+                    const status = recordFailedLoginAttempt();
+                    if (status.locked) {
+                        checkAndApplyLoginLockout();
+                        return;
+                    } else if (genError) {
+                        const rem = status.remainingAttempts;
+                        genError.innerHTML = `
+                            <div style="color: #f87171; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span>${errMsg || 'Incorrect password'}</span>
+                            </div>
+                            <div style="font-size: 0.78rem; color: #fca5a5; margin-top: 4px; font-weight: 500;">
+                                ${rem} attempt${rem > 1 ? 's' : ''} remaining before 3-minute lock.
+                            </div>
+                        `;
+                        genError.style.display = 'block';
+                        return;
+                    }
+                }
+
                 if (genError) {
                     // Show user-friendly message for server/db outages
                     let displayMsg = error.message;
@@ -2817,11 +3046,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     genError.style.display = 'block';
                 }
             } finally {
+                const lockout = getLoginLockoutData();
+                const isLocked = lockout && lockout.lockedUntil && Date.now() < lockout.lockedUntil;
                 const btnText = submitBtn.querySelector('span');
                 const loader = submitBtn.querySelector('.loader');
                 if (btnText) btnText.style.display = 'block';
                 if (loader) loader.style.display = 'none';
-                submitBtn.disabled = false;
+                submitBtn.disabled = isLocked ? true : false;
             }
         });
     }
@@ -2874,6 +3105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     _id: data._id,
                     name: data.name,
                     email: data.email,
+                    phone: data.phone || phone || '',
                     role: 'user',
                     token: data.token
                 };
@@ -3135,13 +3367,21 @@ document.addEventListener('DOMContentLoaded', () => {
         forgotSuccessView.style.display = 'none';
 
         const dots = [1, 2, 3].map(n => document.getElementById(`fp-dot-${n}`));
-        const titles = ['Send Code', 'Verify OTP', 'New Password', 'Done!'];
+        const stepsInfo = [
+            { title: 'Forgot Password', desc: 'Enter your email address to receive a 6-digit verification code.' },
+            { title: 'Verify OTP', desc: 'Enter the 6-digit verification code sent to your email.' },
+            { title: 'New Password', desc: 'Create a new, strong password with at least 6 characters.' },
+            { title: 'All Done!', desc: 'Your password has been successfully updated.' }
+        ];
+        const info = stepsInfo[step - 1] || stepsInfo[0];
         const titleEl = document.getElementById('forgot-flow-title');
+        const descEl = document.getElementById('forgot-flow-desc');
         const backEl = document.getElementById('back-to-login');
 
         // Hide back button on success
-        if (backEl) backEl.style.display = step === 4 ? 'none' : 'flex';
-        if (titleEl) titleEl.textContent = titles[step - 1] || '';
+        if (backEl) backEl.style.display = step === 4 ? 'none' : 'inline-flex';
+        if (titleEl) titleEl.textContent = info.title;
+        if (descEl) descEl.textContent = info.desc;
 
         // Update dots
         dots.forEach((dot, i) => {
@@ -3151,7 +3391,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         if (step === 1) forgotEmailForm.style.display = 'flex';
-        if (step === 2) forgotOtpForm.style.display = 'flex';
+        if (step === 2) {
+            forgotOtpForm.style.display = 'flex';
+            const otpInput = document.getElementById('forgot-otp');
+            if (otpInput) {
+                otpInput.value = '';
+                setTimeout(() => otpInput.focus(), 100);
+            }
+        }
         if (step === 3) forgotResetForm.style.display = 'flex';
         if (step === 4) forgotSuccessView.style.display = 'block';
     };
@@ -3159,19 +3406,70 @@ document.addEventListener('DOMContentLoaded', () => {
     if (forgotLink) {
         forgotLink.onclick = (e) => {
             e.preventDefault();
-            loginForm.style.display = 'none';
-            signupForm.style.display = 'none';
-            authTabs.style.display = 'none';
-            forgotFlow.style.display = 'block';
+            const modal = document.getElementById('auth-modal');
+            if (modal) modal.classList.add('mode-forgot');
+            if (loginForm) loginForm.style.display = 'none';
+            if (signupForm) signupForm.style.display = 'none';
+            const authTabs = document.querySelector('.auth-premium-tabs');
+            if (authTabs) authTabs.style.display = 'none';
+            const ssoSection = document.getElementById('auth-sso-section');
+            if (ssoSection) ssoSection.style.display = 'none';
+            const mainTitle = document.querySelector('.auth-premium-title');
+            if (mainTitle) mainTitle.style.display = 'none';
+
+            // Explicitly hide any individual SSO and submodal elements
+            document.querySelectorAll('#auth-sso-section, .auth-separator, #uwo-sso-login-btn, #google-login-container, #uwo-sso-submodal').forEach(el => {
+                if (el) el.style.display = 'none';
+            });
+
+            if (forgotFlow) forgotFlow.style.display = 'block';
             showForgotStep(1);
+
+            // Auto-fill email entered in login form (or signup form)
+            const loginEmailInput = document.getElementById('login-email');
+            const signupEmailInput = document.getElementById('signup-email');
+            const forgotEmailInput = document.getElementById('forgot-email');
+            const enteredEmail = (loginEmailInput?.value || signupEmailInput?.value || '').trim();
+
+            if (forgotEmailInput) {
+                if (enteredEmail) {
+                    forgotEmailInput.value = enteredEmail;
+                }
+                forgotEmailInput.focus();
+            }
+
+            const errorEl = document.getElementById('forgot-email-error');
+            if (errorEl) {
+                errorEl.textContent = '';
+                errorEl.style.display = 'none';
+            }
         };
     }
 
     if (backToLogin) {
         backToLogin.onclick = () => {
+            const modal = document.getElementById('auth-modal');
+            if (modal) modal.classList.remove('mode-forgot');
             if (forgotFlow) forgotFlow.style.display = 'none';
+            const authTabs = document.querySelector('.auth-premium-tabs');
             if (authTabs) authTabs.style.display = 'flex';
+            const ssoSection = document.getElementById('auth-sso-section');
+            if (ssoSection) ssoSection.style.display = 'block';
+            const mainTitle = document.querySelector('.auth-premium-title');
+            if (mainTitle) mainTitle.style.display = 'block';
+
+            document.querySelectorAll('#auth-sso-section, .auth-separator, #uwo-sso-login-btn, #google-login-container').forEach(el => {
+                if (el) el.style.display = '';
+            });
+
             switchTab('login');
+
+            // If user filled/updated email in forgot password flow, retain it in login input
+            const forgotEmailInput = document.getElementById('forgot-email');
+            const loginEmailInput = document.getElementById('login-email');
+            if (forgotEmailInput && loginEmailInput && forgotEmailInput.value.trim() && !loginEmailInput.value.trim()) {
+                loginEmailInput.value = forgotEmailInput.value.trim();
+            }
         };
     }
 
@@ -3181,25 +3479,49 @@ document.addEventListener('DOMContentLoaded', () => {
         const text = btn.querySelector('span');
         const loader = btn.querySelector('.loader');
         btn.disabled = isLoading;
-        if (text) text.style.display = isLoading ? 'none' : 'block';
-        if (loader) loader.style.display = isLoading ? 'block' : 'none';
+        if (isLoading) {
+            btn.style.opacity = '0.85';
+            btn.style.cursor = 'not-allowed';
+            if (loader) loader.style.display = 'inline-block';
+            if (text) {
+                text.style.display = 'inline';
+                if (!btn.dataset.origText) btn.dataset.origText = text.textContent;
+                text.textContent = ' Sending...';
+            }
+        } else {
+            btn.style.opacity = '';
+            btn.style.cursor = '';
+            if (loader) loader.style.display = 'none';
+            if (text) {
+                text.style.display = 'inline';
+                if (btn.dataset.origText) {
+                    text.textContent = btn.dataset.origText;
+                }
+            }
+        }
     };
 
     // Step 1: Send OTP
     if (forgotEmailForm) {
         forgotEmailForm.onsubmit = async (e) => {
             e.preventDefault();
-            const email = document.getElementById('forgot-email').value.trim();
+            const emailInput = document.getElementById('forgot-email');
+            const email = emailInput ? emailInput.value.trim() : '';
             const errorEl = document.getElementById('forgot-email-error');
-            errorEl.style.display = 'none';
+            if (errorEl) errorEl.style.display = 'none';
             setLoader(forgotEmailForm, true);
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
 
             try {
                 const res = await fetch(`${API_BASE}/api/auth/forgot-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email })
+                    body: JSON.stringify({ email }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 const data = await res.json();
 
                 if (res.ok) {
@@ -3207,12 +3529,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     showForgotStep(2);
                     showToast('OTP sent to your email');
                 } else {
-                    errorEl.textContent = data.message;
-                    errorEl.style.display = 'block';
+                    if (errorEl) {
+                        errorEl.textContent = data.message || 'Unable to send OTP. Please try again.';
+                        errorEl.style.display = 'block';
+                    }
                 }
             } catch (err) {
-                errorEl.textContent = 'Connection error. Try again.';
-                errorEl.style.display = 'block';
+                clearTimeout(timeoutId);
+                if (errorEl) {
+                    errorEl.textContent = err.name === 'AbortError'
+                        ? 'Request timed out. Please check your connection and try again.'
+                        : 'Connection error. Please try again.';
+                    errorEl.style.display = 'block';
+                }
             } finally {
                 setLoader(forgotEmailForm, false);
             }
@@ -3223,29 +3552,42 @@ document.addEventListener('DOMContentLoaded', () => {
     if (forgotOtpForm) {
         forgotOtpForm.onsubmit = async (e) => {
             e.preventDefault();
-            const otp = document.getElementById('forgot-otp').value.trim();
+            const otpInput = document.getElementById('forgot-otp');
+            const otp = otpInput ? otpInput.value.trim() : '';
             const errorEl = document.getElementById('forgot-otp-error');
-            errorEl.style.display = 'none';
+            if (errorEl) errorEl.style.display = 'none';
             setLoader(forgotOtpForm, true);
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
 
             try {
                 const res = await fetch(`${API_BASE}/api/auth/verify-reset-otp`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: resetSession.email, otp })
+                    body: JSON.stringify({ email: resetSession.email, otp }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 const data = await res.json();
 
                 if (res.ok) {
                     resetSession.token = data.resetToken;
                     showForgotStep(3);
                 } else {
-                    errorEl.textContent = data.message;
-                    errorEl.style.display = 'block';
+                    if (errorEl) {
+                        errorEl.textContent = data.message || 'Invalid or expired OTP.';
+                        errorEl.style.display = 'block';
+                    }
                 }
             } catch (err) {
-                errorEl.textContent = 'Verification failed. Try again.';
-                errorEl.style.display = 'block';
+                clearTimeout(timeoutId);
+                if (errorEl) {
+                    errorEl.textContent = err.name === 'AbortError'
+                        ? 'Request timed out. Please try again.'
+                        : 'Verification failed. Try again.';
+                    errorEl.style.display = 'block';
+                }
             } finally {
                 setLoader(forgotOtpForm, false);
             }
@@ -3259,37 +3601,53 @@ document.addEventListener('DOMContentLoaded', () => {
             const pass = document.getElementById('forgot-new-password').value;
             const confirm = document.getElementById('forgot-confirm-password').value;
             const errorEl = document.getElementById('forgot-reset-error');
-            errorEl.style.display = 'none';
+            if (errorEl) errorEl.style.display = 'none';
 
             if (pass.length < 6) {
-                errorEl.textContent = 'Password must be at least 6 characters.';
-                errorEl.style.display = 'block';
+                if (errorEl) {
+                    errorEl.textContent = 'Password must be at least 6 characters.';
+                    errorEl.style.display = 'block';
+                }
                 return;
             }
             if (pass !== confirm) {
-                errorEl.textContent = 'Passwords do not match.';
-                errorEl.style.display = 'block';
+                if (errorEl) {
+                    errorEl.textContent = 'Passwords do not match.';
+                    errorEl.style.display = 'block';
+                }
                 return;
             }
 
             setLoader(forgotResetForm, true);
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 12000);
+
             try {
                 const res = await fetch(`${API_BASE}/api/auth/reset-password`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ resetToken: resetSession.token, newPassword: pass })
+                    body: JSON.stringify({ resetToken: resetSession.token, newPassword: pass }),
+                    signal: controller.signal
                 });
+                clearTimeout(timeoutId);
                 const data = await res.json();
 
                 if (res.ok) {
                     showForgotStep(4);
                 } else {
-                    errorEl.textContent = data.message;
-                    errorEl.style.display = 'block';
+                    if (errorEl) {
+                        errorEl.textContent = data.message || 'Password reset failed.';
+                        errorEl.style.display = 'block';
+                    }
                 }
             } catch (err) {
-                errorEl.textContent = 'Reset failed. Try again.';
-                errorEl.style.display = 'block';
+                clearTimeout(timeoutId);
+                if (errorEl) {
+                    errorEl.textContent = err.name === 'AbortError'
+                        ? 'Request timed out. Please try again.'
+                        : 'Reset failed. Try again.';
+                    errorEl.style.display = 'block';
+                }
             } finally {
                 setLoader(forgotResetForm, false);
             }
@@ -3299,9 +3657,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const finishBtn = document.getElementById('finish-reset-btn');
     if (finishBtn) {
         finishBtn.onclick = () => {
+            const modal = document.getElementById('auth-modal');
+            if (modal) modal.classList.remove('mode-forgot');
+
             if (forgotFlow) forgotFlow.style.display = 'none';
+            const authTabs = document.querySelector('.auth-premium-tabs');
             if (authTabs) authTabs.style.display = 'flex';
+            const ssoSection = document.getElementById('auth-sso-section');
+            if (ssoSection) ssoSection.style.display = 'block';
+            const mainTitle = document.querySelector('.auth-premium-title');
+            if (mainTitle) mainTitle.style.display = 'block';
+
             switchTab('login');
+            if (typeof clearLoginLockout === 'function') clearLoginLockout();
+            const loginEmailInput = document.getElementById('login-email');
+            if (loginEmailInput && resetSession.email) {
+                loginEmailInput.value = resetSession.email;
+            }
         };
     }
 

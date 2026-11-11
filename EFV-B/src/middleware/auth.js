@@ -117,10 +117,13 @@ const validatePurchase = async (req, res, next) => {
     debugLog(`VALIDATING: User=${userEmail}, ID=${userIdStr}, Role=${userRole}, Product=${productId} [URL: ${req.originalUrl}]`);
 
     try {
-        // 1. Admin bypass
-        const lowerEmail = (userEmail || '').toLowerCase();
-        if (userRole === 'admin' || lowerEmail === 'admin@uwo24.com' || lowerEmail === 'efv@uwo24.com') {
-            debugLog(`GRANT: Admin Bypass for ${userEmail}`);
+        // 1. Admin Portal Bypass ONLY (e.g. from admin.html preview)
+        const isExplicitAdminPortal = (req.headers.referer || '').includes('admin.html') || 
+                                      (req.headers.referer || '').includes('admin-dashboard.html') ||
+                                      req.headers['x-admin-preview'] === 'true' ||
+                                      req.headers['x-efv-source'] === 'admin_portal';
+        if (userRole === 'admin' && isExplicitAdminPortal) {
+            debugLog(`GRANT: Admin Portal Preview Bypass for ${userEmail}`);
             return next();
         }
 
@@ -147,33 +150,15 @@ const validatePurchase = async (req, res, next) => {
             }
         }
 
-        // 4. Digital Library (Robust check)
-        // Try multiple ID formats for userId to handle legacy JSON vs MongoDB
-        const library = await DigitalLibrary.findOne({ 
-            $or: [{ userId: userId }, { userId: userIdStr }]
-        });
-
-        if (library && library.items) {
-            const hasAccess = library.items.some(item => {
-                const itemProdId = item.productId || item.id || item._id;
-                if (!itemProdId) return false;
-                const itemStr = itemProdId.toString();
-                return itemStr === productId || itemStr === resolvedProductId;
-            });
-
-            if (hasAccess) {
-                debugLog(`GRANT: Library entry found for ${userEmail} -> ${productId}`);
-                return next();
-            }
-        }
-
-        // 5. Purchase History
+        // 4. Purchase History
         const purchase = await Purchase.findOne({
             $or: [
                 { userId: userId, productId: resolvedProductId },
                 { userId: userId, productId: productId },
                 { userId: userIdStr, productId: resolvedProductId },
-                { userId: userIdStr, productId: productId }
+                { userId: userIdStr, productId: productId },
+                { userEmail: userEmail, productId: resolvedProductId },
+                { userEmail: userEmail, productId: productId }
             ]
         });
 
@@ -182,21 +167,77 @@ const validatePurchase = async (req, res, next) => {
             return next();
         }
 
-        // 6. 🔧 Order History fallback — for Cashfree/newly purchased digital items
+        // 5. Order History: Check for PAID order containing this DIGITAL product
         const { Order } = require('../models');
         const paidOrder = await Order.findOne({
-            $or: [{ userId: userId }, { userId: userIdStr }, { 'customer.email': userEmail }],
-            paymentStatus: 'Paid',
-            'items.productId': resolvedProductId
+            $and: [
+                {
+                    $or: [
+                        { userId: userId },
+                        { userId: userIdStr },
+                        { 'customer.email': userEmail }
+                    ]
+                },
+                { status: { $nin: ['Cancelled', 'Failed', 'Returned'] } },
+                {
+                    $or: [
+                        { paymentStatus: { $regex: /^paid$/i } },
+                        { status: { $in: ['Paid', 'Completed', 'Completed (Digital)'] } }
+                    ]
+                },
+                {
+                    'items.productId': { $in: [resolvedProductId, productId] }
+                }
+            ]
         });
 
         if (paidOrder) {
-            debugLog(`GRANT: Paid Order found for ${userEmail} -> ${productId}`);
-            return next();
+            // Verify that the purchased item is actually digital (not a physical hardcover/paperback)
+            const matchedItem = (paidOrder.items || []).find(i => 
+                (i.productId || '').toString() === resolvedProductId || 
+                (i.productId || '').toString() === productId
+            );
+            if (matchedItem) {
+                const iType = (matchedItem.type || '').toString().toUpperCase();
+                const isPhysical = ['HARDCOVER', 'PAPERBACK', 'PHYSICAL', 'BOOK', 'PRINT'].some(p => iType.includes(p));
+                if (!isPhysical) {
+                    debugLog(`GRANT: Verified Paid Digital Order found for ${userEmail} -> ${productId}`);
+                    return next();
+                }
+            }
         }
 
-        debugLog(`DENY: ${userEmail} does not own ${productId}`);
-        return res.status(403).json({ message: 'Access denied: Content not purchased [REFRESH_REQUIRED]' });
+        // 6. Digital Library Check: only grant if backed by a valid paid order
+        const library = await DigitalLibrary.findOne({ 
+            $or: [{ userId: userId }, { userId: userIdStr }]
+        });
+
+        if (library && library.items) {
+            const libItem = library.items.find(item => {
+                const itemProdId = item.productId || item.id || item._id;
+                if (!itemProdId) return false;
+                const itemStr = itemProdId.toString();
+                return itemStr === productId || itemStr === resolvedProductId;
+            });
+
+            if (libItem && libItem.accessStatus === 'active' && libItem.orderId) {
+                const orderCheck = await Order.findOne({
+                    orderId: libItem.orderId,
+                    status: { $nin: ['Cancelled', 'Failed', 'Returned'] },
+                    $or: [
+                        { paymentStatus: { $regex: /^paid$/i } },
+                        { status: { $in: ['Paid', 'Completed', 'Completed (Digital)'] } }
+                    ]
+                });
+                if (orderCheck) {
+                    debugLog(`GRANT: Verified Library entry with paid order for ${userEmail} -> ${productId}`);
+                    return next();
+                }
+            }
+        }
+
+        debugLog(`DENY: ${userEmail} does not own digital product ${productId}`);
+        return res.status(403).json({ message: 'Access denied: Content not purchased' });
     } catch (error) {
         debugLog(`ERROR: ${error.message} [URL: ${req.originalUrl}]`);
         res.status(500).json({ message: 'Server error during validation' });

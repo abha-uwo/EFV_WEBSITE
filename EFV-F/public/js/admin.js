@@ -2191,7 +2191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const config = {
                     globalName: document.getElementById('store-global-name')?.value || "EFV™ Official Store",
                     hotline: document.getElementById('store-support-hotline')?.value || "+91 98765 43210",
-                    email: document.getElementById('store-support-email')?.value || "support@efv.com",
+                    email: document.getElementById('store-support-email')?.value || "efv@uwo24.com",
                     currency: document.getElementById('store-base-currency')?.value || "INR",
                     taxRate: document.getElementById('store-tax-rate')?.value || "18",
                     invoicePrefix: document.getElementById('store-invoice-prefix')?.value || "EFV-2026-"

@@ -315,7 +315,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // Sync Store Config to Footer & Modals (Dynamically from Database)
     const applyFooterConfig = (config) => {
         if (!config) return;
-        const supportEmail = config.email;
+        let supportEmail = config.email;
+        if (!supportEmail || supportEmail === 'support@efv.com') {
+            supportEmail = 'efv@uwo24.com';
+        }
         const hotline = config.hotline;
         const globalName = config.globalName;
 
